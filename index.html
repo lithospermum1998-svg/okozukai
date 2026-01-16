@@ -1,52 +1,112 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>おこづかい管理</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
+    /* ← ここに CodePenのCSS を全部貼る */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    h1 {
-      text-align: center;
-    }
-    input, button {
-      font-size: 18px;
-      padding: 10px;
-      width: 100%;
-      margin-top: 10px;
-    }
-    .total {
-      margin-top: 20px;
-      font-size: 24px;
-      text-align: center;
-    }
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  background: #f2f2f7;
+  margin: 0;
+  padding: 16px;
+}
+
+.container {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+input, button {
+  font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #007aff;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+button:active {
+  opacity: 0.7;
+}
+
+.summary {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+#expenseForm input,
+#expenseForm button {
+  width: 100%;
+  box-sizing: border-box; /* ←これが超重要 */
+  font-size: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+}
   </style>
 </head>
 <body>
 
-  <h1>おこづかい管理</h1>
+  <!-- ← ここに CodePenのHTML を貼る -->
 
-  <input type="number" id="money" placeholder="金額を入力（例：500）">
+<div class="container">
 
-  <button onclick="addMoney()">追加</button>
+  <h1>お小遣い帳</h1>
 
-  <div class="total">
-    合計：<span id="total">0</span> 円
+  <div class="summary">
+    <span id="monthLabel"></span> 合計：
+    <strong id="monthlyTotal">0</strong> 円
   </div>
 
-  <script>
-    let sum = 0;
+  <form id="expenseForm">
+    <input type="number" id="amount" placeholder="金額" required />
+    <input type="text" id="memo" placeholder="メモ（任意）" />
+    <button type="submit">追加</button>
+  </form>
 
-    function addMoney() {
-      const value = document.getElementById("money").value;
-      sum += Number(value);
-      document.getElementById("total").textContent = sum;
-      document.getElementById("money").value = "";
-    }
+  <ul id="expenseList"></ul>
+
+</div>
+  <script>
+    // ← ここに CodePenのJS を全部貼る
+    
+  monthlyTotalEl.textContent = total;
+}
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const expense = {
+    amount: Number(amountInput.value),
+    memo: memoInput.value,
+    date: new Date().toISOString()
+  };
+
+  const expenses = loadExpenses();
+  expenses.push(expense);
+  saveExpenses(expenses);
+
+  amountInput.value = "";
+  memoInput.value = "";
+
+  render();
+});
+
+render();
   </script>
 
 </body>
