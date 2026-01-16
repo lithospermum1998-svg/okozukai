@@ -84,6 +84,52 @@ button:active {
   <script>
     // ← ここに CodePenのJS を全部貼る
     
+const form = document.getElementById("expenseForm");
+const amountInput = document.getElementById("amount");
+const memoInput = document.getElementById("memo");
+const list = document.getElementById("expenseList");
+const monthlyTotalEl = document.getElementById("monthlyTotal");
+const monthLabel = document.getElementById("monthLabel");
+
+const STORAGE_KEY = "expenses";
+
+const today = new Date();
+const currentMonth = today.getMonth();
+const currentYear = today.getFullYear();
+
+monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+
+function loadExpenses() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveExpenses(expenses) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+}
+
+function render() {
+  const expenses = loadExpenses();
+  list.innerHTML = "";
+
+  let total = 0;
+
+  expenses.forEach(exp => {
+    const date = new Date(exp.date);
+    if (
+      date.getMonth() === currentMonth &&
+      date.getFullYear() === currentYear
+    ) {
+      total += exp.amount;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${date.getDate()}日 ${exp.memo || ""}</span>
+        <strong>${exp.amount}円</strong>
+      `;
+      list.appendChild(li);
+    }
+  });
+
   monthlyTotalEl.textContent = total;
 }
 
@@ -107,6 +153,7 @@ form.addEventListener("submit", e => {
 });
 
 render();
+    
   </script>
 
 </body>
