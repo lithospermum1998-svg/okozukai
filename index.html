@@ -75,7 +75,7 @@ button:active {
   <form id="expenseForm">
     <input type="number" id="amount" placeholder="金額" required />
     <input type="text" id="memo" placeholder="メモ（任意）" />
-    <button onclick="addRecord()">追加</button>
+    <button>追加</button>
   </form>
 
   <ul id="expenseList"></ul>
@@ -96,7 +96,6 @@ const STORAGE_KEY = "expenses";
 const today = new Date();
 const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
-
 monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
 
 function loadExpenses() {
@@ -108,13 +107,13 @@ function saveExpenses(expenses) {
 }
 
 function render() {
-  const list = document.getElementById("list");
+  const expenses = loadExpenses();
   list.innerHTML = "";
 
   let total = 0;
 
-  records.forEach((r, index) => {
-    total += r.amount;
+  expenses.forEach((expense, index) => {
+    total += expense.amount;
 
     const li = document.createElement("li");
     li.style.display = "flex";
@@ -122,23 +121,24 @@ function render() {
     li.style.alignItems = "center";
 
     const text = document.createElement("span");
-    text.textContent = `${r.memo} ¥${r.amount}`;
+    text.textContent = `${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     const del = document.createElement("button");
     del.textContent = "×";
     del.style.marginLeft = "10px";
 
     del.onclick = () => {
-      records.splice(index, 1);
-      localStorage.setItem("okozukai", JSON.stringify(records));
+      expenses.splice(index, 1);
+      saveExpenses(expenses);
       render();
     };
 
     li.appendChild(text);
-    li.appendChild(li);
+    li.appendChild(del);
+    list.appendChild(li);
   });
 
-  document.getElementById("total").textContent = total;
+  monthlyTotalEl.textContent = total;
 }
 
 form.addEventListener("submit", e => {
@@ -161,8 +161,8 @@ form.addEventListener("submit", e => {
 });
 
 render();
-    
-  </script>
+</script>
+      
 
 </body>
 </html>
