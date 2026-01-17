@@ -171,8 +171,8 @@ function getTodayString() {
 const STORAGE_KEY = "expenses";
 
 const today = new Date();
-const currentMonth = today.getMonth();
-const currentYear = today.getFullYear();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
 
 monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
 
