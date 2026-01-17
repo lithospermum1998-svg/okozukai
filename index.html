@@ -41,8 +41,11 @@ input[type="date"] {
   background: #eee;
   box-sizing: border-box;
 
-  height: auto;      /* ← 固定高さを殺す */
-  line-height: normal; /* ← iOSの罠を回避 */
+  -webkit-appearance: none; /* ← 最重要 */
+  appearance: none;
+
+  height: auto;
+  line-height: normal;
 }
     button {
   font-size: 16px;
