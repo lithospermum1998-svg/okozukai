@@ -230,18 +230,13 @@ metaEl.textContent = `${expense.date.slice(5)}　${expense.memo || "メモなし
 
 text.appendChild(amountEl);
 text.appendChild(metaEl);
-    const del = document.createElement("button");
-    del.textContent = "削除";
 
-    del.onclick = () => {
-      expenses.splice(index, 1);
-      saveExpenses(expenses);
-      render();
-    };
+const del = document.createElement("button");
+del.textContent = "削除";
 
-    li.appendChild(text);
-    li.appendChild(del);
-    list.appendChild(li);
+li.appendChild(text);
+li.appendChild(del);
+list.appendChild(li);
   });
 
   monthlyTotalEl.textContent = total;
