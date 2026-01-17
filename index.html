@@ -32,15 +32,17 @@ input:not([type="date"]) {
   border: 1px solid #ccc;
 }
 input[type="date"] {
-  height: 48px;
-  padding: 0 12px;
-  margin-bottom: 12px;
   font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
   border-radius: 12px;
   border: 1px solid #ccc;
   background: #eee;
   box-sizing: border-box;
-  line-height: 48px;
+
+  height: auto;      /* ← 固定高さを殺す */
+  line-height: normal; /* ← iOSの罠を回避 */
 }
     button {
   font-size: 16px;
