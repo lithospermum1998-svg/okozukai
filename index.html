@@ -194,11 +194,12 @@ const today = new Date();
 let currentMonth = today.getMonth();
 let currentYear = today.getFullYear();
 
-monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+function updateMonthLabel() {
+  monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+}
 
-// ★ ここが超重要：最初に今日をセット
 dateInput.value = getTodayString();
-   updateMonthLabel();
+updateMonthLabel();
     
 // ④ 関数群（load / save / render）
 function loadExpenses() {
