@@ -73,7 +73,7 @@ li button {
   color: #fff;
   border: none;
   border-radius: 12px;
-  padding: 10px 16px;
+  padding: 10px 20px;
   font-size: 14px;
   font-weight: bold;
   min-width: 56px;          /* ←「削」が潰れない */
@@ -81,6 +81,8 @@ li button {
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap; /* ← これ超重要 */
+  height: 44px;
 }
 
 li button:active {
