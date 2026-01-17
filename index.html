@@ -219,7 +219,7 @@ form.addEventListener("submit", e => {
   const expense = {
     amount: Number(amountInput.value),
     memo: memoInput.value,
-    date: dateInput.value || new Date().toISOString()
+    date: dateInput.value || getTodayString()
   };
 
   const expenses = loadExpenses();
