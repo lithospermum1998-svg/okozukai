@@ -254,7 +254,9 @@ amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
 
 const metaEl = document.createElement("div");
 metaEl.className = "meta";
-metaEl.textContent = `${expense.date.slice(5)}　${expense.memo || "メモなし"}`;
+metaEl.textContent = expense.memo
+  ? `${expense.date.slice(5)}　${expense.memo}`
+  : expense.date.slice(5);
 
 text.appendChild(amountEl);
 text.appendChild(metaEl);
