@@ -91,10 +91,8 @@ li {
 li span {
   line-height: 1.1;
 }
-
-    
+  
 /* 削除ボタン */
-
     
   </style>
 </head>
@@ -111,6 +109,8 @@ li span {
     <strong id="monthlyTotal">0</strong> 円
   </div>
 
+　　<input type="date" id="date" />
+  
   <form id="expenseForm">
     <input type="number" id="amount" placeholder="金額" required />
     <input type="text" id="memo" placeholder="メモ（任意）" />
@@ -118,11 +118,10 @@ li span {
   </form>
 
   <ul id="expenseList"></ul>
-
-　<input type="date" id="date" />
   
 </div>
   <script>
+    
     // ← ここに CodePenのJS を全部貼る
     
 const form = document.getElementById("expenseForm");
