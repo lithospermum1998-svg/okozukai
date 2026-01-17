@@ -190,6 +190,7 @@ function saveExpenses(expenses) {
 
 function render() {
   const expenses = loadExpenses();
+  expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
   list.innerHTML = "";
 
   let total = 0;
