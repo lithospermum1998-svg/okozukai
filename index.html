@@ -67,7 +67,21 @@ li button {
   height: 28px;
   font-size: 16px;
 }
-  
+
+li button {
+  background: #007aff;      /* 追加ボタンと同じ青 */
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+li button:active {
+  opacity: 0.7;
+}
+    
     
   </style>
 </head>
@@ -136,8 +150,8 @@ function render() {
     text.textContent = `${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     const del = document.createElement("button");
-    del.textContent = "×";
-    del.style.marginLeft = "10px";
+    del.textContent = "削除";
+    
 
     del.onclick = () => {
       expenses.splice(index, 1);
