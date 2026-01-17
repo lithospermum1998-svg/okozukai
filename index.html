@@ -158,6 +158,7 @@ li span {
   <script>
     
     // ← ここに CodePenのJS を全部貼る
+// ① HTML部品に名前をつける（変数定義）
 const form = document.getElementById("expenseForm");
 const amountInput = document.getElementById("amount");
 const memoInput = document.getElementById("memo");
@@ -166,6 +167,14 @@ const monthlyTotalEl = document.getElementById("monthlyTotal");
 const monthLabel = document.getElementById("monthLabel");
 const dateInput = document.getElementById("date");
 
+// ② 今日の日付を文字列にする関数（←ここが抜けてた）
+function getTodayString() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+// ③ 定数・初期設定
 const STORAGE_KEY = "expenses";
 
 const today = new Date();
@@ -173,6 +182,11 @@ const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
 
 monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+
+// ★ ここが超重要：最初に今日をセット
+dateInput.value = getTodayString();
+
+// ④ 関数群（load / save / render）
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
@@ -213,6 +227,7 @@ function render() {
   monthlyTotalEl.textContent = total;
 }
 
+// ⑤ イベント（追加ボタン）
 form.addEventListener("submit", e => {
   e.preventDefault();
 
@@ -230,11 +245,11 @@ form.addEventListener("submit", e => {
   memoInput.value = "";
 
   render();
-  dateInput.value = getTodayString();
+  dateInput.value = getTodayString(); // 次の入力用
 });
 
-render();    
-
+// ⑥ 最初の描画
+render();
   </script>
       
 
