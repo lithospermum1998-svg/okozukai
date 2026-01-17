@@ -282,6 +282,26 @@ form.addEventListener("submit", e => {
   dateInput.value = getTodayString(); // 次の入力用
 });
 
+    document.getElementById("prevMonth").onclick = () => {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+  updateMonthLabel();
+  render();
+};
+
+document.getElementById("nextMonth").onclick = () => {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+  updateMonthLabel();
+  render();
+};
+    
 // ⑥ 最初の描画
 render();
   </script>
