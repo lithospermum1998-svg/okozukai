@@ -236,7 +236,17 @@ function render() {
       );
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
+ 
+  const grouped = {};
 
+  filtered.forEach(expense => {
+    const key = expense.date; // YYYY-MM-DD
+    if (!grouped[key]) {
+      grouped[key] = [];
+    }
+    grouped[key].push(expense);
+  });
+  
   list.innerHTML = "";
   let total = 0;
 
