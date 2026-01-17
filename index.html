@@ -134,22 +134,23 @@ li span {
   <script>
     
     // ← ここに CodePenのJS を全部貼る
-    
 const form = document.getElementById("expenseForm");
 const amountInput = document.getElementById("amount");
 const memoInput = document.getElementById("memo");
 const list = document.getElementById("expenseList");
 const monthlyTotalEl = document.getElementById("monthlyTotal");
 const monthLabel = document.getElementById("monthLabel");
+const dateInput = document.getElementById("date");
 
 const STORAGE_KEY = "expenses";
 
 const today = new Date();
 const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
-const dateInput = document.getElementById("date");
-date: dateInput.value || new Date().toISOString()
-    
+
+monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+dateInput.value = new Date().toISOString().slice(0, 10);
+
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
@@ -168,15 +169,13 @@ function render() {
     total += expense.amount;
 
     const li = document.createElement("li");
-
     const text = document.createElement("span");
-    text.textContent = `${expense.memo || "（メモなし）"} ¥${expense.amount}`;
+
+    const date = expense.date.slice(0, 10);
+    text.textContent = `${date}｜${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     const del = document.createElement("button");
     del.textContent = "削除";
-
-    const date = expense.date.slice(0, 10);
-text.textContent = `${date}｜${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     del.onclick = () => {
       expenses.splice(index, 1);
@@ -198,7 +197,7 @@ form.addEventListener("submit", e => {
   const expense = {
     amount: Number(amountInput.value),
     memo: memoInput.value,
-    date: new Date().toISOString()
+    date: dateInput.value || new Date().toISOString()
   };
 
   const expenses = loadExpenses();
@@ -211,8 +210,9 @@ form.addEventListener("submit", e => {
   render();
 });
 
-render();
-</script>
+render();    
+
+  </script>
       
 
 </body>
