@@ -254,6 +254,7 @@ function render() {
   // --- 日付見出し ---
   const dateLi = document.createElement("li");
   dateLi.textContent = date.slice(5); // MM-DD
+  dateLi.className = "date-header";
   dateLi.style.fontWeight = "700";
   dateLi.style.marginTop = "8px";
   list.appendChild(dateLi);
