@@ -119,6 +119,8 @@ li span {
 
   <ul id="expenseList"></ul>
 
+　<input type="date" id="date" />
+  
 </div>
   <script>
     // ← ここに CodePenのJS を全部貼る
@@ -135,8 +137,10 @@ const STORAGE_KEY = "expenses";
 const today = new Date();
 const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
+const dateInput = document.getElementById("date");
 monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
-
+date: dateInput.value || new Date().toISOString()
+    
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
