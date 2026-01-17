@@ -58,15 +58,6 @@ button:active {
   border-radius: 12px;
 }
 
-li button {
-  background: #ff5c5c;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 16px;
-}
     /* 削除ボタン（追加ボタンと同系統） */
 li button {
   background: #007aff;
@@ -164,18 +155,15 @@ function render() {
     total += expense.amount;
 
     const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.justifyContent = "space-between";
-    li.style.alignItems = "center";
-    li.style.padding = "8px 0";
-
 
     const text = document.createElement("span");
     text.textContent = `${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     const del = document.createElement("button");
     del.textContent = "削除";
-    
+
+    const date = expense.date.slice(0, 10);
+text.textContent = `${date}｜${expense.memo || "（メモなし）"} ¥${expense.amount}`;
 
     del.onclick = () => {
       expenses.splice(index, 1);
