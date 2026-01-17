@@ -120,6 +120,21 @@ li {
   -webkit-appearance: none;
   appearance: none;
 }
+    /* 月ナビ（軽く） */
+.month-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.month-nav button {
+  background: none;
+  color: #007aff;
+  font-size: 18px;
+  padding: 4px 8px;
+}
   </style>
 </head>
 <body>
@@ -183,7 +198,8 @@ monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
 
 // ★ ここが超重要：最初に今日をセット
 dateInput.value = getTodayString();
-
+   updateMonthLabel();
+    
 // ④ 関数群（load / save / render）
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
