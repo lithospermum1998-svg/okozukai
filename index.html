@@ -109,7 +109,23 @@ li span {
   width: 100%;
   box-sizing: border-box;
 }
-    
+
+.date-wrap {
+  height: 48px;              /* 他inputと同じ */
+  border-radius: 12px;
+  overflow: hidden;          /* ← はみ出した灰色を切る */
+}
+
+.date-wrap input[type="date"] {
+  height: 100%;
+  width: 100%;
+  border: none;
+  padding: 0 12px;
+  background: #eee;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
   </style>
 </head>
 <body>
