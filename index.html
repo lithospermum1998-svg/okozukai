@@ -143,7 +143,9 @@ const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
 
 monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
-dateInput.value = new Date().toISOString().slice(0, 10);
+const today = new Date();
+today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+dateInput.value = today.toISOString().slice(0, 10);
 
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
