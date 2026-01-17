@@ -190,12 +190,21 @@ function saveExpenses(expenses) {
 
 function render() {
   const expenses = loadExpenses();
-  expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
-  list.innerHTML = "";
 
+  const filtered = expenses
+    .filter(expense => {
+      const d = new Date(expense.date);
+      return (
+        d.getFullYear() === currentYear &&
+        d.getMonth() === currentMonth
+      );
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  list.innerHTML = "";
   let total = 0;
 
-  expenses.forEach((expense, index) => {
+  filtered.forEach((expense, index) => {
     total += expense.amount;
 
     const li = document.createElement("li");
