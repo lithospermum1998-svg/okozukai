@@ -145,6 +145,8 @@ function render() {
     li.style.display = "flex";
     li.style.justifyContent = "space-between";
     li.style.alignItems = "center";
+    li.style.padding = "8px 0";
+
 
     const text = document.createElement("span");
     text.textContent = `${expense.memo || "（メモなし）"} ¥${expense.amount}`;
