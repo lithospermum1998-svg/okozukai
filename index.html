@@ -250,9 +250,46 @@ function render() {
   list.innerHTML = "";
   let total = 0;
 
-  filtered.forEach((expense, index) => {
+  Object.keys(grouped).forEach(date => {
+  // --- 日付見出し ---
+  const dateLi = document.createElement("li");
+  dateLi.textContent = date.slice(5); // MM-DD
+  dateLi.style.fontWeight = "700";
+  dateLi.style.marginTop = "8px";
+  list.appendChild(dateLi);
+
+  grouped[date].forEach(expense => {
     total += expense.amount;
 
+    const li = document.createElement("li");
+
+    const text = document.createElement("div");
+    text.className = "item-text";
+
+    const amountEl = document.createElement("div");
+    amountEl.className = "amount";
+    amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
+
+    const metaEl = document.createElement("div");
+    metaEl.className = "meta";
+    metaEl.textContent = expense.memo || ""; // ← メモなしなら空
+
+    text.appendChild(amountEl);
+    text.appendChild(metaEl);
+
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.onclick = () => {
+      const expenses = loadExpenses().filter(e => e.id !== expense.id);
+      saveExpenses(expenses);
+      render();
+    };
+
+    li.appendChild(text);
+    li.appendChild(del);
+    list.appendChild(li);
+  });
+});
     const li = document.createElement("li");
 
 const text = document.createElement("div");
