@@ -221,11 +221,11 @@ const text = document.createElement("div");
 text.className = "item-text";
 
 const amountEl = document.createElement("div");
-amountEl.className = "item-amount";
+amountEl.className = "amount";
 amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
 
 const metaEl = document.createElement("div");
-metaEl.className = "item-meta";
+metaEl.className = "meta";
 metaEl.textContent = `${expense.date.slice(5)}　${expense.memo || "メモなし"}`;
 
 text.appendChild(amountEl);
