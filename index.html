@@ -216,6 +216,12 @@ text.appendChild(metaEl);
 
 const del = document.createElement("button");
 del.textContent = "削除";
+del.onclick = () => {
+  const expenses = loadExpenses();
+  expenses.splice(index, 1);
+  saveExpenses(expenses);
+  render();
+};
 
 li.appendChild(text);
 li.appendChild(del);
