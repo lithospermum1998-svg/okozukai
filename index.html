@@ -248,8 +248,7 @@ text.appendChild(metaEl);
 const del = document.createElement("button");
 del.textContent = "削除";
 del.onclick = () => {
-  const expenses = loadExpenses();
-  expenses.splice(index, 1);
+  const expenses = loadExpenses().filter(e => e.id !== expense.id);
   saveExpenses(expenses);
   render();
 };
