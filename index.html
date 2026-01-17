@@ -290,36 +290,6 @@ function render() {
     list.appendChild(li);
   });
 });
-    const li = document.createElement("li");
-
-const text = document.createElement("div");
-text.className = "item-text";
-
-const amountEl = document.createElement("div");
-amountEl.className = "amount";
-amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
-
-const metaEl = document.createElement("div");
-metaEl.className = "meta";
-metaEl.textContent = expense.memo
-  ? `${expense.date.slice(5)}　${expense.memo}`
-  : expense.date.slice(5);
-
-text.appendChild(amountEl);
-text.appendChild(metaEl);
-
-const del = document.createElement("button");
-del.textContent = "削除";
-del.onclick = () => {
-  const expenses = loadExpenses().filter(e => e.id !== expense.id);
-  saveExpenses(expenses);
-  render();
-};
-
-li.appendChild(text);
-li.appendChild(del);
-list.appendChild(li);
-  });
 
 monthlyTotalEl.textContent = total.toLocaleString();
 }
