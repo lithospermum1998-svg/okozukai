@@ -337,10 +337,12 @@ function render() {
 // ==============================
 recordBtn.addEventListener("click", () => {
   currentType = "record";
+  // 記録ボタンは submit ボタンなので、これだけでOK
 });
 
 investBtn.addEventListener("click", () => {
   currentType = "invest";
+  form.requestSubmit(); // ★ここが重要
 });
 
 // ==============================
