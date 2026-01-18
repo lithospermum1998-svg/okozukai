@@ -153,6 +153,26 @@ li {
   line-height: 1;
   font-weight: 600;
 }
+
+.action-row {
+  display: flex;
+  gap: 12px;
+}
+
+.action-row button {
+  flex: 1;
+  margin-bottom: 12px; /* 既存と揃える */
+}
+
+/* 記録（今の青を継承） */
+.btn-record {
+  background: #007aff;
+}
+
+/* 投資（iOSグリーン） */
+.btn-invest {
+  background: #34c759;
+}
   </style>
 </head>
 <body>
@@ -188,27 +208,6 @@ li {
 </form>
 
   <ul id="expenseList"></ul>
-  
-.action-row {
-  display: flex;
-  gap: 12px;
-}
-
-.action-row button {
-  flex: 1;
-  margin-bottom: 12px; /* 既存と揃える */
-}
-
-/* 記録（今の青を継承） */
-.btn-record {
-  background: #007aff;
-}
-
-/* 投資（iOSグリーン） */
-.btn-invest {
-  background: #34c759;
-}
-
   
 </div>
   <script>
