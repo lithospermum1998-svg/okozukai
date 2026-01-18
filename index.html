@@ -239,68 +239,22 @@ function saveExpenses(expenses) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
 }
 
-function render() {
-  const expenses = loadExpenses();
-
-  const filtered = expenses
-    .filter(expense => {
-      const d = new Date(expense.date);
-      return (
-        d.getFullYear() === currentYear &&
-        d.getMonth() === currentMonth
-      );
-    })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  list.innerHTML = "";
-  let total = 0;
-  let lastDate = "";
-
-  filtered.forEach(expense => {
-    total += expense.amount;
-
-    // --- 日付（前と違う時だけ表示） ---
-    if (expense.date !== lastDate) {
-      const dateLi = document.createElement("li");
-      dateLi.textContent = expense.date.slice(5);
-      dateLi.className = "date-header";
-      list.appendChild(dateLi);
-      lastDate = expense.date;
-    }
-
-    // --- 金額行 ---
-    const li = document.createElement("li");
-
-    const text = document.createElement("div");
-    text.className = "item-text";
-
-    const amountEl = document.createElement("div");
-    amountEl.className = "amount";
-    amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
-
-    const metaEl = document.createElement("div");
-    metaEl.className = "meta";
-    metaEl.textContent = expense.memo || "";
-
-    text.appendChild(amountEl);
-    text.appendChild(metaEl);
-
-    const del = document.createElement("button");
-    del.textContent = "削除";
-    del.onclick = () => {
-      const expenses = loadExpenses().filter(e => e.id !== expense.id);
-      saveExpenses(expenses);
-      render();
-    };
-
-    li.appendChild(text);
-    li.appendChild(del);
-    list.appendChild(li);
-  });
-
-  monthlyTotalEl.textContent = total.toLocaleString();
+li {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  padding: 6px 8px;
 }
 
+.date-col {
+  font-size: 12px;
+  color: #999;
+}
+
+.amount {
+  font-size: 20px;
+  font-weight: 700;
+}
 // ⑤ イベント（追加ボタン）
 form.addEventListener("submit", e => {
   e.preventDefault();
