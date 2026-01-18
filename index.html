@@ -162,11 +162,13 @@ li {
 li:not(.date-header) {
   padding-left: 12px;
 }
+    
 li {
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding: 2px 4px;
+  padding: 0 4px;     /* ← 上下0 */
+  margin-bottom: 2px;
 }
 
 .date-col {
@@ -178,7 +180,7 @@ li {
 .amount {
   font-size: 20px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1;     /* ← ここ最強 */
 }
   </style>
 </head>
