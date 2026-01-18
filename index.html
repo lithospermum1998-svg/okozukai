@@ -316,10 +316,11 @@ form.addEventListener("submit", e => {
   e.preventDefault();
 
   const expense = {
-    id: Date.now(),
-    amount: Number(amountInput.value),
-    memo: memoInput.value,
-    date: dateInput.value || getTodayString()
+  id: Date.now(),
+  amount: Number(amountInput.value),
+  memo: memoInput.value,
+  date: dateInput.value || getTodayString(),
+  type: currentType
   };
 
   const expenses = loadExpenses();
