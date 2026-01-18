@@ -94,6 +94,11 @@ li {
   font-size: 20px;
   font-weight: 700;
 }
+
+.amount.record {
+  color: #007aff; /* 記録は青 */
+}
+    
 .meta {
   font-size: 13px;
   color: #666;
@@ -306,7 +311,9 @@ function render() {
 
     if (expense.type === "invest") {
       amountEl.classList.add("invest");
-    }
+    } else {
+  amountEl.classList.add("record");
+}
 
     const metaEl = document.createElement("div");
     metaEl.className = "meta";
