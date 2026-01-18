@@ -98,6 +98,9 @@ li {
   font-size: 13px;
   color: #666;
 }
+.amount.invest {
+  color: #34c759;
+}
   
 /* 入力系を完全に統一 */
 #expenseForm input,
@@ -286,7 +289,10 @@ text.className = "item-text";
 const amountEl = document.createElement("div");
 amountEl.className = "amount";
 amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
-
+if (expense.type === "invest") {
+  amountEl.classList.add("invest");
+}
+    
 const metaEl = document.createElement("div");
 metaEl.className = "meta";
 
