@@ -177,13 +177,38 @@ li {
   <input type="date" id="date" />
 </div>
   
-  <form id="expenseForm">
-    <input type="number" id="amount" placeholder="金額" required />
-    <input type="text" id="memo" placeholder="メモ（任意）" />
-    <button>追加</button>
-  </form>
+<form id="expenseForm">
+  <input type="number" id="amount" placeholder="金額" required />
+  <input type="text" id="memo" placeholder="メモ（任意）" />
+
+  <div class="action-row">
+    <button class="btn-record">記録</button>
+    <button type="button" class="btn-invest">投資</button>
+  </div>
+</form>
 
   <ul id="expenseList"></ul>
+  
+.action-row {
+  display: flex;
+  gap: 12px;
+}
+
+.action-row button {
+  flex: 1;
+  margin-bottom: 12px; /* 既存と揃える */
+}
+
+/* 記録（今の青を継承） */
+.btn-record {
+  background: #007aff;
+}
+
+/* 投資（iOSグリーン） */
+.btn-invest {
+  background: #34c759;
+}
+
   
 </div>
   <script>
