@@ -62,15 +62,16 @@ li button {
   color: #007aff;
   border: none;
   border-radius: 10px;
-  padding: 0px 12px;
-  font-size: 12px;
+  padding: 4px 16px;
+  font-size: 13px;
   font-weight: 600;
   min-width: 56px;          /* ←「削」が潰れない */
-  height: 28px;             /* ← 追加ボタンと視覚バランス */
+  height: 40px;             /* ← 追加ボタンと視覚バランス */
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap; /* ← これ超重要 */
+  height: 40px;
 }
 
 li button:active {
@@ -147,40 +148,6 @@ li {
   height: 32px;
   line-height: 1;
   font-weight: 600;
-}
-/* 日付見出し */
-.date-header {
-  justify-content: flex-start;
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
-  margin: 12px 0 4px;
-  padding-left: 4px;
-}
-
-/* 金額行を少し右に */
-li:not(.date-header) {
-  padding-left: 12px;
-}
-    
-li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 0 4px;     /* ← 上下0 */
-  margin-bottom: 2px;
-}
-
-.date-col {
-  font-size: 12px;
-  line-height: 1;
-  color: #999;
-}
-
-.amount {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;     /* ← ここ最強 */
 }
   </style>
 </head>
@@ -272,27 +239,40 @@ function render() {
 
   list.innerHTML = "";
   let total = 0;
-  let lastDate = "";
 
-  filtered.forEach(expense => {
+  filtered.forEach((expense, index) => {
     total += expense.amount;
 
     const li = document.createElement("li");
 
-    const date = expense.date.slice(5); // MM-DD
-    const showDate = date !== lastDate;
-    lastDate = date;
+const text = document.createElement("div");
+text.className = "item-text";
 
-    li.innerHTML = `
-      <span class="date-col">${showDate ? date : ""}</span>
-      <span class="amount">¥${expense.amount.toLocaleString()}</span>
-      <button onclick="removeExpense(${expense.id})">削除</button>
-    `;
+const amountEl = document.createElement("div");
+amountEl.className = "amount";
+amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
 
-    list.appendChild(li);
+const metaEl = document.createElement("div");
+metaEl.className = "meta";
+metaEl.textContent = `${expense.date.slice(5)}　${expense.memo || "メモなし"}`;
+
+text.appendChild(amountEl);
+text.appendChild(metaEl);
+
+const del = document.createElement("button");
+del.textContent = "削除";
+del.onclick = () => {
+  const expenses = loadExpenses().filter(e => e.id !== expense.id);
+  saveExpenses(expenses);
+  render();
+};
+
+li.appendChild(text);
+li.appendChild(del);
+list.appendChild(li);
   });
 
-  monthlyTotalEl.textContent = total.toLocaleString();
+monthlyTotalEl.textContent = total.toLocaleString();
 }
 
 // ⑤ イベント（追加ボタン）
@@ -336,12 +316,6 @@ document.getElementById("nextMonth").onclick = () => {
   updateMonthLabel();
   render();
 };
-    
-function removeExpense(id) {
-  const expenses = loadExpenses().filter(e => e.id !== id);
-  saveExpenses(expenses);
-  render();
-}
     
 // ⑥ 最初の描画
 render();
