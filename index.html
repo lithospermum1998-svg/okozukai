@@ -334,6 +334,12 @@ document.getElementById("nextMonth").onclick = () => {
   render();
 };
     
+function removeExpense(id) {
+  const expenses = loadExpenses().filter(e => e.id !== id);
+  saveExpenses(expenses);
+  render();
+}
+    
 // ⑥ 最初の描画
 render();
   </script>
