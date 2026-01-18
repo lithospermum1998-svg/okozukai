@@ -317,6 +317,16 @@ monthlyTotalEl.textContent = total.toLocaleString();
 form.addEventListener("submit", e => {
   e.preventDefault();
 
+const recordBtn = document.querySelector(".btn-record");
+
+recordBtn.addEventListener("click", () => {
+  currentType = "record";
+});
+
+investBtn.addEventListener("click", () => {
+  currentType = "invest";
+});
+  
   const expense = {
   id: Date.now(),
   amount: Number(amountInput.value),
