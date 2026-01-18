@@ -220,8 +220,11 @@ h1 {
 </div>
   <script>
     
-    // ← ここに CodePenのJS を全部貼る
-// ① HTML部品に名前をつける（変数定義）
+    // JS
+<script>
+// ==============================
+// ① 要素取得
+// ==============================
 const form = document.getElementById("expenseForm");
 const amountInput = document.getElementById("amount");
 const memoInput = document.getElementById("memo");
@@ -229,17 +232,27 @@ const list = document.getElementById("expenseList");
 const monthlyTotalEl = document.getElementById("monthlyTotal");
 const monthLabel = document.getElementById("monthLabel");
 const dateInput = document.getElementById("date");
-const investBtn = document.querySelector(".btn-invest")
+
+const recordBtn = document.querySelector(".btn-record");
+const investBtn = document.querySelector(".btn-invest");
+
+// ==============================
+// ② 状態
+// ==============================
 let currentType = "record";
-    
-// ② 今日の日付を文字列にする関数（←ここが抜けてた）
+
+// ==============================
+// ③ 日付ユーティリティ
+// ==============================
 function getTodayString() {
   const d = new Date();
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 10);
 }
 
-// ③ 定数・初期設定
+// ==============================
+// ④ 初期設定
+// ==============================
 const STORAGE_KEY = "expenses";
 
 const today = new Date();
@@ -252,8 +265,10 @@ function updateMonthLabel() {
 
 dateInput.value = getTodayString();
 updateMonthLabel();
-    
-// ④ 関数群（load / save / render）
+
+// ==============================
+// ⑤ localStorage
+// ==============================
 function loadExpenses() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
@@ -262,69 +277,65 @@ function saveExpenses(expenses) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
 }
 
+// ==============================
+// ⑥ レンダリング
+// ==============================
 function render() {
   const expenses = loadExpenses();
 
   const filtered = expenses
-    .filter(expense => {
-      const d = new Date(expense.date);
-      return (
-        d.getFullYear() === currentYear &&
-        d.getMonth() === currentMonth
-      );
+    .filter(e => {
+      const d = new Date(e.date);
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   list.innerHTML = "";
   let total = 0;
 
-  filtered.forEach((expense, index) => {
+  filtered.forEach(expense => {
     total += expense.amount;
 
     const li = document.createElement("li");
 
-const text = document.createElement("div");
-text.className = "item-text";
+    const text = document.createElement("div");
+    text.className = "item-text";
 
-const amountEl = document.createElement("div");
-amountEl.className = "amount";
-amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
-if (expense.type === "invest") {
-  amountEl.classList.add("invest");
-}
-    
-const metaEl = document.createElement("div");
-metaEl.className = "meta";
+    const amountEl = document.createElement("div");
+    amountEl.className = "amount";
+    amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
 
-metaEl.textContent = expense.memo
-  ? `${expense.date.slice(5)}　${expense.memo}`
-  : expense.date.slice(5);
+    if (expense.type === "invest") {
+      amountEl.classList.add("invest");
+    }
 
-text.appendChild(amountEl);
-text.appendChild(metaEl);
+    const metaEl = document.createElement("div");
+    metaEl.className = "meta";
+    metaEl.textContent = expense.memo
+      ? `${expense.date.slice(5)}　${expense.memo}`
+      : expense.date.slice(5);
 
-const del = document.createElement("button");
-del.textContent = "削除";
-del.onclick = () => {
-  const expenses = loadExpenses().filter(e => e.id !== expense.id);
-  saveExpenses(expenses);
-  render();
-};
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.onclick = () => {
+      const updated = loadExpenses().filter(e => e.id !== expense.id);
+      saveExpenses(updated);
+      render();
+    };
 
-li.appendChild(text);
-li.appendChild(del);
-list.appendChild(li);
+    text.appendChild(amountEl);
+    text.appendChild(metaEl);
+    li.appendChild(text);
+    li.appendChild(del);
+    list.appendChild(li);
   });
 
-monthlyTotalEl.textContent = total.toLocaleString();
+  monthlyTotalEl.textContent = total.toLocaleString();
 }
 
-// ⑤ イベント（追加ボタン）
-form.addEventListener("submit", e => {
-  e.preventDefault();
-
-const recordBtn = document.querySelector(".btn-record");
-
+// ==============================
+// ⑦ ボタン種別切替
+// ==============================
 recordBtn.addEventListener("click", () => {
   currentType = "record";
 });
@@ -332,13 +343,19 @@ recordBtn.addEventListener("click", () => {
 investBtn.addEventListener("click", () => {
   currentType = "invest";
 });
-  
+
+// ==============================
+// ⑧ 追加処理
+// ==============================
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
   const expense = {
-  id: Date.now(),
-  amount: Number(amountInput.value),
-  memo: memoInput.value,
-  date: dateInput.value || getTodayString(),
-  type: currentType
+    id: Date.now(),
+    amount: Number(amountInput.value),
+    memo: memoInput.value,
+    date: dateInput.value || getTodayString(),
+    type: currentType
   };
 
   const expenses = loadExpenses();
@@ -347,12 +364,15 @@ investBtn.addEventListener("click", () => {
 
   amountInput.value = "";
   memoInput.value = "";
+  dateInput.value = getTodayString();
 
   render();
-  dateInput.value = getTodayString(); // 次の入力用
 });
 
-    document.getElementById("prevMonth").onclick = () => {
+// ==============================
+// ⑨ 月移動
+// ==============================
+document.getElementById("prevMonth").onclick = () => {
   currentMonth--;
   if (currentMonth < 0) {
     currentMonth = 11;
@@ -371,11 +391,12 @@ document.getElementById("nextMonth").onclick = () => {
   updateMonthLabel();
   render();
 };
-    
-// ⑥ 最初の描画
+
+// ==============================
+// ⑩ 初回描画
+// ==============================
 render();
-  </script>
-      
+</script>      
 
 </body>
 </html>
