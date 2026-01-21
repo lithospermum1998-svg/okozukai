@@ -2,417 +2,232 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>MONEY LOG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <title>MONEY LOG PRO</title>
   <style>
-    /* ← ここに CodePenのCSS を全部貼る */
+    :root {
+      --ios-blue: #007aff;
+      --ios-green: #34c759;
+      --ios-red: #ff3b30;
+      --bg-color: #f2f2f7;
+      --card-bg: #ffffff;
+      --text-main: #1c1c1e;
+      --text-sub: #8e8e93;
+      --radius: 12px;
+    }
+
     body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  background: #f2f2f7;
-  margin: 0;
-  padding: 16px;
-}
+      font-family: -apple-system, sans-serif;
+      background: var(--bg-color);
+      margin: 0;
+      padding: 16px;
+      color: var(--text-main);
+    }
 
-.container {
-  max-width: 420px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
 
-input:not([type="date"]) {
-  font-size: 16px;
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-}
+    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin-top: 0; }
+
+    /* 月ナビゲーション */
+    .month-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .month-nav button { background: none; color: var(--ios-blue); font-size: 20px; border: none; cursor: pointer; }
+    #monthLabel { font-weight: bold; font-size: 18px; }
+
+    /* 合計表示 */
+    .summary {
+      background: var(--bg-color);
+      padding: 15px;
+      border-radius: var(--radius);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #monthlyTotal { font-size: 28px; font-weight: 800; color: var(--ios-blue); }
+
+    /* 入力フォーム */
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #e5e5ea;
+      border-radius: var(--radius);
+      background: #fafafa;
+    }
     
-button {
-  font-size: 16px;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #007aff;
-  color: #fff;
-  font-weight: bold;
-}
+    .action-row { display: flex; gap: 10px; }
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-record { background: var(--ios-blue); }
+    .btn-invest { background: var(--ios-green); }
+    .btn:active { opacity: 0.6; }
 
-    #expenseForm button {
-  width: 100%;
-}
+    /* リスト表示 */
+    #expenseList { list-style: none; padding: 0; margin-top: 20px; }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f2f2f7;
+    }
+    .item-info .amount { font-size: 18px; font-weight: 700; }
+    .item-info .amount.record { color: var(--ios-blue); }
+    .item-info .amount.invest { color: var(--ios-green); }
+    .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
-button:active {
-  opacity: 0.7;
-}
-
-.summary {
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-    /* 削除ボタン（追加ボタンと同系統） */
-li button {
-  background: #e9f2ff;
-  color: #007aff;
-  border: none;
-  border-radius: 10px;
-  padding: 4px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  min-width: 56px;          /* ←「削」が潰れない */
-  height: 40px;             /* ← 追加ボタンと視覚バランス */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap; /* ← これ超重要 */
-}
-
-li.invest button {
-  background: #e9f9ef;   /* 薄いグリーン */
-  color: #34c759;        /* iOSグリーン */
-}
-    
-li button:active {
-  opacity: 0.7;
-}
-
-li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1px 0;      /* ← ここを極小に */
-  margin-bottom: 2px;  /* ← 行間も最小限 */
-}
-
-.item-text {
-  flex: 1;
-  min-width: 0;
-}
-    
-.amount {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.amount.record {
-  color: #007aff; /* 記録は青 */
-}
-    
-.meta {
-  font-size: 13px;
-  color: #666;
-}
-.amount.invest {
-  color: #34c759;
-}
-  
-/* 入力系を完全に統一 */
-#expenseForm input,
-#date,
-#expenseForm button {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.date-wrap {
-  height: 48px;              /* 他inputと同じ */
-  border-radius: 12px;
-  overflow: hidden;  /* ← はみ出した灰色を切る */
-  margin-bottom: 12px;
-}
-
-.date-wrap input[type="date"] {
-  height: 100%;
-  width: 100%;
-  border: none;
-  padding: 0 12px;
-  background: #eee;
-  color: #000;
-
-  -webkit-appearance: none;
-  appearance: none;
-}
-    /* 月ナビ（軽く） */
-.month-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  height: 40px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-.month-nav button {
-  margin-bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  line-height: 1;
-  background: none;
-  color: #000;
-  font-size: 18px;
-  padding: 4px 8px;
-}
-.month-nav span {
-  display: flex;
-  align-items: center;
-  height: 32px;
-  line-height: 1;
-  font-weight: 600;
-  color: #000;
-}
-
-.action-row {
-  display: flex;
-  gap: 12px;
-}
-
-.action-row button {
-  flex: 1;
-  margin-bottom: 12px; /* 既存と揃える */
-}
-
-/* 記録（今の青を継承） */
-.btn-record {
-  background: #007aff;
-}
-
-/* 投資（iOSグリーン） */
-.btn-invest {
-  background: #34c759;
-}
-
-h1 {
-  font-size: 22px;
-  letter-spacing: 0.08em;
-}
+    .delete-btn {
+      background: #fff0f0;
+      color: var(--ios-red);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
-  <!-- ← ここに CodePenのHTML を貼る -->
-
 <div class="container">
-
   <h1>MONEY LOG</h1>
-<div class="month-nav">
-  <button id="prevMonth">◀</button>
-  <span id="monthLabel"></span>
-  <button id="nextMonth">▶</button>
-</div>
-  
-  <div class="summary">
-     合計：
-    <strong id="monthlyTotal">0</strong> 円
+
+  <div class="month-nav">
+    <button id="prevBtn">◀</button>
+    <span id="monthLabel">2024年 1月</span>
+    <button id="nextBtn">▶</button>
   </div>
-  
-  <div class="date-wrap">
-  <input type="date" id="date" />
-</div>
-  
-<form id="expenseForm">
-  <input type="number" id="amount" placeholder="金額" required />
-  <input type="text" id="memo" placeholder="メモ（任意）" />
+
+  <div class="summary">
+    <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
+    <span id="monthlyTotal">0</span><small> 円</small>
+  </div>
+
+  <input type="date" id="dateInput" />
+  <input type="number" id="amountInput" placeholder="金額を入力" inputmode="decimal" />
+  <input type="text" id="memoInput" placeholder="メモ（任意）" />
 
   <div class="action-row">
-    <button class="btn-record">記録</button>
-    <button type="button" class="btn-invest">投資</button>
+    <button class="btn btn-record" onclick="addEntry('record')">記録</button>
+    <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
   </div>
-</form>
 
   <ul id="expenseList"></ul>
-  
 </div>
-  
+
 <script>
-// JS
-// ==============================
-// ① 要素取得
-// ==============================
-const form = document.getElementById("expenseForm");
-const amountInput = document.getElementById("amount");
-const memoInput = document.getElementById("memo");
-const list = document.getElementById("expenseList");
-const monthlyTotalEl = document.getElementById("monthlyTotal");
-const monthLabel = document.getElementById("monthLabel");
-const dateInput = document.getElementById("date");
-
-const recordBtn = document.querySelector(".btn-record");
-const investBtn = document.querySelector(".btn-invest");
-
-// ==============================
-// ② 状態
-// ==============================
-let currentType = "record";
-
-// ==============================
-// ③ 日付ユーティリティ
-// ==============================
-function getTodayString() {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 10);
-}
-
-// ==============================
-// ④ 初期設定
-// ==============================
-const STORAGE_KEY = "expenses";
-
-const today = new Date();
-let currentMonth = today.getMonth();
-let currentYear = today.getFullYear();
-
-function updateMonthLabel() {
-  monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
-}
-
-dateInput.value = getTodayString();
-updateMonthLabel();
-
-// ==============================
-// ⑤ localStorage
-// ==============================
-function loadExpenses() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-}
-
-function saveExpenses(expenses) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
-}
-
-// ==============================
-// ⑥ レンダリング
-// ==============================
-function render() {
-  const expenses = loadExpenses();
-
-  const filtered = expenses
-    .filter(e => {
-      const d = new Date(e.date);
-      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
-    })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  list.innerHTML = "";
-  let total = 0;
-
-  filtered.forEach(expense => {
-    total += expense.amount;
-
-    const li = document.createElement("li");
-    li.classList.add(expense.type); // record or invest
-
-    const text = document.createElement("div");
-    text.className = "item-text";
-
-    const amountEl = document.createElement("div");
-    amountEl.className = "amount";
-    amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
-
-    if (expense.type === "invest") {
-      amountEl.classList.add("invest");
-    } else {
-  amountEl.classList.add("record");
-}
-
-    const metaEl = document.createElement("div");
-    metaEl.className = "meta";
-    metaEl.textContent = expense.memo
-      ? `${expense.date.slice(5)}　${expense.memo}`
-      : expense.date.slice(5);
-
-    const del = document.createElement("button");
-    del.textContent = "削除";
-    del.onclick = () => {
-      const updated = loadExpenses().filter(e => e.id !== expense.id);
-      saveExpenses(updated);
-      render();
-    };
-
-    text.appendChild(amountEl);
-    text.appendChild(metaEl);
-    li.appendChild(text);
-    li.appendChild(del);
-    list.appendChild(li);
-  });
-
-  monthlyTotalEl.textContent = total.toLocaleString();
-}
-
-// ==============================
-// ⑦ ボタン種別切替
-// ==============================
-recordBtn.addEventListener("click", () => {
-  currentType = "record";
-  // 記録ボタンは submit ボタンなので、これだけでOK
-});
-
-investBtn.addEventListener("click", () => {
-  currentType = "invest";
-  form.requestSubmit(); // ★ここが重要
-});
-
-// ==============================
-// ⑧ 追加処理
-// ==============================
-form.addEventListener("submit", e => {
-  e.preventDefault();
-
-  const expense = {
-    id: Date.now(),
-    amount: Number(amountInput.value),
-    memo: memoInput.value,
-    date: dateInput.value || getTodayString(),
-    type: currentType
+  // --- 状態管理 ---
+  const state = {
+    expenses: JSON.parse(localStorage.getItem('expenses')) || [],
+    currentView: new Date() // 表示中の年月
   };
 
-  const expenses = loadExpenses();
-  expenses.push(expense);
-  saveExpenses(expenses);
+  // --- 要素取得 ---
+  const elements = {
+    list: document.getElementById('expenseList'),
+    total: document.getElementById('monthlyTotal'),
+    label: document.getElementById('monthLabel'),
+    date: document.getElementById('dateInput'),
+    amount: document.getElementById('amountInput'),
+    memo: document.getElementById('memoInput')
+  };
 
-  amountInput.value = "";
-  memoInput.value = "";
-  dateInput.value = getTodayString();
-
-  render();
-});
-
-// ==============================
-// ⑨ 月移動
-// ==============================
-document.getElementById("prevMonth").onclick = () => {
-  currentMonth--;
-  if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
+  // --- 初期化 ---
+  function init() {
+    elements.date.value = new Date().toISOString().split('T')[0];
+    updateUI();
   }
-  updateMonthLabel();
-  render();
-};
 
-document.getElementById("nextMonth").onclick = () => {
-  currentMonth++;
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
+  // --- ロジック ---
+  function save() {
+    localStorage.setItem('expenses', JSON.stringify(state.expenses));
+    updateUI();
   }
-  updateMonthLabel();
-  render();
-};
 
-// ==============================
-// ⑩ 初回描画
-// ==============================
-render();
-</script>      
+  function addEntry(type) {
+    const val = parseInt(elements.amount.value);
+    if (!val) return alert("金額を入力してください");
 
+    const newEntry = {
+      id: Date.now(),
+      amount: val,
+      memo: elements.memo.value,
+      date: elements.date.value,
+      type: type
+    };
+
+    state.expenses.push(newEntry);
+    elements.amount.value = "";
+    elements.memo.value = "";
+    elements.amount.focus();
+    save();
+  }
+
+  function deleteEntry(id) {
+    state.expenses = state.expenses.filter(e => e.id !== id);
+    save();
+  }
+
+  function changeMonth(diff) {
+    state.currentView.setMonth(state.currentView.getMonth() + diff);
+    updateUI();
+  }
+
+  // --- 表示更新 ---
+  function updateUI() {
+    const year = state.currentView.getFullYear();
+    const month = state.currentView.getMonth();
+    
+    elements.label.textContent = `${year}年 ${month + 1}月`;
+
+    // フィルタリング
+    const filtered = state.expenses.filter(e => {
+      const d = new Date(e.date);
+      return d.getFullYear() === year && d.getMonth() === month;
+    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // 新しい順
+
+    // 合計計算
+    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+    elements.total.textContent = total.toLocaleString();
+
+    // リスト描画（テンプレートリテラルでスッキリ！）
+    elements.list.innerHTML = filtered.map(e => `
+      <li>
+        <div class="item-info">
+          <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
+          <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+        </div>
+        <button class="delete-btn" onclick="deleteEntry(${e.id})">削除</button>
+      </li>
+    `).join('');
+  }
+
+  // イベントリスナー
+  document.getElementById('prevBtn').onclick = () => changeMonth(-1);
+  document.getElementById('nextBtn').onclick = () => changeMonth(1);
+
+  init();
+</script>
 </body>
 </html>
