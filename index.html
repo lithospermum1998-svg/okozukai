@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <title>MONEY LOG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
+    /* 【元のCSSを維持】 */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       background: #f2f2f7;
       margin: 0;
       padding: 16px;
@@ -21,7 +23,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    /* 入力エリア */
     input:not([type="date"]) {
       font-size: 16px;
       width: 100%;
@@ -29,9 +30,84 @@
       margin-bottom: 12px;
       border-radius: 12px;
       border: 1px solid #ccc;
-      box-sizing: border-box;
     }
     
+    button {
+      font-size: 16px;
+      padding: 12px;
+      margin-bottom: 12px; /* ← これがズレの主因 */
+      border-radius: 12px;
+      border: none;
+      background: #007aff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #expenseForm button {
+      width: 100%;
+    }
+
+    .summary {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    /* 【ここを修正：削除ボタンの整列】 */
+    li {
+      display: flex;
+      align-items: center;      /* 垂直中央に揃える */
+      justify-content: space-between;
+      padding: 12px 0;          /* 上下余白を確保 */
+      border-bottom: 1px solid #eee;
+    }
+
+    li button {
+      background: #e9f2ff;
+      color: #007aff;
+      border: none;
+      border-radius: 10px;
+      padding: 4px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 56px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      margin-bottom: 0 !important; /* ← 強制的に下の余白を消して中央へ */
+    }
+
+    li.invest button {
+      background: #e9f9ef;
+      color: #34c759;
+    }
+    
+    .item-text {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .amount {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .amount.record { color: #007aff; }
+    .amount.invest { color: #34c759; }
+    
+    .meta {
+      font-size: 13px;
+      color: #666;
+    }
+  
+    #expenseForm input,
+    #date,
+    #expenseForm button {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
     .date-wrap {
       height: 48px;
       border-radius: 12px;
@@ -45,36 +121,11 @@
       border: none;
       padding: 0 12px;
       background: #eee;
-      box-sizing: border-box;
+      color: #000;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    /* ボタン共通 */
-    button {
-      font-size: 16px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    button:active { opacity: 0.7; }
-
-    /* メインアクションボタン */
-    .action-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .action-row button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 12px;
-      color: #fff;
-    }
-    .btn-record { background: #007aff; }
-    .btn-invest { background: #34c759; }
-
-    /* ヘッダー・ナビ */
-    h1 { font-size: 22px; letter-spacing: 0.08em; text-align: center; margin: 10px 0; }
     .month-nav {
       display: flex;
       justify-content: center;
@@ -82,156 +133,153 @@
       gap: 12px;
       margin-bottom: 8px;
     }
-    .month-nav button { background: none; font-size: 18px; padding: 10px; }
-    .summary { font-size: 18px; margin-bottom: 16px; text-align: left; }
-    .amount-total { font-size: 24px; font-weight: 700; color: #007aff; }
-
-    /* リスト表示（ここが重要） */
-    #expenseList { list-style: none; padding: 0; margin: 0; }
-    li {
-      display: flex;
-      align-items: center;      /* 垂直方向中央 */
-      justify-content: space-between;
-      padding: 12px 0;          /* 上下余白を均等に */
-      border-bottom: 1px solid #f0f0f5;
+    .month-nav button {
+      margin-bottom: 0;
+      background: none;
+      color: #000;
+      font-size: 18px;
     }
 
-    .item-text {
+    .action-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-row button {
       flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* テキストを垂直中央に */
     }
 
-    .amount { font-size: 19px; font-weight: 700; line-height: 1.2; }
-    .amount.record { color: #007aff; }
-    .amount.invest { color: #34c759; }
-    .meta { font-size: 13px; color: #666; margin-top: 2px; }
+    .btn-record { background: #007aff; }
+    .btn-invest { background: #34c759; }
 
-    /* 削除ボタンの微調整 */
-    li button {
-      background: #e9f2ff;
-      color: #007aff;
-      border-radius: 10px;
-      padding: 0 12px;
-      font-size: 13px;
-      height: 34px;             /* 高さを明示 */
-      margin-left: 10px;
-      display: flex;
-      align-items: center;      /* 文字を中央に */
-      justify-content: center;
-      flex-shrink: 0;           /* 潰れ防止 */
+    h1 {
+      font-size: 22px;
+      letter-spacing: 0.08em;
+      text-align: center;
     }
-    li.invest button { background: #e9f9ef; color: #34c759; }
-
   </style>
 </head>
 <body>
 
 <div class="container">
   <h1>MONEY LOG</h1>
-  
   <div class="month-nav">
-    <button onclick="changeMonth(-1)">◀</button>
+    <button id="prevMonth">◀</button>
     <span id="monthLabel"></span>
-    <button onclick="changeMonth(1)">▶</button>
+    <button id="nextMonth">▶</button>
   </div>
   
-  <div class="summary">合計：<span class="amount-total" id="monthlyTotal">0</span> 円</div>
+  <div class="summary">
+    合計：<strong id="monthlyTotal">0</strong> 円
+  </div>
   
   <div class="date-wrap">
-    <input type="date" id="dateInput" />
+    <input type="date" id="date" />
   </div>
   
-  <input type="number" id="amountInput" placeholder="金額" inputmode="decimal" />
-  <input type="text" id="memoInput" placeholder="メモ（任意）" />
+  <form id="expenseForm">
+    <input type="number" id="amount" placeholder="金額" required />
+    <input type="text" id="memo" placeholder="メモ（任意）" />
 
-  <div class="action-row">
-    <button class="btn-record" onclick="addEntry('record')">記録</button>
-    <button class="btn-invest" onclick="addEntry('invest')">投資</button>
-  </div>
+    <div class="action-row">
+      <button type="submit" class="btn-record" id="recordSubmit">記録</button>
+      <button type="button" class="btn-invest" id="investSubmit">投資</button>
+    </div>
+  </form>
 
   <ul id="expenseList"></ul>
 </div>
-
+  
 <script>
-  let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-  let currentViewDate = new Date();
+// --- JSは構造を整理して保守性をアップ ---
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let currentViewDate = new Date();
 
-  const el = {
-    amount: document.getElementById("amountInput"),
-    memo: document.getElementById("memoInput"),
-    date: document.getElementById("dateInput"),
-    list: document.getElementById("expenseList"),
-    total: document.getElementById("monthlyTotal"),
-    label: document.getElementById("monthLabel")
+const el = {
+  form: document.getElementById("expenseForm"),
+  amount: document.getElementById("amount"),
+  memo: document.getElementById("memo"),
+  date: document.getElementById("date"),
+  list: document.getElementById("expenseList"),
+  total: document.getElementById("monthlyTotal"),
+  label: document.getElementById("monthLabel"),
+  investBtn: document.getElementById("investSubmit")
+};
+
+function init() {
+  el.date.value = new Date().toISOString().split('T')[0];
+  render();
+}
+
+function addEntry(type) {
+  const val = Number(el.amount.value);
+  if (!val) return;
+
+  const entry = {
+    id: Date.now(),
+    amount: val,
+    memo: el.memo.value,
+    date: el.date.value,
+    type: type
   };
 
-  function init() {
-    el.date.value = new Date().toISOString().split('T')[0];
-    render();
-  }
+  expenses.push(entry);
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  
+  el.amount.value = "";
+  el.memo.value = "";
+  el.amount.focus();
+  render();
+}
 
-  function addEntry(type) {
-    const amount = Number(el.amount.value);
-    if (!amount) return;
+// フォーム送信
+el.form.addEventListener("submit", e => {
+  e.preventDefault();
+  addEntry('record');
+});
 
-    const entry = {
-      id: Date.now(),
-      amount,
-      memo: el.memo.value,
-      date: el.date.value,
-      type
-    };
+// 投資ボタン
+el.investBtn.onclick = () => addEntry('invest');
 
-    expenses.push(entry);
-    save();
-    el.amount.value = "";
-    el.memo.value = "";
-    el.amount.focus();
-  }
+function deleteEntry(id) {
+  expenses = expenses.filter(e => e.id !== id);
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  render();
+}
 
-  function deleteEntry(id) {
-    expenses = expenses.filter(e => e.id !== id);
-    save();
-  }
+function changeMonth(diff) {
+  currentViewDate.setMonth(currentViewDate.getMonth() + diff);
+  render();
+}
 
-  function save() {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-    render();
-  }
+document.getElementById("prevMonth").onclick = () => changeMonth(-1);
+document.getElementById("nextMonth").onclick = () => changeMonth(1);
 
-  function changeMonth(diff) {
-    currentViewDate.setMonth(currentViewDate.getMonth() + diff);
-    render();
-  }
+function render() {
+  const y = currentViewDate.getFullYear();
+  const m = currentViewDate.getMonth();
+  el.label.textContent = `${y}年 ${m + 1}月`;
 
-  function render() {
-    const y = currentViewDate.getFullYear();
-    const m = currentViewDate.getMonth();
-    el.label.textContent = `${y}年 ${m + 1}月`;
+  const filtered = expenses.filter(e => {
+    const d = new Date(e.date);
+    return d.getFullYear() === y && d.getMonth() === m;
+  }).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const filtered = expenses.filter(e => {
-      const d = new Date(e.date);
-      return d.getFullYear() === y && d.getMonth() === m;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+  el.list.innerHTML = filtered.map(e => `
+    <li class="${e.type}">
+      <div class="item-text">
+        <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
+        <div class="meta">${e.date.slice(5)}　${e.memo}</div>
+      </div>
+      <button onclick="deleteEntry(${e.id})">削除</button>
+    </li>
+  `).join("");
 
-    el.list.innerHTML = filtered.map(e => `
-      <li class="${e.type}">
-        <div class="item-text">
-          <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-          <div class="meta">${e.date.split('-').slice(1).join('/')}　${e.memo}</div>
-        </div>
-        <button onclick="deleteEntry(${e.id})">削除</button>
-      </li>
-    `).join("");
+  const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+  el.total.textContent = total.toLocaleString();
+}
 
-    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
-    el.total.textContent = total.toLocaleString();
-  }
-
-  init();
-</script>
+init();
+</script>      
 </body>
 </html>
