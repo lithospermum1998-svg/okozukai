@@ -14,6 +14,9 @@
       --text-main: #1c1c1e;
       --text-sub: #8e8e93;
       --radius: 12px;
+      /* 編集モード用の薄い色 */
+      --edit-blue: #e1f0ff;
+      --edit-green: #e8f9ee;
     }
 
     body {
@@ -23,7 +26,8 @@
       padding: 16px;
       color: var(--text-main);
       overflow-x: hidden;
-      min-height: 100vh; /* 余白タップ検知のため全高を確保 */
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .container {
@@ -106,13 +110,13 @@
       background: white;
       position: relative;
       z-index: 2;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.3s ease;
       border-bottom: 1px solid #f2f2f7;
     }
 
-    .item-content.editing {
-      background: #fff9c4; /* 編集中のハイライト */
-    }
+    /* 編集モード時の動的クラス */
+    .item-content.editing-record { background: var(--edit-blue) !important; cursor: pointer; }
+    .item-content.editing-invest { background: var(--edit-green) !important; cursor: pointer; }
 
     .swipe-delete-btn {
       position: absolute;
@@ -168,7 +172,8 @@
   let state = {
     expenses: JSON.parse(localStorage.getItem('expenses')) || [],
     currentView: new Date(),
-    editingId: null
+    editingId: null,
+    editingType: null // 編集中のタイプを保持
   };
 
   const elements = {
@@ -213,10 +218,16 @@
   }
 
   function editEntry(id) {
+    if (state.editingId === id) {
+      cancelEdit();
+      return;
+    }
+
     const target = state.expenses.find(e => e.id === id);
     if (!target) return;
 
     state.editingId = id;
+    state.editingType = target.type; // タイプを保存
     elements.amount.value = target.amount;
     elements.memo.value = target.memo;
     elements.date.value = target.date;
@@ -226,9 +237,9 @@
     updateUI();
   }
 
-  // 編集モードを解除する関数
   function cancelEdit() {
     state.editingId = null;
+    state.editingType = null;
     elements.amount.value = "";
     elements.memo.value = "";
     elements.btnRecord.textContent = "記録";
@@ -236,11 +247,8 @@
     updateUI();
   }
 
-  // 余白をタップした時の処理
   function handleGlobalClick(e) {
-    if (state.editingId) {
-      cancelEdit();
-    }
+    if (state.editingId) cancelEdit();
   }
 
   function changeMonth(diff) {
@@ -273,6 +281,13 @@
     }
   }
 
+  function handleItemClick(e, id) {
+    if (state.editingId === id) {
+      e.stopPropagation();
+      cancelEdit();
+    }
+  }
+
   function updateUI() {
     const year = state.currentView.getFullYear();
     const month = state.currentView.getMonth();
@@ -285,20 +300,28 @@
 
     elements.total.textContent = filtered.reduce((sum, e) => sum + e.amount, 0).toLocaleString();
 
-    elements.list.innerHTML = filtered.map(e => `
-      <li class="swipe-item" onclick="event.stopPropagation()">
-        <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
-        <div class="item-content ${state.editingId === e.id ? 'editing' : ''}" 
-             ontouchstart="handleTouchStart(event, ${e.id})" 
-             ontouchend="handleTouchEnd()"
-             ontouchmove="handleTouchMove(event)">
-          <div class="item-info">
-            <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-            <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+    elements.list.innerHTML = filtered.map(e => {
+      let editClass = '';
+      if (state.editingId === e.id) {
+        editClass = e.type === 'record' ? 'editing-record' : 'editing-invest';
+      }
+
+      return `
+        <li class="swipe-item" onclick="event.stopPropagation()">
+          <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
+          <div class="item-content ${editClass}" 
+               onclick="handleItemClick(event, ${e.id})"
+               ontouchstart="handleTouchStart(event, ${e.id})" 
+               ontouchend="handleTouchEnd()"
+               ontouchmove="handleTouchMove(event)">
+            <div class="item-info">
+              <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
+              <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+            </div>
           </div>
-        </div>
-      </li>
-    `).join('');
+        </li>
+      `;
+    }).join('');
   }
 
   document.getElementById('prevBtn').onclick = () => changeMonth(-1);
