@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>MONEY LOG PRO</title>
   <style>
     :root {
@@ -17,11 +17,12 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-color);
       margin: 0;
       padding: 16px;
       color: var(--text-main);
+      overflow-x: hidden; /* スワイプ時のはみ出し防止 */
     }
 
     .container {
@@ -34,7 +35,7 @@
       box-sizing: border-box;
     }
 
-    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin: 0 0 15px 0; color: var(--text-main); }
+    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin: 0 0 15px 0; }
 
     .month-nav {
       display: flex;
@@ -43,7 +44,7 @@
       margin-bottom: 20px;
     }
     .month-nav button { background: none; color: var(--text-main); font-size: 20px; border: none; cursor: pointer; padding: 5px 15px; }
-    #monthLabel { font-weight: bold; font-size: 18px; color: var(--text-main); }
+    #monthLabel { font-weight: bold; font-size: 18px; }
 
     .summary {
       background: var(--bg-color);
@@ -69,10 +70,7 @@
       color: var(--text-main);
     }
     
-    input[type="date"] {
-      min-height: 46px;
-      color: var(--text-main);
-    }
+    input[type="date"] { min-height: 46px; }
 
     .action-row { display: flex; gap: 10px; margin-bottom: 5px; }
     .btn {
@@ -88,33 +86,50 @@
     .btn-record { background: var(--ios-blue); }
     .btn-invest { background: var(--ios-green); }
 
+    /* --- スワイプ削除用のスタイル --- */
     #expenseList { list-style: none; padding: 0; margin-top: 20px; }
-    li {
+    
+    .swipe-item {
+      position: relative;
+      overflow: hidden; /* ボタンを隠す */
+      background-color: var(--ios-red); /* スワイプした時に見える背景色 */
+      border-radius: 8px;
+      margin-bottom: 1px;
+    }
+
+    .item-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
+      padding: 12px 16px;
+      background: white; /* 重なるコンテンツの背景 */
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s ease; /* スムーズな動き */
       border-bottom: 1px solid #f2f2f7;
     }
-    .item-info { flex: 1; }
-    .item-info .amount { font-size: 18px; font-weight: 700; line-height: 1.2; }
+
+    .swipe-delete-btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      background: var(--ios-red);
+      color: white;
+      border: none;
+      font-weight: bold;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .item-info .amount { font-size: 18px; font-weight: 700; }
     .item-info .amount.record { color: var(--ios-blue); }
     .item-info .amount.invest { color: var(--ios-green); }
     .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
-
-    /* 削除ボタンをテキスト形式に戻しました */
-    .delete-btn {
-      background: #f2f2f7;
-      color: var(--text-sub); /* 控えめなグレー */
-      border: none;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-left: 10px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
   </style>
 </head>
 <body>
@@ -130,7 +145,7 @@
 
   <div class="summary">
     <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
-    <span id="monthlyTotal">0</span><small style="color: var(--text-main);"> 円</small>
+    <span id="monthlyTotal">0</span><small> 円</small>
   </div>
 
   <input type="date" id="dateInput" />
@@ -173,18 +188,8 @@
   function addEntry(type) {
     const val = parseInt(elements.amount.value);
     if (!val) return;
-
-    state.expenses.push({
-      id: Date.now(),
-      amount: val,
-      memo: elements.memo.value,
-      date: elements.date.value,
-      type: type
-    });
-
-    elements.amount.value = "";
-    elements.memo.value = "";
-    elements.amount.focus();
+    state.expenses.push({ id: Date.now(), amount: val, memo: elements.memo.value, date: elements.date.value, type: type });
+    elements.amount.value = ""; elements.memo.value = "";
     save();
   }
 
@@ -198,6 +203,25 @@
     updateUI();
   }
 
+  // スワイプ処理用の変数
+  let startX = 0;
+
+  function handleTouchStart(e) {
+    startX = e.touches[0].pageX;
+  }
+
+  function handleTouchMove(e, id) {
+    const touch = e.touches[0];
+    const change = startX - touch.pageX;
+    const content = e.currentTarget;
+    
+    if (change > 50) { // 左に50px以上スワイプしたら
+      content.style.transform = "translateX(-80px)";
+    } else if (change < -50) { // 右にスワイプしたら戻す
+      content.style.transform = "translateX(0px)";
+    }
+  }
+
   function updateUI() {
     const year = state.currentView.getFullYear();
     const month = state.currentView.getMonth();
@@ -208,23 +232,23 @@
       return d.getFullYear() === year && d.getMonth() === month;
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
-    elements.total.textContent = total.toLocaleString();
+    elements.total.textContent = filtered.reduce((sum, e) => sum + e.amount, 0).toLocaleString();
 
     elements.list.innerHTML = filtered.map(e => `
-      <li>
-        <div class="item-info">
-          <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-          <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+      <li class="swipe-item">
+        <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
+        <div class="item-content" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event, ${e.id})">
+          <div class="item-info">
+            <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
+            <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+          </div>
         </div>
-        <button class="delete-btn" onclick="deleteEntry(${e.id})">削除</button>
       </li>
     `).join('');
   }
 
   document.getElementById('prevBtn').onclick = () => changeMonth(-1);
   document.getElementById('nextBtn').onclick = () => changeMonth(1);
-
   init();
 </script>
 </body>
