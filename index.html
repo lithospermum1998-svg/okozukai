@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>MONEY LOG PRO</title>
+  <title>MONEY LOG</title>
   <style>
     :root {
       --ios-blue: #007aff;
@@ -152,7 +152,7 @@
   </div>
 
   <div class="summary">
-    <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
+    <div style="font-size: 12px; color: var(--text-sub);">今月の合計</div>
     <span id="monthlyTotal">0</span><small> 円</small>
   </div>
 
@@ -188,7 +188,9 @@
   };
 
   function init() {
-    elements.date.value = new Date().toISOString().split('T')[0];
+      const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  elements.date.value = now.toISOString().split('T')[0];
     updateUI();
   }
 
@@ -231,7 +233,6 @@
     elements.amount.value = target.amount;
     elements.memo.value = target.memo;
     elements.date.value = target.date;
-    
     elements.btnRecord.textContent = "修正(記録)";
     elements.btnInvest.textContent = "修正(投資)";
     updateUI();
