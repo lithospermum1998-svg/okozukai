@@ -4,226 +4,415 @@
   <meta charset="UTF-8" />
   <title>MONEY LOG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
+    /* ← ここに CodePenのCSS を全部貼る */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      background: #f2f2f7;
-      margin: 0;
-      padding: 16px;
-    }
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  background: #f2f2f7;
+  margin: 0;
+  padding: 16px;
+}
 
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+.container {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    input:not([type="date"]) {
-      font-size: 16px;
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
+input:not([type="date"]) {
+  font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+}
     
-    button {
-      font-size: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      border: none;
-      background: #007aff;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
+button {
+  font-size: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #007aff;
+  color: #fff;
+  font-weight: bold;
+}
 
-    .action-row {
-      display: flex;
-      gap: 12px;
-    }
+    #expenseForm button {
+  width: 100%;
+}
 
-    .action-row button {
-      flex: 1;
-    }
+button:active {
+  opacity: 0.7;
+}
 
-    .btn-record { background: #007aff; }
-    .btn-invest { background: #34c759; }
+.summary {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
 
-    .summary { font-size: 18px; margin-bottom: 12px; }
-    .amount { font-size: 20px; font-weight: 700; }
-    .amount.record { color: #007aff; }
-    .amount.invest { color: #34c759; }
+    /* 削除ボタン（追加ボタンと同系統） */
+li button {
+  background: #e9f2ff;
+  color: #007aff;
+  border: none;
+  border-radius: 10px;
+  padding: 4px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 56px;          /* ←「削」が潰れない */
+  height: 40px;             /* ← 追加ボタンと視覚バランス */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; /* ← これ超重要 */
+}
 
-    .date-wrap {
-      height: 48px;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
+li.invest button {
+  background: #e9f9ef;   /* 薄いグリーン */
+  color: #34c759;        /* iOSグリーン */
+}
+    
+li button:active {
+  opacity: 0.7;
+}
 
-    .date-wrap input[type="date"] {
-      height: 100%;
-      width: 100%;
-      border: none;
-      padding: 0 12px;
-      background: #eee;
-      color: #000;
-      box-sizing: border-box;
-    }
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 0;      /* ← ここを極小に */
+  margin-bottom: 2px;  /* ← 行間も最小限 */
+}
 
-    .month-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    .month-nav button {
-      background: none;
-      color: #000;
-      font-size: 18px;
-      margin-bottom: 0;
-    }
+.item-text {
+  flex: 1;
+  min-width: 0;
+}
+    
+.amount {
+  font-size: 20px;
+  font-weight: 700;
+}
 
-    #expenseList { list-style: none; padding: 0; }
-    li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #eee;
-    }
+.amount.record {
+  color: #007aff; /* 記録は青 */
+}
+    
+.meta {
+  font-size: 13px;
+  color: #666;
+}
+.amount.invest {
+  color: #34c759;
+}
+  
+/* 入力系を完全に統一 */
+#expenseForm input,
+#date,
+#expenseForm button {
+  width: 100%;
+  box-sizing: border-box;
+}
 
-    .meta { font-size: 13px; color: #666; }
+.date-wrap {
+  height: 48px;              /* 他inputと同じ */
+  border-radius: 12px;
+  overflow: hidden;  /* ← はみ出した灰色を切る */
+  margin-bottom: 12px;
+}
 
-    li button {
-      background: #e9f2ff;
-      color: #007aff;
-      border-radius: 10px;
-      padding: 4px 16px;
-      font-size: 13px;
-      min-width: 56px;
-      height: 40px;
-    }
-    li.invest button { background: #e9f9ef; color: #34c759; }
-    h1 { font-size: 22px; letter-spacing: 0.08em; text-align: center; }
+.date-wrap input[type="date"] {
+  height: 100%;
+  width: 100%;
+  border: none;
+  padding: 0 12px;
+  background: #eee;
+  color: #000;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+    /* 月ナビ（軽く） */
+.month-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.month-nav button {
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  line-height: 1;
+  background: none;
+  color: #000;
+  font-size: 18px;
+  padding: 4px 8px;
+}
+.month-nav span {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 1;
+  font-weight: 600;
+  color: #000;
+}
+
+.action-row {
+  display: flex;
+  gap: 12px;
+}
+
+.action-row button {
+  flex: 1;
+  margin-bottom: 12px; /* 既存と揃える */
+}
+
+/* 記録（今の青を継承） */
+.btn-record {
+  background: #007aff;
+}
+
+/* 投資（iOSグリーン） */
+.btn-invest {
+  background: #34c759;
+}
+
+h1 {
+  font-size: 22px;
+  letter-spacing: 0.08em;
+}
   </style>
 </head>
 <body>
 
+  <!-- ← ここに CodePenのHTML を貼る -->
+
 <div class="container">
+
   <h1>MONEY LOG</h1>
+<div class="month-nav">
+  <button id="prevMonth">◀</button>
+  <span id="monthLabel"></span>
+  <button id="nextMonth">▶</button>
+</div>
   
-  <div class="month-nav">
-    <button onclick="changeMonth(-1)">◀</button>
-    <span id="monthLabel"></span>
-    <button onclick="changeMonth(1)">▶</button>
+  <div class="summary">
+     合計：
+    <strong id="monthlyTotal">0</strong> 円
   </div>
-  
-  <div class="summary">合計：<strong id="monthlyTotal">0</strong> 円</div>
   
   <div class="date-wrap">
-    <input type="date" id="dateInput" />
-  </div>
+  <input type="date" id="date" />
+</div>
   
-  <input type="number" id="amountInput" placeholder="金額" />
-  <input type="text" id="memoInput" placeholder="メモ（任意）" />
+<form id="expenseForm">
+  <input type="number" id="amount" placeholder="金額" required />
+  <input type="text" id="memo" placeholder="メモ（任意）" />
 
   <div class="action-row">
-    <button class="btn-record" onclick="addEntry('record')">記録</button>
-    <button class="btn-invest" onclick="addEntry('invest')">投資</button>
+    <button class="btn-record">記録</button>
+    <button type="button" class="btn-invest">投資</button>
   </div>
+</form>
 
   <ul id="expenseList"></ul>
+  
 </div>
-
+  
 <script>
-  // --- データと状態 ---
-  let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-  let currentViewDate = new Date();
+// JS
+// ==============================
+// ① 要素取得
+// ==============================
+const form = document.getElementById("expenseForm");
+const amountInput = document.getElementById("amount");
+const memoInput = document.getElementById("memo");
+const list = document.getElementById("expenseList");
+const monthlyTotalEl = document.getElementById("monthlyTotal");
+const monthLabel = document.getElementById("monthLabel");
+const dateInput = document.getElementById("date");
 
-  // --- 要素 ---
-  const el = {
-    amount: document.getElementById("amountInput"),
-    memo: document.getElementById("memoInput"),
-    date: document.getElementById("dateInput"),
-    list: document.getElementById("expenseList"),
-    total: document.getElementById("monthlyTotal"),
-    label: document.getElementById("monthLabel")
-  };
+const recordBtn = document.querySelector(".btn-record");
+const investBtn = document.querySelector(".btn-invest");
 
-  // --- 初期化 ---
-  function init() {
-    el.date.value = new Date().toISOString().split('T')[0];
-    render();
-  }
+// ==============================
+// ② 状態
+// ==============================
+let currentType = "record";
 
-  // --- 処理 ---
-  function addEntry(type) {
-    const amount = Number(el.amount.value);
-    if (!amount) return;
+// ==============================
+// ③ 日付ユーティリティ
+// ==============================
+function getTodayString() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
 
-    const entry = {
-      id: Date.now(),
-      amount: amount,
-      memo: el.memo.value,
-      date: el.date.value,
-      type: type
+// ==============================
+// ④ 初期設定
+// ==============================
+const STORAGE_KEY = "expenses";
+
+const today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
+function updateMonthLabel() {
+  monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+}
+
+dateInput.value = getTodayString();
+updateMonthLabel();
+
+// ==============================
+// ⑤ localStorage
+// ==============================
+function loadExpenses() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveExpenses(expenses) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+}
+
+// ==============================
+// ⑥ レンダリング
+// ==============================
+function render() {
+  const expenses = loadExpenses();
+
+  const filtered = expenses
+    .filter(e => {
+      const d = new Date(e.date);
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  list.innerHTML = "";
+  let total = 0;
+
+  filtered.forEach(expense => {
+    total += expense.amount;
+
+    const li = document.createElement("li");
+    li.classList.add(expense.type); // record or invest
+
+    const text = document.createElement("div");
+    text.className = "item-text";
+
+    const amountEl = document.createElement("div");
+    amountEl.className = "amount";
+    amountEl.textContent = `¥${expense.amount.toLocaleString()}`;
+
+    if (expense.type === "invest") {
+      amountEl.classList.add("invest");
+    } else {
+  amountEl.classList.add("record");
+}
+
+    const metaEl = document.createElement("div");
+    metaEl.className = "meta";
+    metaEl.textContent = expense.memo
+      ? `${expense.date.slice(5)}　${expense.memo}`
+      : expense.date.slice(5);
+
+    const del = document.createElement("button");
+    del.textContent = "削除";
+    del.onclick = () => {
+      const updated = loadExpenses().filter(e => e.id !== expense.id);
+      saveExpenses(updated);
+      render();
     };
 
-    expenses.push(entry);
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-    
-    // 入力クリアとフォーカス
-    el.amount.value = "";
-    el.memo.value = "";
-    el.amount.focus();
-    render();
+    text.appendChild(amountEl);
+    text.appendChild(metaEl);
+    li.appendChild(text);
+    li.appendChild(del);
+    list.appendChild(li);
+  });
+
+  monthlyTotalEl.textContent = total.toLocaleString();
+}
+
+// ==============================
+// ⑦ ボタン種別切替
+// ==============================
+recordBtn.addEventListener("click", () => {
+  currentType = "record";
+  // 記録ボタンは submit ボタンなので、これだけでOK
+});
+
+investBtn.addEventListener("click", () => {
+  currentType = "invest";
+  form.requestSubmit(); // ★ここが重要
+});
+
+// ==============================
+// ⑧ 追加処理
+// ==============================
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const expense = {
+    id: Date.now(),
+    amount: Number(amountInput.value),
+    memo: memoInput.value,
+    date: dateInput.value || getTodayString(),
+    type: currentType
+  };
+
+  const expenses = loadExpenses();
+  expenses.push(expense);
+  saveExpenses(expenses);
+
+  amountInput.value = "";
+  memoInput.value = "";
+  dateInput.value = getTodayString();
+
+  render();
+});
+
+// ==============================
+// ⑨ 月移動
+// ==============================
+document.getElementById("prevMonth").onclick = () => {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
   }
+  updateMonthLabel();
+  render();
+};
 
-  function deleteEntry(id) {
-    expenses = expenses.filter(e => e.id !== id);
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-    render();
+document.getElementById("nextMonth").onclick = () => {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
   }
+  updateMonthLabel();
+  render();
+};
 
-  function changeMonth(diff) {
-    currentViewDate.setMonth(currentViewDate.getMonth() + diff);
-    render();
-  }
+// ==============================
+// ⑩ 初回描画
+// ==============================
+render();
+</script>      
 
-  function render() {
-    const year = currentViewDate.getFullYear();
-    const month = currentViewDate.getMonth();
-    el.label.textContent = `${year}年 ${month + 1}月`;
-
-    const filtered = expenses.filter(e => {
-      const d = new Date(e.date);
-      return d.getFullYear() === year && d.getMonth() === month;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    // リスト描画（テンプレートリテラルでスッキリ化）
-    el.list.innerHTML = filtered.map(e => `
-      <li class="${e.type}">
-        <div class="item-text">
-          <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-          <div class="meta">${e.date.slice(5)}　${e.memo}</div>
-        </div>
-        <button onclick="deleteEntry(${e.id})">削除</button>
-      </li>
-    `).join("");
-
-    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
-    el.total.textContent = total.toLocaleString();
-  }
-
-  init();
-</script>
 </body>
 </html>
