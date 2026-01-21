@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MONEY LOG PRO</title>
+  <title>MONEY LOG</title>
   <style>
     :root {
       --ios-blue: #007aff;
@@ -11,7 +11,7 @@
       --ios-red: #ff3b30;
       --bg-color: #f2f2f7;
       --card-bg: #ffffff;
-      --text-main: #1c1c1e; /* 基本の黒 */
+      --text-main: #1c1c1e;
       --text-sub: #8e8e93;
       --radius: 12px;
     }
@@ -34,14 +34,7 @@
       box-sizing: border-box;
     }
 
-    /* MONEY LOG のタイトル色 */
-    h1 { 
-      font-size: 22px; 
-      text-align: center; 
-      letter-spacing: 2px; 
-      margin: 0 0 15px 0; 
-      color: var(--text-main); 
-    }
+    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin: 0 0 15px 0; color: var(--text-main); }
 
     .month-nav {
       display: flex;
@@ -49,23 +42,8 @@
       align-items: center;
       margin-bottom: 20px;
     }
-    
-    /* ◀ ▶ 矢印の色を黒に変更 */
-    .month-nav button { 
-      background: none; 
-      color: var(--text-main); 
-      font-size: 20px; 
-      border: none; 
-      cursor: pointer; 
-      padding: 5px 15px; 
-    }
-    
-    /* 2026年1月の文字色 */
-    #monthLabel { 
-      font-weight: bold; 
-      font-size: 18px; 
-      color: var(--text-main);
-    }
+    .month-nav button { background: none; color: var(--text-main); font-size: 20px; border: none; cursor: pointer; padding: 5px 15px; }
+    #monthLabel { font-weight: bold; font-size: 18px; color: var(--text-main); }
 
     .summary {
       background: var(--bg-color);
@@ -74,13 +52,7 @@
       text-align: center;
       margin-bottom: 20px;
     }
-
-    /* 合計金額の数値を黒に変更 */
-    #monthlyTotal { 
-      font-size: 28px; 
-      font-weight: 800; 
-      color: var(--text-main); 
-    }
+    #monthlyTotal { font-size: 28px; font-weight: 800; color: var(--text-main); }
 
     input {
       width: 100%;
@@ -94,10 +66,9 @@
       -webkit-appearance: none;
       appearance: none;
       display: block;
-      color: var(--text-main); /* 入力文字を黒に */
+      color: var(--text-main);
     }
     
-    /* 日付入力欄の文字色を強制的に黒にする（iOS対策含む） */
     input[type="date"] {
       min-height: 46px;
       color: var(--text-main);
@@ -131,17 +102,25 @@
     .item-info .amount.invest { color: var(--ios-green); }
     .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
+    /* --- ゴミ箱ボタンのスタイル修正 --- */
     .delete-btn {
-      background: #fff0f0;
-      color: var(--ios-red);
+      background: #f2f2f7; /* 薄いグレーに変更 */
       border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-left: 10px;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      border-radius: 50%; /* 丸いボタンに */
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
+      margin-left: 10px;
+      transition: background 0.2s;
+    }
+    .delete-btn:active {
+      background: #e5e5ea; /* タップした時に少し暗く */
     }
   </style>
 </head>
@@ -157,7 +136,8 @@
   </div>
 
   <div class="summary">
-    <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
+    <div style="font-size: 12px; color: var(--text-sub);">今月の合計
+    </div>
     <span id="monthlyTotal">0</span><small style="color: var(--text-main);"> 円</small>
   </div>
 
@@ -217,8 +197,10 @@
   }
 
   function deleteEntry(id) {
-    state.expenses = state.expenses.filter(e => e.id !== id);
-    save();
+    if(confirm('この項目を削除しますか？')) {
+      state.expenses = state.expenses.filter(e => e.id !== id);
+      save();
+    }
   }
 
   function changeMonth(diff) {
@@ -245,7 +227,7 @@
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
           <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
         </div>
-        <button class="delete-btn" onclick="deleteEntry(${e.id})">削除</button>
+        <button class="delete-btn" onclick="deleteEntry(${e.id})">🗑️</button>
       </li>
     `).join('');
   }
