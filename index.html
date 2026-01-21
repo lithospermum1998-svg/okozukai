@@ -1,333 +1,201 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>MONEY LOG</title>
-  <style>
-    :root {
-      --ios-blue: #007aff;
-      --ios-green: #34c759;
-      --ios-red: #ff3b30;
-      --bg-color: #f2f2f7;
-      --card-bg: #ffffff;
-      --text-main: #1c1c1e;
-      --text-sub: #8e8e93;
-      --radius: 12px;
-      /* 編集モード用の薄い色 */
-      --edit-blue: #e1f0ff;
-      --edit-green: #e8f9ee;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>MONEY LOG</title>
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg-color);
-      margin: 0;
-      padding: 16px;
-      color: var(--text-main);
-      overflow-x: hidden;
-      min-height: 100vh;
-      -webkit-tap-highlight-color: transparent;
-    }
+<style>
+:root{
+--blue:#007aff;--green:#34c759;--red:#ff3b30;
+--bg:#f2f2f7;--card:#fff;--sub:#8e8e93;
+}
+body{
+margin:0;padding:16px;background:var(--bg);
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
+.container{
+max-width:420px;margin:auto;background:var(--card);
+border-radius:20px;padding:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+h1{text-align:center;margin:0 0 10px;}
+.tab{
+display:flex;gap:10px;margin-bottom:15px;
+}
+.tab button{
+flex:1;padding:10px;border-radius:10px;border:none;
+font-weight:bold;background:#e5e5ea;
+}
+.tab .active{background:var(--blue);color:#fff;}
 
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-      box-sizing: border-box;
-    }
+.summary{
+background:var(--bg);border-radius:12px;
+padding:12px;text-align:center;margin-bottom:15px;
+}
+input{
+width:100%;padding:12px;margin-bottom:10px;
+border-radius:10px;border:1px solid #e5e5ea;
+font-size:16px;
+}
+.btns{display:flex;gap:10px;}
+.btns button{
+flex:1;padding:14px;border:none;border-radius:12px;
+font-size:16px;font-weight:bold;color:#fff;
+}
+.record{background:var(--blue);}
+.invest{background:var(--green);}
+ul{list-style:none;padding:0;margin:0;}
+li{margin-bottom:8px;}
+.item{
+background:#fff;border-radius:10px;padding:12px;
+display:flex;justify-content:space-between;
+}
+.money{color:var(--blue);font-weight:bold;}
+.investTxt{color:var(--green);font-weight:bold;}
+.sub{font-size:12px;color:var(--sub);}
 
-    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin: 0 0 15px 0; }
-
-    .month-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .month-nav button { background: none; color: var(--text-main); font-size: 20px; border: none; cursor: pointer; padding: 5px 15px; }
-    #monthLabel { font-weight: bold; font-size: 18px; }
-
-    .summary {
-      background: var(--bg-color);
-      padding: 15px;
-      border-radius: var(--radius);
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    #monthlyTotal { font-size: 28px; font-weight: 800; color: var(--text-main); }
-
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #e5e5ea;
-      border-radius: var(--radius);
-      background: #fafafa;
-      appearance: none;
-      -webkit-appearance: none;
-      display: block;
-      color: var(--text-main);
-    }
-    
-    input:focus { border-color: var(--ios-blue); outline: none; }
-    input[type="date"] { min-height: 46px; }
-
-    .action-row { display: flex; gap: 10px; margin-bottom: 5px; }
-    .btn {
-      flex: 1;
-      padding: 14px;
-      border-radius: var(--radius);
-      border: none;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .btn-record { background: var(--ios-blue); }
-    .btn-invest { background: var(--ios-green); }
-
-    #expenseList { list-style: none; padding: 0; margin-top: 20px; }
-    
-    .swipe-item {
-      position: relative;
-      overflow: hidden;
-      background-color: var(--ios-red);
-      border-radius: 8px;
-      margin-bottom: 1px;
-    }
-
-    .item-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: white;
-      position: relative;
-      z-index: 2;
-      transition: transform 0.3s ease, background-color 0.3s ease;
-      border-bottom: 1px solid #f2f2f7;
-    }
-
-    /* 編集モード時の動的クラス */
-    .item-content.editing-record { background: var(--edit-blue) !important; cursor: pointer; }
-    .item-content.editing-invest { background: var(--edit-green) !important; cursor: pointer; }
-
-    .swipe-delete-btn {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 80px;
-      background: var(--ios-red);
-      color: white;
-      border: none;
-      font-weight: bold;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .item-info .amount { font-size: 18px; font-weight: 700; }
-    .item-info .amount.record { color: var(--ios-blue); }
-    .item-info .amount.invest { color: var(--ios-green); }
-    .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
-  </style>
+.nisa-card{
+background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;
+}
+.nisa-name{font-weight:bold;}
+.nisa-value{font-weight:bold;margin-top:6px;}
+</style>
 </head>
-<body onclick="handleGlobalClick(event)">
 
-<div class="container" onclick="event.stopPropagation()">
-  <h1>MONEY LOG</h1>
+<body>
+<div class="container">
 
-  <div class="month-nav">
-    <button id="prevBtn">◀</button>
-    <span id="monthLabel"></span>
-    <button id="nextBtn">▶</button>
+<h1>MONEY LOG</h1>
+
+<div class="tab">
+  <button id="tabMoney" class="active" onclick="show('money')">家計</button>
+  <button id="tabNisa" onclick="show('nisa')">NISA</button>
+</div>
+
+<!-- 家計 -->
+<div id="moneyView">
+  <div class="summary">
+    <div class="sub">今月の合計</div>
+    <div id="monthTotal">0 円</div>
   </div>
+
+  <input type="date" id="date">
+  <input type="number" id="amount" placeholder="金額">
+  <input type="text" id="memo" placeholder="メモ">
+
+  <div class="btns">
+    <button class="record" onclick="add('record')">記録</button>
+    <button class="invest" onclick="add('invest')">投資</button>
+  </div>
+
+  <ul id="list"></ul>
+</div>
+
+<!-- NISA -->
+<div id="nisaView" style="display:none;">
+  <ul id="nisaList"></ul>
 
   <div class="summary">
-    <div style="font-size: 12px; color: var(--text-sub);">今月の合計</div>
-    <span id="monthlyTotal">0</span><small> 円</small>
+    <div class="sub">NISA 合計評価額</div>
+    <div id="nisaTotal">0 円</div>
   </div>
+</div>
 
-  <input type="date" id="dateInput" />
-  <input type="number" id="amountInput" placeholder="金額を入力" inputmode="decimal" />
-  <input type="text" id="memoInput" placeholder="メモ（任意）" />
-
-  <div class="action-row">
-    <button class="btn btn-record" id="btnRecord" onclick="addEntry('record')">記録</button>
-    <button class="btn btn-invest" id="btnInvest" onclick="addEntry('invest')">投資</button>
-  </div>
-
-  <ul id="expenseList"></ul>
 </div>
 
 <script>
-  let state = {
-    expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-    currentView: new Date(),
-    editingId: null,
-    editingType: null // 編集中のタイプを保持
-  };
+/* ===== state ===== */
+const state = {
+  expenses: JSON.parse(localStorage.getItem("expenses")) || [],
+  nisa: JSON.parse(localStorage.getItem("nisa")) || [
+    {id:1,name:"eMAXIS Slim 米国株式",units:0,price:21543,prev:21300},
+    {id:2,name:"SMT 米国株モメンタム",units:0,price:17820,prev:17600},
+    {id:3,name:"ブラックロック・ゴールド",units:0,price:14500,prev:14620}
+  ]
+};
 
-  const elements = {
-    list: document.getElementById('expenseList'),
-    total: document.getElementById('monthlyTotal'),
-    label: document.getElementById('monthLabel'),
-    date: document.getElementById('dateInput'),
-    amount: document.getElementById('amountInput'),
-    memo: document.getElementById('memoInput'),
-    btnRecord: document.getElementById('btnRecord'),
-    btnInvest: document.getElementById('btnInvest')
-  };
+/* ===== 初期化 ===== */
+const today=new Date();
+document.getElementById("date").value=today.toISOString().split("T")[0];
+renderMoney();
 
-  function init() {
-      const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  elements.date.value = now.toISOString().split('T')[0];
-    updateUI();
-  }
+/* ===== 画面切替 ===== */
+function show(v){
+  moneyView.style.display=v==="money"?"block":"none";
+  nisaView.style.display=v==="nisa"?"block":"none";
+  tabMoney.classList.toggle("active",v==="money");
+  tabNisa.classList.toggle("active",v==="nisa");
+  if(v==="nisa") renderNisa();
+}
 
-  function save() {
-    localStorage.setItem('expenses', JSON.stringify(state.expenses));
-    updateUI();
-  }
-
-  function addEntry(type) {
-    const val = parseInt(elements.amount.value);
-    if (!val) return;
-
-    if (state.editingId) {
-      state.expenses = state.expenses.filter(e => e.id !== state.editingId);
-      cancelEdit();
-    }
-
-    state.expenses.push({ id: Date.now(), amount: val, memo: elements.memo.value, date: elements.date.value, type: type });
-    elements.amount.value = ""; elements.memo.value = "";
-    save();
-  }
-
-  function deleteEntry(id) {
-    state.expenses = state.expenses.filter(e => e.id !== id);
-    if (state.editingId === id) cancelEdit();
-    save();
-  }
-
-  function editEntry(id) {
-    if (state.editingId === id) {
-      cancelEdit();
-      return;
-    }
-
-    const target = state.expenses.find(e => e.id === id);
-    if (!target) return;
-
-    state.editingId = id;
-    state.editingType = target.type; // タイプを保存
-    elements.amount.value = target.amount;
-    elements.memo.value = target.memo;
-    elements.date.value = target.date;
-    elements.btnRecord.textContent = "修正(記録)";
-    elements.btnInvest.textContent = "修正(投資)";
-    updateUI();
-  }
-
-  function cancelEdit() {
-    state.editingId = null;
-    state.editingType = null;
-    elements.amount.value = "";
-    elements.memo.value = "";
-    elements.btnRecord.textContent = "記録";
-    elements.btnInvest.textContent = "投資";
-    updateUI();
-  }
-
-  function handleGlobalClick(e) {
-    if (state.editingId) cancelEdit();
-  }
-
-  function changeMonth(diff) {
-    state.currentView.setMonth(state.currentView.getMonth() + diff);
-    updateUI();
-  }
-
-  let startX = 0;
-  let pressTimer;
-
-  function handleTouchStart(e, id) {
-    startX = e.touches[0].pageX;
-    pressTimer = window.setTimeout(() => editEntry(id), 800);
-  }
-
-  function handleTouchEnd() {
-    clearTimeout(pressTimer);
-  }
-
-  function handleTouchMove(e) {
-    clearTimeout(pressTimer);
-    const touch = e.touches[0];
-    const change = startX - touch.pageX;
-    const content = e.currentTarget;
-    
-    if (change > 60) {
-      content.style.transform = "translateX(-80px)";
-    } else if (change < -60) {
-      content.style.transform = "translateX(0px)";
-    }
-  }
-
-  function handleItemClick(e, id) {
-    if (state.editingId === id) {
-      e.stopPropagation();
-      cancelEdit();
-    }
-  }
-
-  function updateUI() {
-    const year = state.currentView.getFullYear();
-    const month = state.currentView.getMonth();
-    elements.label.textContent = `${year}年 ${month + 1}月`;
-
-    const filtered = state.expenses.filter(e => {
-      const d = new Date(e.date);
-      return d.getFullYear() === year && d.getMonth() === month;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    elements.total.textContent = filtered.reduce((sum, e) => sum + e.amount, 0).toLocaleString();
-
-    elements.list.innerHTML = filtered.map(e => {
-      let editClass = '';
-      if (state.editingId === e.id) {
-        editClass = e.type === 'record' ? 'editing-record' : 'editing-invest';
-      }
-
-      return `
-        <li class="swipe-item" onclick="event.stopPropagation()">
-          <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
-          <div class="item-content ${editClass}" 
-               onclick="handleItemClick(event, ${e.id})"
-               ontouchstart="handleTouchStart(event, ${e.id})" 
-               ontouchend="handleTouchEnd()"
-               ontouchmove="handleTouchMove(event)">
-            <div class="item-info">
-              <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-              <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
-            </div>
+/* ===== 家計 ===== */
+function add(type){
+  const a=+amount.value;
+  if(!a) return;
+  state.expenses.push({
+    id:Date.now(),date:date.value,amount:a,memo:memo.value,type
+  });
+  amount.value="";memo.value="";
+  save();
+}
+function save(){
+  localStorage.setItem("expenses",JSON.stringify(state.expenses));
+  renderMoney();
+}
+function renderMoney(){
+  const m=today.getMonth(),y=today.getFullYear();
+  const f=state.expenses.filter(e=>{
+    const d=new Date(e.date);
+    return d.getMonth()===m&&d.getFullYear()===y;
+  });
+  monthTotal.textContent=
+    f.reduce((s,e)=>s+e.amount,0).toLocaleString()+" 円";
+  list.innerHTML=f.map(e=>`
+    <li>
+      <div class="item">
+        <div>
+          <div class="${e.type==="record"?"money":"investTxt"}">
+            ¥${e.amount.toLocaleString()}
           </div>
-        </li>
-      `;
-    }).join('');
-  }
+          <div class="sub">${e.date} ${e.memo||""}</div>
+        </div>
+      </div>
+    </li>`).join("");
+}
 
-  document.getElementById('prevBtn').onclick = () => changeMonth(-1);
-  document.getElementById('nextBtn').onclick = () => changeMonth(1);
-  init();
+/* ===== NISA ===== */
+function renderNisa(){
+  let total=0;
+  nisaList.innerHTML=state.nisa.map(h=>{
+    const value=Math.floor(h.units*h.price/10000);
+    total+=value;
+    const diff=h.price-h.prev;
+    return `
+      <li class="nisa-card">
+        <div class="nisa-name">${h.name}</div>
+        <div class="sub">
+          基準価額 ¥${h.price.toLocaleString()}
+          (${diff>=0?"+":""}${diff})
+        </div>
+        <input type="number" value="${h.units}"
+          placeholder="保有口数"
+          oninput="updateUnits(${h.id},this.value)">
+        <div class="nisa-value">
+          評価額 ¥${value.toLocaleString()}
+        </div>
+      </li>`;
+  }).join("");
+  nisaTotal.textContent=total.toLocaleString()+" 円";
+}
+
+function updateUnits(id,val){
+  const t=state.nisa.find(n=>n.id===id);
+  if(!t) return;
+  t.units=parseInt(val)||0;
+  localStorage.setItem("nisa",JSON.stringify(state.nisa));
+  renderNisa();
+}
 </script>
 </body>
 </html>
