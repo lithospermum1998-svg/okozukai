@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MONEY LOG</title>
+  <title>MONEY LOG PRO</title>
   <style>
     :root {
       --ios-blue: #007aff;
@@ -102,25 +102,18 @@
     .item-info .amount.invest { color: var(--ios-green); }
     .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
-    /* --- ゴミ箱ボタンのスタイル修正 --- */
+    /* 削除ボタンをテキスト形式に戻しました */
     .delete-btn {
-      background: #f2f2f7; /* 薄いグレーに変更 */
+      background: #f2f2f7;
+      color: var(--text-sub); /* 控えめなグレー */
       border: none;
-      width: 36px;
-      height: 36px;
-      line-height: 36px;
-      border-radius: 50%; /* 丸いボタンに */
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
       cursor: pointer;
       flex-shrink: 0;
-      margin-left: 10px;
-      transition: background 0.2s;
-    }
-    .delete-btn:active {
-      background: #e5e5ea; /* タップした時に少し暗く */
     }
   </style>
 </head>
@@ -136,8 +129,7 @@
   </div>
 
   <div class="summary">
-    <div style="font-size: 12px; color: var(--text-sub);">今月の合計
-    </div>
+    <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
     <span id="monthlyTotal">0</span><small style="color: var(--text-main);"> 円</small>
   </div>
 
@@ -197,10 +189,8 @@
   }
 
   function deleteEntry(id) {
-    if(confirm('この項目を削除しますか？')) {
-      state.expenses = state.expenses.filter(e => e.id !== id);
-      save();
-    }
+    state.expenses = state.expenses.filter(e => e.id !== id);
+    save();
   }
 
   function changeMonth(diff) {
@@ -227,7 +217,7 @@
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
           <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
         </div>
-        <button class="delete-btn" onclick="deleteEntry(${e.id})">🗑️</button>
+        <button class="delete-btn" onclick="deleteEntry(${e.id})">削除</button>
       </li>
     `).join('');
   }
