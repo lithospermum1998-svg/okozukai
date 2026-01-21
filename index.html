@@ -22,7 +22,8 @@
       margin: 0;
       padding: 16px;
       color: var(--text-main);
-      overflow-x: hidden; /* スワイプ時のはみ出し防止 */
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent; /* タップ時の青い枠を消す */
     }
 
     .container {
@@ -64,12 +65,13 @@
       border: 1px solid #e5e5ea;
       border-radius: var(--radius);
       background: #fafafa;
-      -webkit-appearance: none;
       appearance: none;
+      -webkit-appearance: none;
       display: block;
       color: var(--text-main);
     }
     
+    input:focus { border-color: var(--ios-blue); outline: none; }
     input[type="date"] { min-height: 46px; }
 
     .action-row { display: flex; gap: 10px; margin-bottom: 5px; }
@@ -86,13 +88,12 @@
     .btn-record { background: var(--ios-blue); }
     .btn-invest { background: var(--ios-green); }
 
-    /* --- スワイプ削除用のスタイル --- */
     #expenseList { list-style: none; padding: 0; margin-top: 20px; }
     
     .swipe-item {
       position: relative;
-      overflow: hidden; /* ボタンを隠す */
-      background-color: var(--ios-red); /* スワイプした時に見える背景色 */
+      overflow: hidden;
+      background-color: var(--ios-red);
       border-radius: 8px;
       margin-bottom: 1px;
     }
@@ -102,11 +103,16 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: white; /* 重なるコンテンツの背景 */
+      background: white;
       position: relative;
       z-index: 2;
-      transition: transform 0.3s ease; /* スムーズな動き */
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
       border-bottom: 1px solid #f2f2f7;
+    }
+
+    /* 長押し編集中のスタイル */
+    .item-content.editing {
+      background: #fff9c4; /* 編集中の項目を黄色っぽく */
     }
 
     .swipe-delete-btn {
@@ -123,7 +129,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
     }
 
     .item-info .amount { font-size: 18px; font-weight: 700; }
@@ -153,17 +158,18 @@
   <input type="text" id="memoInput" placeholder="メモ（任意）" />
 
   <div class="action-row">
-    <button class="btn btn-record" onclick="addEntry('record')">記録</button>
-    <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
+    <button class="btn btn-record" id="btnRecord" onclick="addEntry('record')">記録</button>
+    <button class="btn btn-invest" id="btnInvest" onclick="addEntry('invest')">投資</button>
   </div>
 
   <ul id="expenseList"></ul>
 </div>
 
 <script>
-  const state = {
+  let state = {
     expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-    currentView: new Date()
+    currentView: new Date(),
+    editingId: null // 編集中のIDを保持
   };
 
   const elements = {
@@ -172,7 +178,9 @@
     label: document.getElementById('monthLabel'),
     date: document.getElementById('dateInput'),
     amount: document.getElementById('amountInput'),
-    memo: document.getElementById('memoInput')
+    memo: document.getElementById('memoInput'),
+    btnRecord: document.getElementById('btnRecord'),
+    btnInvest: document.getElementById('btnInvest')
   };
 
   function init() {
@@ -188,6 +196,15 @@
   function addEntry(type) {
     const val = parseInt(elements.amount.value);
     if (!val) return;
+
+    // 編集モードなら古いデータを削除
+    if (state.editingId) {
+      state.expenses = state.expenses.filter(e => e.id !== state.editingId);
+      state.editingId = null;
+      elements.btnRecord.textContent = "記録";
+      elements.btnInvest.textContent = "投資";
+    }
+
     state.expenses.push({ id: Date.now(), amount: val, memo: elements.memo.value, date: elements.date.value, type: type });
     elements.amount.value = ""; elements.memo.value = "";
     save();
@@ -198,26 +215,57 @@
     save();
   }
 
+  function editEntry(id) {
+    const target = state.expenses.find(e => e.id === id);
+    if (!target) return;
+
+    // 振動（ハプティクス：強め）
+    if (window.navigator.vibrate) window.navigator.vibrate([100]);
+
+    state.editingId = id;
+    elements.amount.value = target.amount;
+    elements.memo.value = target.memo;
+    elements.date.value = target.date;
+    
+    elements.btnRecord.textContent = "修正(記録)";
+    elements.btnInvest.textContent = "修正(投資)";
+    
+    elements.amount.focus();
+    updateUI();
+  }
+
   function changeMonth(diff) {
     state.currentView.setMonth(state.currentView.getMonth() + diff);
     updateUI();
   }
 
-  // スワイプ処理用の変数
+  // スワイプ & 長押し処理
   let startX = 0;
+  let pressTimer;
 
-  function handleTouchStart(e) {
+  function handleTouchStart(e, id) {
     startX = e.touches[0].pageX;
+    // 長押しの判定（0.8秒）
+    pressTimer = window.setTimeout(() => editEntry(id), 800);
   }
 
-  function handleTouchMove(e, id) {
+  function handleTouchEnd() {
+    clearTimeout(pressTimer);
+  }
+
+  function handleTouchMove(e) {
+    clearTimeout(pressTimer); // 動いたら長押し解除
     const touch = e.touches[0];
     const change = startX - touch.pageX;
     const content = e.currentTarget;
     
-    if (change > 50) { // 左に50px以上スワイプしたら
+    if (change > 60) {
+      if (content.style.transform !== "translateX(-80px)") {
+        // 振動（ハプティクス：軽い）
+        if (window.navigator.vibrate) window.navigator.vibrate(10);
+      }
       content.style.transform = "translateX(-80px)";
-    } else if (change < -50) { // 右にスワイプしたら戻す
+    } else if (change < -60) {
       content.style.transform = "translateX(0px)";
     }
   }
@@ -237,7 +285,10 @@
     elements.list.innerHTML = filtered.map(e => `
       <li class="swipe-item">
         <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
-        <div class="item-content" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event, ${e.id})">
+        <div class="item-content ${state.editingId === e.id ? 'editing' : ''}" 
+             ontouchstart="handleTouchStart(event, ${e.id})" 
+             ontouchend="handleTouchEnd()"
+             ontouchmove="handleTouchMove(event)">
           <div class="item-info">
             <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
             <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
