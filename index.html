@@ -24,6 +24,7 @@
       color: var(--text-main);
     }
 
+    /* 幅を以前の 420px に固定し、中央寄せに設定 */
     .container {
       max-width: 420px;
       margin: 0 auto;
@@ -31,21 +32,20 @@
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      box-sizing: border-box; /* パディングを含めて420pxに */
     }
 
-    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin-top: 0; }
+    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin: 0 0 15px 0; }
 
-    /* 月ナビゲーション */
     .month-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-    .month-nav button { background: none; color: var(--ios-blue); font-size: 20px; border: none; cursor: pointer; }
+    .month-nav button { background: none; color: var(--ios-blue); font-size: 20px; border: none; cursor: pointer; padding: 5px 15px; }
     #monthLabel { font-weight: bold; font-size: 18px; }
 
-    /* 合計表示 */
     .summary {
       background: var(--bg-color);
       padding: 15px;
@@ -55,7 +55,6 @@
     }
     #monthlyTotal { font-size: 28px; font-weight: 800; color: var(--ios-blue); }
 
-    /* 入力フォーム */
     input {
       width: 100%;
       box-sizing: border-box;
@@ -67,7 +66,7 @@
       background: #fafafa;
     }
     
-    .action-row { display: flex; gap: 10px; }
+    .action-row { display: flex; gap: 10px; margin-bottom: 5px; }
     .btn {
       flex: 1;
       padding: 14px;
@@ -77,22 +76,21 @@
       font-weight: bold;
       font-size: 16px;
       cursor: pointer;
-      transition: opacity 0.2s;
     }
     .btn-record { background: var(--ios-blue); }
     .btn-invest { background: var(--ios-green); }
-    .btn:active { opacity: 0.6; }
 
-    /* リスト表示 */
+    /* リスト表示のズレを修正 */
     #expenseList { list-style: none; padding: 0; margin-top: 20px; }
     li {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: center; /* 垂直方向中央寄せ */
       padding: 12px 0;
       border-bottom: 1px solid #f2f2f7;
     }
-    .item-info .amount { font-size: 18px; font-weight: 700; }
+    .item-info { flex: 1; }
+    .item-info .amount { font-size: 18px; font-weight: 700; line-height: 1.2; }
     .item-info .amount.record { color: var(--ios-blue); }
     .item-info .amount.invest { color: var(--ios-green); }
     .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
@@ -105,6 +103,9 @@
       border-radius: 8px;
       font-size: 12px;
       font-weight: bold;
+      margin-left: 10px; /* テキストとの間に隙間を確保 */
+      cursor: pointer;
+      flex-shrink: 0; /* ボタンが潰れないように */
     }
   </style>
 </head>
@@ -115,7 +116,7 @@
 
   <div class="month-nav">
     <button id="prevBtn">◀</button>
-    <span id="monthLabel">2024年 1月</span>
+    <span id="monthLabel"></span>
     <button id="nextBtn">▶</button>
   </div>
 
@@ -137,13 +138,11 @@
 </div>
 
 <script>
-  // --- 状態管理 ---
   const state = {
     expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-    currentView: new Date() // 表示中の年月
+    currentView: new Date()
   };
 
-  // --- 要素取得 ---
   const elements = {
     list: document.getElementById('expenseList'),
     total: document.getElementById('monthlyTotal'),
@@ -153,13 +152,11 @@
     memo: document.getElementById('memoInput')
   };
 
-  // --- 初期化 ---
   function init() {
     elements.date.value = new Date().toISOString().split('T')[0];
     updateUI();
   }
 
-  // --- ロジック ---
   function save() {
     localStorage.setItem('expenses', JSON.stringify(state.expenses));
     updateUI();
@@ -167,17 +164,16 @@
 
   function addEntry(type) {
     const val = parseInt(elements.amount.value);
-    if (!val) return alert("金額を入力してください");
+    if (!val) return;
 
-    const newEntry = {
+    state.expenses.push({
       id: Date.now(),
       amount: val,
       memo: elements.memo.value,
       date: elements.date.value,
       type: type
-    };
+    });
 
-    state.expenses.push(newEntry);
     elements.amount.value = "";
     elements.memo.value = "";
     elements.amount.focus();
@@ -194,24 +190,19 @@
     updateUI();
   }
 
-  // --- 表示更新 ---
   function updateUI() {
     const year = state.currentView.getFullYear();
     const month = state.currentView.getMonth();
-    
     elements.label.textContent = `${year}年 ${month + 1}月`;
 
-    // フィルタリング
     const filtered = state.expenses.filter(e => {
       const d = new Date(e.date);
       return d.getFullYear() === year && d.getMonth() === month;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // 新しい順
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // 合計計算
     const total = filtered.reduce((sum, e) => sum + e.amount, 0);
     elements.total.textContent = total.toLocaleString();
 
-    // リスト描画（テンプレートリテラルでスッキリ！）
     elements.list.innerHTML = filtered.map(e => `
       <li>
         <div class="item-info">
@@ -223,7 +214,6 @@
     `).join('');
   }
 
-  // イベントリスナー
   document.getElementById('prevBtn').onclick = () => changeMonth(-1);
   document.getElementById('nextBtn').onclick = () => changeMonth(1);
 
