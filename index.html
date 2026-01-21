@@ -2,230 +2,234 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <title>MONEY LOG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MONEY LOG PRO</title>
   <style>
-    :root {
-      --ios-blue: #007aff;
-      --ios-green: #34c759;
-      --ios-red: #ff3b30;
-      --bg-color: #f2f2f7;
-      --card-bg: #ffffff;
-      --text-main: #1c1c1e;
-      --text-sub: #8e8e93;
-      --radius: 12px;
-    }
-
     body {
-      font-family: -apple-system, sans-serif;
-      background: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f2f2f7;
       margin: 0;
       padding: 16px;
-      color: var(--text-main);
     }
 
     .container {
       max-width: 420px;
       margin: 0 auto;
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    h1 { font-size: 22px; text-align: center; letter-spacing: 2px; margin-top: 0; }
-
-    /* 月ナビゲーション */
-    .month-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .month-nav button { background: none; color: var(--ios-blue); font-size: 20px; border: none; cursor: pointer; }
-    #monthLabel { font-weight: bold; font-size: 18px; }
-
-    /* 合計表示 */
-    .summary {
-      background: var(--bg-color);
-      padding: 15px;
-      border-radius: var(--radius);
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    #monthlyTotal { font-size: 28px; font-weight: 800; color: var(--ios-blue); }
-
-    /* 入力フォーム */
-    input {
-      width: 100%;
-      box-sizing: border-box;
+    /* 入力エリア */
+    input:not([type="date"]) {
       font-size: 16px;
+      width: 100%;
       padding: 12px;
       margin-bottom: 12px;
-      border: 1px solid #e5e5ea;
-      border-radius: var(--radius);
-      background: #fafafa;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     
-    .action-row { display: flex; gap: 10px; }
-    .btn {
-      flex: 1;
-      padding: 14px;
-      border-radius: var(--radius);
+    .date-wrap {
+      height: 48px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .date-wrap input[type="date"] {
+      height: 100%;
+      width: 100%;
       border: none;
-      color: white;
-      font-weight: bold;
+      padding: 0 12px;
+      background: #eee;
+      box-sizing: border-box;
+    }
+
+    /* ボタン共通 */
+    button {
       font-size: 16px;
+      border: none;
+      font-weight: bold;
       cursor: pointer;
       transition: opacity 0.2s;
     }
-    .btn-record { background: var(--ios-blue); }
-    .btn-invest { background: var(--ios-green); }
-    .btn:active { opacity: 0.6; }
+    button:active { opacity: 0.7; }
 
-    /* リスト表示 */
-    #expenseList { list-style: none; padding: 0; margin-top: 20px; }
+    /* メインアクションボタン */
+    .action-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .action-row button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      color: #fff;
+    }
+    .btn-record { background: #007aff; }
+    .btn-invest { background: #34c759; }
+
+    /* ヘッダー・ナビ */
+    h1 { font-size: 22px; letter-spacing: 0.08em; text-align: center; margin: 10px 0; }
+    .month-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .month-nav button { background: none; font-size: 18px; padding: 10px; }
+    .summary { font-size: 18px; margin-bottom: 16px; text-align: left; }
+    .amount-total { font-size: 24px; font-weight: 700; color: #007aff; }
+
+    /* リスト表示（ここが重要） */
+    #expenseList { list-style: none; padding: 0; margin: 0; }
     li {
       display: flex;
+      align-items: center;      /* 垂直方向中央 */
       justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f2f2f7;
+      padding: 12px 0;          /* 上下余白を均等に */
+      border-bottom: 1px solid #f0f0f5;
     }
-    .item-info .amount { font-size: 18px; font-weight: 700; }
-    .item-info .amount.record { color: var(--ios-blue); }
-    .item-info .amount.invest { color: var(--ios-green); }
-    .item-info .meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
-    .delete-btn {
-      background: #fff0f0;
-      color: var(--ios-red);
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: bold;
+    .item-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* テキストを垂直中央に */
     }
+
+    .amount { font-size: 19px; font-weight: 700; line-height: 1.2; }
+    .amount.record { color: #007aff; }
+    .amount.invest { color: #34c759; }
+    .meta { font-size: 13px; color: #666; margin-top: 2px; }
+
+    /* 削除ボタンの微調整 */
+    li button {
+      background: #e9f2ff;
+      color: #007aff;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 13px;
+      height: 34px;             /* 高さを明示 */
+      margin-left: 10px;
+      display: flex;
+      align-items: center;      /* 文字を中央に */
+      justify-content: center;
+      flex-shrink: 0;           /* 潰れ防止 */
+    }
+    li.invest button { background: #e9f9ef; color: #34c759; }
+
   </style>
 </head>
 <body>
 
 <div class="container">
   <h1>MONEY LOG</h1>
-
+  
   <div class="month-nav">
-    <button id="prevBtn">◀</button>
-    <span id="monthLabel">2024年 1月</span>
-    <button id="nextBtn">▶</button>
+    <button onclick="changeMonth(-1)">◀</button>
+    <span id="monthLabel"></span>
+    <button onclick="changeMonth(1)">▶</button>
   </div>
-
-  <div class="summary">
-    <div style="font-size: 12px; color: var(--text-sub);">今月の合計支出</div>
-    <span id="monthlyTotal">0</span><small> 円</small>
+  
+  <div class="summary">合計：<span class="amount-total" id="monthlyTotal">0</span> 円</div>
+  
+  <div class="date-wrap">
+    <input type="date" id="dateInput" />
   </div>
-
-  <input type="date" id="dateInput" />
-  <input type="number" id="amountInput" placeholder="金額を入力" inputmode="decimal" />
+  
+  <input type="number" id="amountInput" placeholder="金額" inputmode="decimal" />
   <input type="text" id="memoInput" placeholder="メモ（任意）" />
 
   <div class="action-row">
-    <button class="btn btn-record" onclick="addEntry('record')">記録</button>
-    <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
+    <button class="btn-record" onclick="addEntry('record')">記録</button>
+    <button class="btn-invest" onclick="addEntry('invest')">投資</button>
   </div>
 
   <ul id="expenseList"></ul>
 </div>
 
 <script>
-  // --- 状態管理 ---
-  const state = {
-    expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-    currentView: new Date() // 表示中の年月
+  let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+  let currentViewDate = new Date();
+
+  const el = {
+    amount: document.getElementById("amountInput"),
+    memo: document.getElementById("memoInput"),
+    date: document.getElementById("dateInput"),
+    list: document.getElementById("expenseList"),
+    total: document.getElementById("monthlyTotal"),
+    label: document.getElementById("monthLabel")
   };
 
-  // --- 要素取得 ---
-  const elements = {
-    list: document.getElementById('expenseList'),
-    total: document.getElementById('monthlyTotal'),
-    label: document.getElementById('monthLabel'),
-    date: document.getElementById('dateInput'),
-    amount: document.getElementById('amountInput'),
-    memo: document.getElementById('memoInput')
-  };
-
-  // --- 初期化 ---
   function init() {
-    elements.date.value = new Date().toISOString().split('T')[0];
-    updateUI();
-  }
-
-  // --- ロジック ---
-  function save() {
-    localStorage.setItem('expenses', JSON.stringify(state.expenses));
-    updateUI();
+    el.date.value = new Date().toISOString().split('T')[0];
+    render();
   }
 
   function addEntry(type) {
-    const val = parseInt(elements.amount.value);
-    if (!val) return alert("金額を入力してください");
+    const amount = Number(el.amount.value);
+    if (!amount) return;
 
-    const newEntry = {
+    const entry = {
       id: Date.now(),
-      amount: val,
-      memo: elements.memo.value,
-      date: elements.date.value,
-      type: type
+      amount,
+      memo: el.memo.value,
+      date: el.date.value,
+      type
     };
 
-    state.expenses.push(newEntry);
-    elements.amount.value = "";
-    elements.memo.value = "";
-    elements.amount.focus();
+    expenses.push(entry);
     save();
+    el.amount.value = "";
+    el.memo.value = "";
+    el.amount.focus();
   }
 
   function deleteEntry(id) {
-    state.expenses = state.expenses.filter(e => e.id !== id);
+    expenses = expenses.filter(e => e.id !== id);
     save();
   }
 
+  function save() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+    render();
+  }
+
   function changeMonth(diff) {
-    state.currentView.setMonth(state.currentView.getMonth() + diff);
-    updateUI();
+    currentViewDate.setMonth(currentViewDate.getMonth() + diff);
+    render();
   }
 
-  // --- 表示更新 ---
-  function updateUI() {
-    const year = state.currentView.getFullYear();
-    const month = state.currentView.getMonth();
-    
-    elements.label.textContent = `${year}年 ${month + 1}月`;
+  function render() {
+    const y = currentViewDate.getFullYear();
+    const m = currentViewDate.getMonth();
+    el.label.textContent = `${y}年 ${m + 1}月`;
 
-    // フィルタリング
-    const filtered = state.expenses.filter(e => {
+    const filtered = expenses.filter(e => {
       const d = new Date(e.date);
-      return d.getFullYear() === year && d.getMonth() === month;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // 新しい順
+      return d.getFullYear() === y && d.getMonth() === m;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // 合計計算
-    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
-    elements.total.textContent = total.toLocaleString();
-
-    // リスト描画（テンプレートリテラルでスッキリ！）
-    elements.list.innerHTML = filtered.map(e => `
-      <li>
-        <div class="item-info">
+    el.list.innerHTML = filtered.map(e => `
+      <li class="${e.type}">
+        <div class="item-text">
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-          <div class="meta">${e.date.split('-').slice(1).join('/')} ${e.memo}</div>
+          <div class="meta">${e.date.split('-').slice(1).join('/')}　${e.memo}</div>
         </div>
-        <button class="delete-btn" onclick="deleteEntry(${e.id})">削除</button>
+        <button onclick="deleteEntry(${e.id})">削除</button>
       </li>
-    `).join('');
-  }
+    `).join("");
 
-  // イベントリスナー
-  document.getElementById('prevBtn').onclick = () => changeMonth(-1);
-  document.getElementById('nextBtn').onclick = () => changeMonth(1);
+    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+    el.total.textContent = total.toLocaleString();
+  }
 
   init();
 </script>
