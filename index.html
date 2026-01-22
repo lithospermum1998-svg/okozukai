@@ -1,274 +1,162 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>MONEY LOG PRO</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>MONEY LOG</title>
+  <style>
+    :root { --ios-blue: #007aff; --ios-green: #34c759; --ios-red: #ff3b30; --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; --radius: 12px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); margin: 0; padding: 16px; color: var(--text-main); min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    .container { max-width: 420px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); box-sizing: border-box; }
+    
+    /* 写真のヘッダーを再現 */
+    .header-box { background: #f2f2f7; border-radius: 18px; padding: 12px; margin-bottom: 20px; text-align: center; }
+    .header-box h1 { font-size: 18px; letter-spacing: 2px; margin: 0 0 10px 0; color: #1c1c1e; }
+    .tab-switch { display: flex; background: #e3e3e8; border-radius: 10px; padding: 2px; }
+    .tab-switch button { flex: 1; border: none; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #8e8e93; background: none; }
+    .tab-switch button.active { background: #007aff; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-<style>
-:root{
---ios-blue:#007aff;
---ios-green:#34c759;
---ios-red:#ff3b30;
---bg:#f2f2f7;
---card:#ffffff;
---text:#1c1c1e;
---sub:#8e8e93;
---radius:14px;
-}
-body{
-margin:0;
-padding:16px;
-background:var(--bg);
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-color:var(--text);
-}
+    .page { display: none; }
+    .page.active { display: block; }
 
-/* ===== 囲い枠ヘッダー ===== */
-.top-box{
-background:var(--card);
-border-radius:20px;
-padding:18px;
-margin-bottom:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.06);
-}
-.top-box h1{
-margin:0 0 12px;
-text-align:center;
-letter-spacing:2px;
-font-size:20px;
-}
-.tabs{
-display:flex;
-background:#e5e5ea;
-border-radius:12px;
-padding:4px;
-}
-.tab{
-flex:1;
-border:none;
-background:transparent;
-padding:10px;
-font-weight:bold;
-border-radius:10px;
-color:#666;
-}
-.tab.active{
-background:var(--ios-blue);
-color:#fff;
-}
+    .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
+    #monthlyTotal { font-size: 28px; font-weight: 800; }
+    input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid #e5e5ea; border-radius: var(--radius); background: #fafafa; }
+    .action-row { display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 14px; border-radius: var(--radius); border: none; color: white; font-weight: bold; font-size: 16px; }
+    .btn-record { background: var(--ios-blue); }
+    .btn-invest { background: var(--ios-green); }
 
-/* ===== 共通 ===== */
-.section{
-background:var(--card);
-border-radius:20px;
-padding:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.05);
-}
-.summary{
-background:var(--bg);
-border-radius:12px;
-padding:14px;
-text-align:center;
-margin-bottom:16px;
-}
-input{
-width:100%;
-padding:12px;
-margin-bottom:10px;
-border-radius:12px;
-border:1px solid #e5e5ea;
-font-size:16px;
-background:#fafafa;
-}
-.btns{
-display:flex;
-gap:10px;
-}
-.btn{
-flex:1;
-padding:14px;
-border:none;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
-color:#fff;
-}
-.record{background:var(--ios-blue);}
-.invest{background:var(--ios-green);}
+    .stock-card { background: #fff; padding: 16px; border-radius: var(--radius); margin-bottom: 12px; border: 1px solid #f2f2f7; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+    .valuation { font-size: 22px; font-weight: 800; color: var(--ios-green); margin-bottom: 10px; }
+    .stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stock-inputs div { font-size: 11px; color: var(--text-sub); }
+    .stock-inputs input { padding: 8px; font-size: 14px; margin-top: 4px; }
 
-/* ===== 家計 ===== */
-#expenseList{list-style:none;padding:0;margin-top:16px;}
-.item{
-background:#fff;
-border-radius:12px;
-padding:12px;
-margin-bottom:6px;
-display:flex;
-justify-content:space-between;
-}
-.amount.record{color:var(--ios-blue);font-weight:bold;}
-.amount.invest{color:var(--ios-green);font-weight:bold;}
-.meta{font-size:12px;color:var(--sub);}
-
-/* ===== NISA ===== */
-.stock-card{
-background:#f9f9fb;
-border-radius:14px;
-padding:16px;
-margin-bottom:14px;
-border:1px solid #e5e5ea;
-}
-.stock-name{font-weight:bold;margin-bottom:6px;}
-.valuation{font-size:24px;font-weight:800;margin-bottom:8px;}
-.stock-inputs{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-.stock-inputs div{
-font-size:11px;
-color:var(--sub);
-}
-.stock-inputs input{
-padding:8px;
-font-size:14px;
-margin-bottom:0;
-}
-</style>
+    #expenseList { list-style: none; padding: 0; margin-top: 20px; }
+    .item-content { display: flex; justify-content: space-between; padding: 12px 16px; background: white; border-bottom: 1px solid #f2f2f7; }
+    .amount.record { color: var(--ios-blue); font-weight: bold; }
+    .amount.invest { color: var(--ios-green); font-weight: bold; }
+  </style>
 </head>
-
 <body>
 
-<!-- 囲い枠 -->
-<div class="top-box">
-  <h1>MONEY LOG</h1>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('log')">家計</button>
-    <button class="tab" onclick="showTab('nisa')">NISA</button>
-  </div>
-</div>
-
-<!-- 家計 -->
-<div id="logPage" class="section">
-  <div class="summary">
-    <div style="font-size:12px;color:var(--sub)">今月の支出合計</div>
-    <div id="monthlyTotal" style="font-size:28px;font-weight:800">0 円</div>
+<div class="container">
+  <div class="header-box">
+    <h1>MONEY LOG</h1>
+    <div class="tab-switch">
+      <button id="btnLog" class="active" onclick="switchPage('logPage')">家計</button>
+      <button id="btnStock" onclick="switchPage('stockPage')">NISA</button>
+    </div>
   </div>
 
-  <input type="date" id="dateInput">
-  <input type="number" id="amountInput" placeholder="金額">
-  <input type="text" id="memoInput" placeholder="メモ">
-
-  <div class="btns">
-    <button class="btn record" onclick="addEntry('record')">記録</button>
-    <button class="btn invest" onclick="addEntry('invest')">投資</button>
+  <div id="logPage" class="page active">
+    <div class="summary">
+      <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
+      <span id="monthlyTotal">0</span><small> 円</small>
+    </div>
+    <input type="date" id="dateInput">
+    <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
+    <input type="text" id="memoInput" placeholder="メモ">
+    <div class="action-row">
+      <button class="btn btn-record" onclick="addEntry('record')">記録</button>
+      <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
+    </div>
+    <ul id="expenseList"></ul>
   </div>
 
-  <ul id="expenseList"></ul>
-</div>
-
-<!-- NISA -->
-<div id="nisaPage" class="section" style="display:none;">
-  <div id="stockList"></div>
-  <div class="summary">
-    <div style="font-size:12px;color:var(--sub)">NISA 合計評価額</div>
-    <div id="nisaTotal" style="font-size:24px;font-weight:800">0 円</div>
+  <div id="stockPage" class="page">
+    <div id="stockList"></div>
+    <div class="summary">
+      <div style="font-size:12px; color:var(--text-sub)">NISA 合計評価額</div>
+      <div id="nisaTotal" style="font-size:24px; font-weight:bold;">0 円</div>
+    </div>
   </div>
 </div>
 
 <script>
-/* ===== state ===== */
-const state={
-expenses:JSON.parse(localStorage.getItem("expenses"))||[],
-stocks:JSON.parse(localStorage.getItem("stocks"))||[
-{name:"ブラックロック・ゴールド",price:14500,holding:0},
-{name:"WCM世界成長株激選",price:17820,holding:0},
-{name:"SMT米国トレンドランキング",price:21543,holding:0}
-],
-view:new Date()
-};
+  // ショートカットからの数値受け取り
+  const urlParams = new URLSearchParams(window.location.search);
+  const latestPrice = parseInt(urlParams.get('p')) || 0;
 
-/* ===== タブ切替 ===== */
-function showTab(tab){
-document.getElementById("logPage").style.display=tab==="log"?"block":"none";
-document.getElementById("nisaPage").style.display=tab==="nisa"?"block":"none";
-document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
-event.target.classList.add("active");
-if(tab==="nisa") renderStocks();
-}
+  let state = {
+    expenses: JSON.parse(localStorage.getItem('expenses')) || [],
+    stocks: JSON.parse(localStorage.getItem('stocks')) || [
+      { name: "ブラックロック・ゴールド", price: latestPrice || 14500, holding: 0 },
+      { name: "WCM世界成長株激選", price: 0, holding: 0 },
+      { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
+    ],
+    currentView: new Date()
+  };
 
-/* ===== 家計 ===== */
-function addEntry(type){
-const amt=+amountInput.value;
-if(!amt) return;
-state.expenses.push({
-id:Date.now(),
-type,
-amount:amt,
-memo:memoInput.value,
-date:dateInput.value
-});
-amountInput.value="";
-memoInput.value="";
-save();
-}
-function save(){
-localStorage.setItem("expenses",JSON.stringify(state.expenses));
-renderExpenses();
-}
-function renderExpenses(){
-const y=state.view.getFullYear(),m=state.view.getMonth();
-const list=state.expenses.filter(e=>{
-const d=new Date(e.date);
-return d.getFullYear()===y&&d.getMonth()===m;
-});
-monthlyTotal.textContent=
-list.reduce((s,e)=>s+e.amount,0).toLocaleString()+" 円";
-expenseList.innerHTML=list.map(e=>`
-<li class="item">
-<div>
-<div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-<div class="meta">${e.date.slice(5)} ${e.memo||""}</div>
-</div>
-</li>`).join("");
-}
+  // 最新価格があれば更新して保存
+  if(latestPrice > 0) {
+    state.stocks[0].price = latestPrice;
+    localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  }
 
-/* ===== NISA ===== */
-function renderStocks(){
-let total=0;
-stockList.innerHTML=state.stocks.map((s,i)=>{
-const val=Math.floor((s.price*s.holding)/10000);
-total+=val;
-return `
-<div class="stock-card">
-  <div class="stock-name">${s.name}</div>
-  <div class="valuation">¥${val.toLocaleString()}</div>
-  <div class="stock-inputs">
-    <div>
-      基準価額
-      <input type="number" value="${s.price}"
-        onchange="updateStock(${i},'price',this.value)">
-    </div>
-    <div>
-      保有口数
-      <input type="number" value="${s.holding}"
-        onchange="updateStock(${i},'holding',this.value)">
-    </div>
-  </div>
-</div>`;
-}).join("");
-nisaTotal.textContent=total.toLocaleString()+" 円";
-}
-function updateStock(i,f,v){
-state.stocks[i][f]=+v||0;
-localStorage.setItem("stocks",JSON.stringify(state.stocks));
-renderStocks();
-}
+  function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('btnLog').classList.toggle('active', id === 'logPage');
+    document.getElementById('btnStock').classList.toggle('active', id === 'stockPage');
+    if(id === 'stockPage') renderStocks();
+  }
 
-/* init */
-dateInput.value=new Date().toISOString().split("T")[0];
-renderExpenses();
+  function renderStocks() {
+    let totalVal = 0;
+    const container = document.getElementById('stockList');
+    container.innerHTML = state.stocks.map((s, i) => {
+      const val = Math.floor((s.price * s.holding) / 10000);
+      totalVal += val;
+      return `<div class="stock-card">
+          <div class="stock-name">${s.name}</div>
+          <div class="valuation">¥${val.toLocaleString()}</div>
+          <div class="stock-inputs">
+            <div>基準価額<input type="number" value="${s.price}" onchange="updSt(${i},'price',this.value)"></div>
+            <div>保有口数<input type="number" value="${s.holding}" onchange="updSt(${i},'holding',this.value)"></div>
+          </div>
+        </div>`;
+    }).join('');
+    document.getElementById('nisaTotal').textContent = totalVal.toLocaleString() + " 円";
+  }
+
+  function updSt(i, f, v) {
+    state.stocks[i][f] = parseFloat(v) || 0;
+    localStorage.setItem('stocks', JSON.stringify(state.stocks));
+    renderStocks();
+  }
+
+  function addEntry(type) {
+    const amount = parseInt(document.getElementById('amountInput').value);
+    if(!amount) return;
+    state.expenses.push({ id: Date.now(), type, amount, memo: document.getElementById('memoInput').value, date: document.getElementById('dateInput').value });
+    document.getElementById('amountInput').value = ""; document.getElementById('memoInput').value = "";
+    save();
+  }
+
+  function save() { localStorage.setItem('expenses', JSON.stringify(state.expenses)); updateUI(); }
+
+  function updateUI() {
+    const list = document.getElementById('expenseList');
+    const now = state.currentView;
+    const f = state.expenses.filter(e => {
+      const d = new Date(e.date);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+    document.getElementById('monthlyTotal').textContent = f.reduce((s, e) => s + e.amount, 0).toLocaleString();
+    list.innerHTML = f.sort((a,b) => new Date(a.date) - new Date(b.date)).map(e => `
+      <li class="item-content">
+        <div><div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
+        <div style="font-size:11px; color:var(--text-sub)">${e.date.slice(5)} ${e.memo}</div></div>
+      </li>`).join('');
+  }
+
+  const n = new Date();
+  n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
+  document.getElementById('dateInput').value = n.toISOString().split('T')[0];
+  updateUI();
 </script>
 </body>
 </html>
