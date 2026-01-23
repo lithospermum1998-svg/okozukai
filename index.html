@@ -14,7 +14,7 @@
   --text-main: #1c1c1e;
   --text-sub: #3a3a3c;
   --radius: 12px;
-  --tab-active-bg: #666666; /* 少し明るめの濃灰色 */
+  --tab-active-bg: #666666;
 }
 
 body {
@@ -29,7 +29,6 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 上のカード：タイトル + 家計/NISA */
 .header-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -45,7 +44,6 @@ body {
   letter-spacing: 1px;
 }
 
-/* 家計/NISAボタン */
 .header-tabs {
   display: flex;
   justify-content: center;
@@ -72,16 +70,28 @@ body {
   color: #fff;
 }
 
-/* 下のカード：家計/NISAコンテンツ */
 .content-card {
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-  transition: opacity 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
 }
 
-/* 収支ログ用 */
+/* スライドコンテナ */
+.page-wrapper {
+  display: flex;
+  width: 200%;
+  transition: transform 0.3s ease;
+}
+
+.page {
+  width: 50%;
+  flex-shrink: 0;
+}
+
 .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 18px; }
 #monthlyTotal { font-size: 28px; font-weight: 800; }
 input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid #e5e5ea; border-radius: var(--radius); background: #fafafa; }
@@ -91,7 +101,6 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 銘柄カード用 */
 .stock-card { background: #f9f9fb; padding: 16px; border-radius: var(--radius); margin-bottom: 12px; border: 1px solid #e5e5ea; }
 .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
 .valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
@@ -99,7 +108,6 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 .stock-inputs div { font-size: 11px; color: var(--text-sub); }
 .stock-inputs input { padding: 6px; font-size: 13px; margin-bottom: 4px; }
 
-/* リスト表示 */
 #expenseList { list-style: none; padding: 0; margin-top: 20px; }
 .swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 8px; margin-bottom: 1px; }
 .item-content { display: flex; justify-content: space-between; padding: 12px 16px; background: white; position: relative; z-index: 2; transition: 0.3s; border-bottom: 1px solid #f2f2f7; }
@@ -108,16 +116,12 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 .amount.record { color: var(--ios-blue); font-weight: bold; }
 .amount.invest { color: var(--ios-green); font-weight: bold; }
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-
-.page { display: none; }
-.page.active { display: block; }
 </style>
 </head>
 <body onclick="handleGlobalClick()">
 
 <div class="container">
 
-  <!-- 上のカード -->
   <div class="header-card">
     <h1>MONEY LOG</h1>
     <div class="header-tabs">
@@ -126,25 +130,26 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
     </div>
   </div>
 
-  <!-- 下のカード -->
   <div class="content-card">
-    <div id="logPage" class="page active">
-      <div class="summary">
-        <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
-        <span id="monthlyTotal">0</span><small> 円</small>
+    <div class="page-wrapper" id="pageWrapper">
+      <div id="logPage" class="page">
+        <div class="summary">
+          <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
+          <span id="monthlyTotal">0</span><small> 円</small>
+        </div>
+        <input type="date" id="dateInput">
+        <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
+        <input type="text" id="memoInput" placeholder="メモ">
+        <div class="action-row">
+          <button class="btn btn-record" onclick="addEntry('record')">記録</button>
+          <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
+        </div>
+        <ul id="expenseList"></ul>
       </div>
-      <input type="date" id="dateInput">
-      <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
-      <input type="text" id="memoInput" placeholder="メモ">
-      <div class="action-row">
-        <button class="btn btn-record" onclick="addEntry('record')">記録</button>
-        <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
-      </div>
-      <ul id="expenseList"></ul>
-    </div>
 
-    <div id="stockPage" class="page">
-      <div id="stockList"></div>
+      <div id="stockPage" class="page">
+        <div id="stockList"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -162,8 +167,12 @@ let state = {
 };
 
 function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const wrapper = document.getElementById('pageWrapper');
+  if(id==='logPage'){
+    wrapper.style.transform='translateX(0%)';
+  } else {
+    wrapper.style.transform='translateX(-50%)';
+  }
 
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
