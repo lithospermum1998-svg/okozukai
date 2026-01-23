@@ -26,10 +26,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.container {
-  max-width: 420px;
-  margin: 0 auto;
-}
+.container { max-width: 420px; margin: 0 auto; }
 
 /* 上のカード：タイトル + 家計/NISA */
 .header-card {
@@ -37,7 +34,7 @@ body {
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  margin-bottom: 8px; /* ここを16px→8pxに詰めた */
+  margin-bottom: 8px; 
 }
 
 .header-card h1 {
@@ -69,7 +66,7 @@ body {
 }
 
 .header-tabs button.active {
-  background: #8e8e93;
+  background: #666666; /* 濃い灰色 */
   color: #fff;
 }
 
@@ -167,6 +164,7 @@ function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
+  // タブの色切替
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
 
