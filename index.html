@@ -33,9 +33,33 @@ body {
 /* ヘッダー部分（タイトル + 家計/NISAボタン） */
 header { display: block; margin-bottom: 15px; }
 header h1 { font-size: 20px; margin: 0; text-align: center; letter-spacing: 1px; }
-.header-tabs { display: flex; justify-content: center; margin-top: 10px; gap: 20px; }
-.header-tabs button { padding: 8px 20px; border-radius: 20px; border: 1px solid #e5e5ea; background: #fff; cursor: pointer; font-weight: bold; color: var(--ios-blue); }
-.header-tabs button.active { background: var(--ios-blue); color: #fff; }
+
+/* 家計/NISA ボタンスタイル（先のコードの見た目を再現） */
+.header-tabs {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid #e5e5ea;
+}
+
+.header-tabs button {
+  flex: 1;
+  padding: 10px 0; /* 高さ調整 */
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--ios-blue);
+  font-size: 14px;
+}
+
+.header-tabs button.active {
+  background: var(--ios-blue);
+  color: #fff;
+}
 
 /* 収支ログ用 */
 .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
