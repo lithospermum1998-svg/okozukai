@@ -60,7 +60,6 @@ body {
   padding: 10px 0;
   border: none;
   background: #fff;
-  cursor: pointer;
   font-weight: bold;
   color: var(--text-sub);
   font-size: 14px;
@@ -88,27 +87,36 @@ body {
   margin-bottom: 18px;
 }
 
-.month-nav {
+.month-switch {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 6px;
 }
 
-.month-nav button {
-  border: none;
+.month-btn {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
   background: none;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 4px 10px;
+  border: none;
+  padding: 4px 8px;
 }
 
-/* ★ ここが変更点（おすすめ設定） */
+.month-btn:active {
+  opacity: 0.4;
+}
+
 #monthLabel {
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--text-main);
+}
+
+.summary-label {
+  font-size: 12px;
+  color: var(--text-sub);
 }
 
 #monthlyTotal {
@@ -230,12 +238,12 @@ input {
 
 <div id="logPage" class="page active">
   <div class="summary">
-    <div class="month-nav">
-      <button onclick="changeMonth(-1)">＜</button>
+    <div class="month-switch">
+      <button class="month-btn" onclick="changeMonth(-1)">◀︎</button>
       <div id="monthLabel"></div>
-      <button onclick="changeMonth(1)">＞</button>
+      <button class="month-btn" onclick="changeMonth(1)">▶︎</button>
     </div>
-    <div style="font-size:12px;color:var(--text-sub)">今月の支出合計</div>
+    <div class="summary-label">今月の支出合計</div>
     <span id="monthlyTotal">0</span><small> 円</small>
   </div>
 
