@@ -32,7 +32,7 @@ body {
 .header-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 20px 20px 16px;
+  padding: 20px 20px 16px 20px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.05);
   margin-bottom: 6px;
 }
@@ -58,6 +58,7 @@ body {
   padding: 10px 0;
   border: none;
   background: #fff;
+  cursor: pointer;
   font-weight: bold;
   color: var(--text-sub);
   font-size: 14px;
@@ -184,20 +185,6 @@ let state = {
   editingId: null
 };
 
-/* ===== 外部（ショートカット）からの値を安全に受信 ===== */
-const params = new URLSearchParams(location.search);
-const extGold = Number(params.get('gold'));
-const extWcm  = Number(params.get('wcm'));
-const extSmt  = Number(params.get('smt'));
-
-if (!isNaN(extGold)) state.stocks[0].price = extGold;
-if (!isNaN(extWcm))  state.stocks[1].price = extWcm;
-if (!isNaN(extSmt))  state.stocks[2].price = extSmt;
-
-if (!isNaN(extGold) || !isNaN(extWcm) || !isNaN(extSmt)) {
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
-}
-
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -208,28 +195,13 @@ function switchPage(id){
 
 function renderStocks(){
   const container=document.getElementById('stockList');
-  container.innerHTML=state.stocks.map((s,i)=>{
+  container.innerHTML=state.stocks.map(s=>{
     const valuation=Math.floor(s.price*s.holding/10000);
-    return `
-      <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="valuation">¥${valuation.toLocaleString()}</div>
-        <div class="stock-inputs">
-          <div>基準価額
-            <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)">
-          </div>
-          <div>保有口数
-            <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)">
-          </div>
-        </div>
-      </div>`;
+    return `<div class="stock-card">
+      <div class="stock-name">${s.name}</div>
+      <div class="valuation">¥${valuation.toLocaleString()}</div>
+    </div>`;
   }).join('');
-}
-
-function updateStock(index,field,value){
-  state.stocks[index][field]=parseFloat(value)||0;
-  localStorage.setItem('stocks',JSON.stringify(state.stocks));
-  renderStocks();
 }
 
 function addEntry(type){
