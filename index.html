@@ -383,11 +383,32 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
+// ===== Update from Shortcut via URL =====
+function updateStocksFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  const prices = {
+    "ブラックロック・ゴールド": parseFloat(params.get('gold')) || 0,
+    "WCM世界成長株激選": parseFloat(params.get('wcm')) || 0,
+    "SMT米国トレンドランキング": parseFloat(params.get('smt')) || 0
+  };
+  updateStocksFromShortcut(prices);
+}
+
+function updateStocksFromShortcut(prices){
+  state.stocks.forEach(s => {
+    if(prices[s.name] !== undefined){
+      s.price = prices[s.name];
+    }
+  });
+  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  renderStocks();
+}
+
 // ===== Init =====
 document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+updateStocksFromURL();
 updateUI();
 
 </script>
-
 </body>
 </html>
