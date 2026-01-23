@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG PRO</title>
 <style>
 :root {
@@ -31,16 +31,10 @@ body {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ヘッダーとタブ */
+/* 先に貼った家計/NISAタブ見た目 */
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 header h1 { font-size: 20px; margin: 0; flex: 1; text-align: center; letter-spacing: 1px; }
-
-.tab-btns { display: flex; gap: 10px; }
-.tab-btn {
-  flex: 1; text-align: center; padding: 8px 0; font-weight: bold; border-radius: var(--radius);
-  cursor: pointer; border: 1px solid #ccc; background: #fafafa; color: var(--text-main);
-}
-.tab-btn.active { background: var(--ios-blue); color: white; border-color: var(--ios-blue); }
+.nav-btn { color: var(--ios-blue); font-weight: bold; cursor: pointer; width: 70px; font-size: 14px; border:none; background:none; }
 
 /* 収支ログ用 */
 .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
@@ -75,16 +69,14 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 
 <div class="container" onclick="event.stopPropagation()">
 
-  <!-- ヘッダー タブ部分 -->
+  <!-- ヘッダー（家計/NISAボタン見た目を先に貼ったコードから移植） -->
   <header>
-    <h1>MONEY LOG PRO</h1>
-    <div class="tab-btns">
-      <div class="tab-btn active" onclick="switchPage('logPage', this)">家計</div>
-      <div class="tab-btn" onclick="switchPage('stockPage', this)">NISA</div>
-    </div>
+    <button class="nav-btn" onclick="switchPage('logPage')">家計</button>
+    <h1>MONEY LOG</h1>
+    <button class="nav-btn" onclick="switchPage('stockPage')">NISA</button>
   </header>
 
-  <!-- 家計画面 -->
+  <!-- 家計ページ -->
   <div id="logPage" class="page active">
     <div class="summary">
       <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
@@ -100,7 +92,7 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
     <ul id="expenseList"></ul>
   </div>
 
-  <!-- NISA画面 -->
+  <!-- NISAページ -->
   <div id="stockPage" class="page">
     <div id="stockList"></div>
   </div>
@@ -119,14 +111,10 @@ let state = {
   editingId: null
 };
 
-// ページ切り替え（タブボタン用）
-function switchPage(id, btn){
+// 画面遷移ロジック（後に貼ったコードから）
+function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  // タブのアクティブ表示切り替え
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-
   if(id==='stockPage') renderStocks();
 }
 
