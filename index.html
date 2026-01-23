@@ -34,17 +34,21 @@ body {
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   position: relative;
   overflow: hidden;
+  height: 100vh;
 }
 
-/* ページ切り替え + スライドアニメーション */
+/* ページ切り替え + スライド */
 .page {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
+  padding-bottom: 20px;
   transition: transform 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
   transform: translateX(100%);
+  opacity: 0;
+  z-index: 0;
 }
 .page.active {
   transform: translateX(0%);
@@ -53,6 +57,10 @@ body {
 }
 .page.exit-left {
   transform: translateX(-100%);
+  opacity: 0;
+}
+.page.exit-right {
+  transform: translateX(100%);
   opacity: 0;
 }
 
@@ -178,16 +186,26 @@ let state = {
   editingId: null
 };
 
+// ページ切替
 function switchPage(targetId) {
   const current = document.querySelector('.page.active');
   const next = document.getElementById(targetId);
   if(current === next) return;
 
-  current.classList.add('exit-left');
-  current.classList.remove('active');
+  // 左右判定
+  if(targetId === 'stockPage') {
+    current.style.transform = 'translateX(-100%)';
+    next.style.transform = 'translateX(100%)';
+  } else {
+    current.style.transform = 'translateX(100%)';
+    next.style.transform = 'translateX(-100%)';
+  }
 
   next.classList.add('active');
-  next.classList.remove('exit-left');
+  setTimeout(() => {
+    current.classList.remove('active');
+    next.style.transform = 'translateX(0%)';
+  }, 20);
 
   if(targetId === 'stockPage') renderStocks();
 }
