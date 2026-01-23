@@ -14,6 +14,7 @@
   --text-main: #1c1c1e;
   --text-sub: #3a3a3c;
   --radius: 12px;
+  --tab-active-bg: #666666; /* 少し明るめの濃灰色 */
 }
 
 body {
@@ -32,9 +33,9 @@ body {
 .header-card {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  margin-bottom: 8px; 
+  padding: 20px 20px 16px 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  margin-bottom: 6px;
 }
 
 .header-card h1 {
@@ -48,7 +49,7 @@ body {
 .header-tabs {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 12px;
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid #e5e5ea;
@@ -63,10 +64,11 @@ body {
   font-weight: bold;
   color: var(--text-sub);
   font-size: 14px;
+  transition: background 0.2s, color 0.2s;
 }
 
 .header-tabs button.active {
-  background: #555555; /* 濃い灰色 */
+  background: var(--tab-active-bg);
   color: #fff;
 }
 
@@ -75,21 +77,22 @@ body {
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  transition: opacity 0.3s ease;
 }
 
 /* 収支ログ用 */
-.summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
+.summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 18px; }
 #monthlyTotal { font-size: 28px; font-weight: 800; }
 input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid #e5e5ea; border-radius: var(--radius); background: #fafafa; }
 
 .action-row { display: flex; gap: 10px; }
-.btn { flex: 1; padding: 14px; border-radius: var(--radius); border: none; color: white; font-weight: bold; font-size: 16px; }
+.btn { flex: 1; padding: 14px; border-radius: var(--radius); border: none; color: white; font-weight: bold; font-size: 16px; transition: opacity 0.2s; }
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
 /* 銘柄カード用 */
-.stock-card { background: #f9f9fb; padding: 16px; border-radius: var(--radius); margin-bottom: 15px; border: 1px solid #e5e5ea; }
+.stock-card { background: #f9f9fb; padding: 16px; border-radius: var(--radius); margin-bottom: 12px; border: 1px solid #e5e5ea; }
 .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
 .valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
 .stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -159,11 +162,9 @@ let state = {
 };
 
 function switchPage(id){
-  // ページ切替
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
-  // タブのアクティブ切替
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
 
@@ -195,7 +196,6 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-// --- 収支ログ ---
 function addEntry(type){
   const amount=parseInt(document.getElementById('amountInput').value);
   if(!amount) return;
