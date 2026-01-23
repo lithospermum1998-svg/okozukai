@@ -12,7 +12,7 @@
   --bg-color: #f2f2f7;
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #5a5a5f; /* 濃いグレーに変更 */
+  --text-sub: #3a3a3c; /* 濃いグレー */
   --radius: 12px;
 }
 
@@ -52,12 +52,12 @@ header h1 { font-size: 20px; margin: 0; text-align: center; letter-spacing: 1px;
   background: #fff;
   cursor: pointer;
   font-weight: bold;
-  color: #5a5a5f; /* 濃いグレー */
+  color: #3a3a3c; /* 濃いグレー */
   font-size: 14px;
 }
 
 .header-tabs button.active {
-  background: #d1d1d6; /* アクティブ背景グレー */
+  background: #8e8e93; /* アクティブ背景グレー */
   color: #fff; /* アクティブ文字は白抜き */
 }
 
@@ -173,22 +173,25 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
+// --- 収支ログ ---
 function addEntry(type){
   const amount=parseInt(document.getElementById('amountInput').value);
   if(!amount) return;
   if(state.editingId) state.expenses=state.expenses.filter(e=>e.id!==state.editingId);
   state.expenses.push({
-    id:Date.now(),
-    type,
-    amount,
-    memo:document.getElementById('memoInput').value,
-    date:document.getElementById('dateInput').value
+    id: Date.now(),
+    type, amount,
+    memo: document.getElementById('memoInput').value,
+    date: document.getElementById('dateInput').value
   });
   cancelEdit();
   save();
 }
 
-function save(){ localStorage.setItem('expenses',JSON.stringify(state.expenses)); updateUI(); }
+function save(){
+  localStorage.setItem('expenses',JSON.stringify(state.expenses));
+  updateUI();
+}
 
 function cancelEdit(){
   state.editingId=null;
@@ -206,13 +209,14 @@ function updateUI(){
     const d=new Date(e.date);
     return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
   });
+
   document.getElementById('monthlyTotal').textContent=filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   list.innerHTML=filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>`
     <li class="swipe-item" onclick="event.stopPropagation()">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
       <div class="item-content ${state.editingId===e.id?'editing-'+e.type:''}" 
-        onclick="state.editingId===${e.id}?cancelEdit():null"
-        ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
+           onclick="state.editingId===${e.id}?cancelEdit():null"
+           ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
         <div>
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
           <div style="font-size:11px; color:var(--text-sub)">${e.date.slice(5)} ${e.memo}</div>
@@ -236,16 +240,16 @@ function handleStart(e,id){
     updateUI();
   },800);
 }
+
 function handleMove(e){
   clearTimeout(window.ptimer);
   const diff=startX-e.touches[0].pageX;
-  if(diff>60) e.currentTarget.style.transform="translateX(-80px)";
-  if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
+  if(diff>60)e.currentTarget.style.transform="translateX(-80px)";
+  if(diff<-60)e.currentTarget.style.transform="translateX(0px)";
 }
 
 document.getElementById('dateInput').value=new Date().toISOString().split('T')[0];
 updateUI();
 </script>
-
 </body>
 </html>
