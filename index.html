@@ -12,7 +12,7 @@
   --bg-color: #f2f2f7;
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #8e8e93;
+  --text-sub: #5a5a5f; /* 濃いグレーに変更 */
   --radius: 12px;
 }
 
@@ -52,7 +52,7 @@ header h1 { font-size: 20px; margin: 0; text-align: center; letter-spacing: 1px;
   background: #fff;
   cursor: pointer;
   font-weight: bold;
-  color: #8e8e93; /* 非アクティブ文字色グレー */
+  color: #5a5a5f; /* 濃いグレー */
   font-size: 14px;
 }
 
@@ -138,19 +138,16 @@ let state = {
   editingId: null
 };
 
-// 画面切替
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
-  // ヘッダーのアクティブボタン切替
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
 
   if(id==='stockPage') renderStocks();
 }
 
-// 銘柄描画
 function renderStocks(){
   const container=document.getElementById('stockList');
   container.innerHTML=state.stocks.map((s,i)=>{
@@ -176,7 +173,6 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-// 収支追加
 function addEntry(type){
   const amount=parseInt(document.getElementById('amountInput').value);
   if(!amount) return;
