@@ -66,7 +66,7 @@ body {
 }
 
 .header-tabs button.active {
-  background: #666666; /* 濃い灰色 */
+  background: #555555; /* 濃い灰色 */
   color: #fff;
 }
 
@@ -106,6 +106,8 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 .amount.invest { color: var(--ios-green); font-weight: bold; }
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
+.page { display: none; }
+.page.active { display: block; }
 </style>
 </head>
 <body onclick="handleGlobalClick()">
@@ -123,8 +125,6 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 
   <!-- 下のカード -->
   <div class="content-card">
-
-    <!-- 家計ページ -->
     <div id="logPage" class="page active">
       <div class="summary">
         <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
@@ -140,11 +140,9 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
       <ul id="expenseList"></ul>
     </div>
 
-    <!-- NISAページ -->
     <div id="stockPage" class="page">
       <div id="stockList"></div>
     </div>
-
   </div>
 </div>
 
@@ -161,10 +159,11 @@ let state = {
 };
 
 function switchPage(id){
+  // ページ切替
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
-  // タブの色切替
+  // タブのアクティブ切替
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
 
