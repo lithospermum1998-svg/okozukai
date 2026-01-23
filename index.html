@@ -175,7 +175,7 @@ function renderStocks(){
   const container=document.getElementById('stockList');
   container.innerHTML=state.stocks.map((s,i)=>{
     const valuation=Math.floor(s.price*s.holding/10000);
-    return <div class="stock-card">
+    return `<div class="stock-card">
       <div class="stock-name">${s.name}</div>
       <div class="valuation">¥${valuation.toLocaleString()}</div>
       <div class="stock-inputs">
@@ -186,7 +186,7 @@ function renderStocks(){
           <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal">
         </div>
       </div>
-    </div>;
+    </div>`;
   }).join('');
 }
 
@@ -233,7 +233,7 @@ function updateUI(){
   });
 
   document.getElementById('monthlyTotal').textContent=filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  list.innerHTML=filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>
+  list.innerHTML=filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>`
     <li class="swipe-item" onclick="event.stopPropagation()">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
       <div class="item-content ${state.editingId===e.id?'editing-'+e.type:''}" 
@@ -245,7 +245,7 @@ function updateUI(){
         </div>
       </div>
     </li>
-  ).join('');
+  `).join('');
 }
 
 function deleteEntry(id){ state.expenses=state.expenses.filter(e=>e.id!==id); save(); }
