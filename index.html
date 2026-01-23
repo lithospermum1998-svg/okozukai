@@ -31,9 +31,37 @@
     .page { display: none; }
     .page.active { display: block; }
 
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    header h1 { font-size: 20px; margin: 0; flex: 1; text-align: center; letter-spacing: 1px; }
-    .nav-btn { color: var(--ios-blue); font-weight: bold; cursor: pointer; width: 70px; font-size: 14px; border:none; background:none; }
+    /* 新しいiOS風ヘッダー */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      padding: 10px 12px;
+      border-radius: 14px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      flex: 1;
+      letter-spacing: 1px;
+    }
+    .nav-btn {
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      background: none;
+      color: var(--ios-blue);
+      min-width: 70px;
+    }
 
     /* 収支ログ用 */
     .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
@@ -68,12 +96,12 @@
 
 <div class="container" onclick="event.stopPropagation()">
   
+  <!-- ログページ -->
   <div id="logPage" class="page active">
-    <!-- 新しいヘッダー -->
     <header>
-      <div style="width:70px"></div>
-      <h1>MONEY LOG PRO</h1>
-      <button class="nav-btn" onclick="switchPage('stockPage')">保有銘柄 📊</button>
+      <div style="min-width:70px;"></div>
+      <h1>MONEY LOG</h1>
+      <button class="nav-btn" onclick="switchPage('stockPage')">保有銘柄</button>
     </header>
 
     <div class="summary">
@@ -90,12 +118,12 @@
     <ul id="expenseList"></ul>
   </div>
 
+  <!-- 銘柄ページ -->
   <div id="stockPage" class="page">
-    <!-- 新しいヘッダー -->
     <header>
       <button class="nav-btn" onclick="switchPage('logPage')">◀ 戻る</button>
       <h1>MY ASSETS</h1>
-      <div style="width:70px"></div>
+      <div style="min-width:70px;"></div>
     </header>
     <div id="stockList"></div>
   </div>
