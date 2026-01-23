@@ -223,34 +223,6 @@
 
   document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
   updateUI();
-
-(function applyShortcutData() {
-  const params = new URLSearchParams(location.search);
-  const raw = params.get("data");
-  if (!raw) return;
-
-  try {
-    const data = JSON.parse(raw);
-
-    // p1,p2,p3 → stocks に反映
-    const map = {
-      p1: 0,
-      p2: 1,
-      p3: 2
-    };
-
-    Object.keys(map).forEach(key => {
-      if (data[key] !== undefined) {
-        state.stocks[map[key]].price = Number(data[key]);
-      }
-    });
-
-    localStorage.setItem('stocks', JSON.stringify(state.stocks));
-  } catch (e) {
-    console.error("JSON parse error", e);
-  }
-})();
-
 </script>
 </body>
 </html>
