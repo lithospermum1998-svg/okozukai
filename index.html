@@ -167,9 +167,27 @@ body {
 .stock-card { background:#f9f9fb; padding:16px; border-radius:var(--radius); margin-bottom:12px; border:1px solid #e5e5ea; }
 .stock-name { font-weight:bold; margin-bottom:6px; }
 .valuation { font-size:24px; font-weight:800; margin-bottom:10px; }
-.stock-inputs { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.stock-inputs div { font-size:11px; color:var(--text-sub); }
-.stock-inputs input { padding:6px; font-size:13px; margin-bottom:4px; }
+
+/* 修正版 NISA 入力欄 */
+.stock-inputs {
+  display: flex;
+  flex-wrap: wrap; /* 狭い画面は下に折り返す */
+  gap: 8px;
+}
+
+.stock-inputs div {
+  flex: 1 1 48%; /* 2列に収まる幅に制限 */
+  font-size: 11px;
+  color: var(--text-sub);
+}
+
+.stock-inputs input {
+  width: 100%; /* div内で幅いっぱい */
+  padding: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  margin-bottom: 4px;
+}
 </style>
 </head>
 
@@ -199,7 +217,6 @@ body {
         <span id="monthlyTotal">0</span><small> 円</small>
       </div>
 
-      <!-- カスタム日付入力 -->
       <div class="input-wrapper">
         <input type="text" id="dateInput" readonly onclick="showDatePicker()" placeholder="日付を選択">
       </div>
@@ -227,7 +244,6 @@ body {
 </div>
 
 <script>
-// ===== State =====
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
@@ -239,7 +255,6 @@ let state = {
   editingId: null
 };
 
-// ===== Page Switch =====
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -248,13 +263,11 @@ function switchPage(id){
   if(id==='stockPage') renderStocks();
 }
 
-// ===== Month Change =====
 function changeMonth(diff){
   state.currentView.setMonth(state.currentView.getMonth() + diff);
   updateUI();
 }
 
-// ===== Custom Date Picker =====
 function showDatePicker(){
   const picker = document.createElement('input');
   picker.type = 'date';
@@ -270,7 +283,6 @@ function showDatePicker(){
   picker.click();
 }
 
-// ===== Add Entry =====
 function addEntry(type){
   const amount = parseInt(document.getElementById('amountInput').value);
   if(!amount) return;
@@ -286,7 +298,6 @@ function addEntry(type){
   save();
 }
 
-// ===== Save / Cancel =====
 function save(){
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   updateUI();
@@ -301,7 +312,6 @@ function cancelEdit(){
 
 function handleGlobalClick(){ if(state.editingId) cancelEdit(); }
 
-// ===== Update UI =====
 function updateUI(){
   const list = document.getElementById('expenseList');
   const now = state.currentView;
@@ -330,13 +340,11 @@ function updateUI(){
   `).join('');
 }
 
-// ===== Delete =====
 function deleteEntry(id){
   state.expenses = state.expenses.filter(e=>e.id!==id);
   save();
 }
 
-// ===== Swipe / Long Press =====
 let startX=0;
 function handleStart(e,id){
   startX = e.touches[0].pageX;
@@ -357,7 +365,6 @@ function handleMove(e){
   if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
 }
 
-// ===== NISA =====
 function renderStocks(){
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s,i)=>{
@@ -383,7 +390,6 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-// ===== Update from Shortcut via URL =====
 function updateStocksFromURL(){
   const params = new URLSearchParams(window.location.search);
   const prices = {
@@ -408,7 +414,6 @@ function updateStocksFromShortcut(prices){
 document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
 updateStocksFromURL();
 updateUI();
-
 </script>
 </body>
 </html>
