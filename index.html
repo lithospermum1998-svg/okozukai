@@ -31,10 +31,16 @@ body {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ヘッダー */
+/* ヘッダーとタブ */
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 header h1 { font-size: 20px; margin: 0; flex: 1; text-align: center; letter-spacing: 1px; }
-.nav-btn { color: var(--ios-blue); font-weight: bold; cursor: pointer; width: 70px; font-size: 14px; border:none; background:none; }
+
+.tab-btns { display: flex; gap: 10px; }
+.tab-btn {
+  flex: 1; text-align: center; padding: 8px 0; font-weight: bold; border-radius: var(--radius);
+  cursor: pointer; border: 1px solid #ccc; background: #fafafa; color: var(--text-main);
+}
+.tab-btn.active { background: var(--ios-blue); color: white; border-color: var(--ios-blue); }
 
 /* 収支ログ用 */
 .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
@@ -68,13 +74,18 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 <body onclick="handleGlobalClick()">
 
 <div class="container" onclick="event.stopPropagation()">
-  
+
+  <!-- ヘッダー タブ部分 -->
+  <header>
+    <h1>MONEY LOG PRO</h1>
+    <div class="tab-btns">
+      <div class="tab-btn active" onclick="switchPage('logPage', this)">家計</div>
+      <div class="tab-btn" onclick="switchPage('stockPage', this)">NISA</div>
+    </div>
+  </header>
+
+  <!-- 家計画面 -->
   <div id="logPage" class="page active">
-    <header>
-      <div style="width:70px"></div>
-      <h1>MONEY LOG</h1>
-      <button class="nav-btn" onclick="switchPage('stockPage')">保有銘柄 📈</button>
-    </header>
     <div class="summary">
       <div style="font-size:12px; color:var(--text-sub)">今月の支出合計</div>
       <span id="monthlyTotal">0</span><small> 円</small>
@@ -89,12 +100,8 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
     <ul id="expenseList"></ul>
   </div>
 
+  <!-- NISA画面 -->
   <div id="stockPage" class="page">
-    <header>
-      <button class="nav-btn" onclick="switchPage('logPage')">◀ 戻る</button>
-      <h1>MY ASSETS</h1>
-      <div style="width:70px"></div>
-    </header>
     <div id="stockList"></div>
   </div>
 
@@ -112,35 +119,34 @@ let state = {
   editingId: null
 };
 
-// ===== ここから移植部分（先に貼ったコードの画面遷移ロジック） =====
-function switchPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+// ページ切り替え（タブボタン用）
+function switchPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if(id === 'stockPage') renderStocks();
+  // タブのアクティブ表示切り替え
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if(id==='stockPage') renderStocks();
 }
-// ===== 移植ここまで =====
 
 // 銘柄描画
-function renderStocks() {
-  const container = document.getElementById('stockList');
-  container.innerHTML = state.stocks.map((s,i)=>{
-    const valuation = Math.floor((s.price*s.holding)/10000);
-    return `
-      <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="valuation">¥${valuation.toLocaleString()}</div>
-        <div class="stock-inputs">
-          <div>
-            基準価額 (1万口当り)
-            <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal">
-          </div>
-          <div>
-            保有口数
-            <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal">
-          </div>
+function renderStocks(){
+  const container=document.getElementById('stockList');
+  container.innerHTML=state.stocks.map((s,i)=>{
+    const valuation=Math.floor(s.price*s.holding/10000);
+    return `<div class="stock-card">
+      <div class="stock-name">${s.name}</div>
+      <div class="valuation">¥${valuation.toLocaleString()}</div>
+      <div class="stock-inputs">
+        <div>基準価額 (1万口当り)
+          <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal">
+        </div>
+        <div>保有口数
+          <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal">
         </div>
       </div>
-    `;
+    </div>`;
   }).join('');
 }
 
