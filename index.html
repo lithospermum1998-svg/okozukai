@@ -29,7 +29,7 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* ===== Header ===== */
+/* Header */
 .header-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -62,7 +62,7 @@ body {
   color: #fff;
 }
 
-/* ===== Content ===== */
+/* Content */
 .content-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -73,7 +73,7 @@ body {
 .page { display: none; }
 .page.active { display: block; }
 
-/* ===== Summary ===== */
+/* Summary */
 .summary {
   background: var(--bg-color);
   padding: 15px;
@@ -106,16 +106,13 @@ body {
 #monthlyTotal { font-size: 28px; font-weight: 800; }
 .summary-label { font-size: 12px; color: var(--text-sub); }
 
-/* ===== Input wrapper for date ===== */
+/* Input */
 .input-wrapper {
-  text-align: center;
-  margin-bottom: 10px;
   max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 10px auto;
 }
 
-.input-wrapper input[type="date"] {
+.input-wrapper input {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -123,9 +120,11 @@ body {
   border-radius: var(--radius);
   background: #fafafa;
   box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
 }
 
-/* ===== Other Inputs ===== */
+/* Other Inputs */
 .input-number, .input-text {
   max-width: 360px;
   margin: 0 auto 10px auto;
@@ -142,7 +141,7 @@ body {
   background: #fafafa;
 }
 
-/* ===== Buttons ===== */
+/* Buttons */
 .action-row {
   display: flex;
   gap: 10px;
@@ -154,7 +153,7 @@ body {
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* ===== Expense list ===== */
+/* Expense List */
 #expenseList { list-style:none; padding:0; margin-top:20px; }
 .swipe-item { position:relative; overflow:hidden; background-color:var(--ios-red); border-radius:8px; margin-bottom:1px; }
 .item-content { display:flex; justify-content:space-between; padding:12px 16px; background:#fff; position:relative; z-index:2; transition:0.3s; border-bottom:1px solid #f2f2f7; }
@@ -164,14 +163,13 @@ body {
 .amount.invest { color: var(--ios-green); font-weight:bold; }
 .swipe-delete-btn { position:absolute; right:0; top:0; bottom:0; width:80px; background: var(--ios-red); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; }
 
-/* ===== Stock ===== */
+/* Stock */
 .stock-card { background:#f9f9fb; padding:16px; border-radius:var(--radius); margin-bottom:12px; border:1px solid #e5e5ea; }
 .stock-name { font-weight:bold; margin-bottom:6px; }
 .valuation { font-size:24px; font-weight:800; margin-bottom:10px; }
 .stock-inputs { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .stock-inputs div { font-size:11px; color:var(--text-sub); }
 .stock-inputs input { padding:6px; font-size:13px; margin-bottom:4px; }
-
 </style>
 </head>
 
@@ -201,8 +199,9 @@ body {
         <span id="monthlyTotal">0</span><small> 円</small>
       </div>
 
+      <!-- カスタム日付入力 -->
       <div class="input-wrapper">
-        <input type="date" id="dateInput">
+        <input type="text" id="dateInput" readonly onclick="showDatePicker()" placeholder="日付を選択">
       </div>
       <div class="input-number">
         <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
@@ -228,6 +227,7 @@ body {
 </div>
 
 <script>
+// ===== State =====
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
@@ -239,6 +239,7 @@ let state = {
   editingId: null
 };
 
+// ===== Page Switch =====
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -247,11 +248,29 @@ function switchPage(id){
   if(id==='stockPage') renderStocks();
 }
 
+// ===== Month Change =====
 function changeMonth(diff){
   state.currentView.setMonth(state.currentView.getMonth() + diff);
   updateUI();
 }
 
+// ===== Custom Date Picker =====
+function showDatePicker(){
+  const picker = document.createElement('input');
+  picker.type = 'date';
+  picker.value = state.currentView.toISOString().split('T')[0];
+  picker.style.position = 'absolute';
+  picker.style.opacity = 0;
+  document.body.appendChild(picker);
+  picker.onchange = ()=> {
+    document.getElementById('dateInput').value = picker.value;
+    document.body.removeChild(picker);
+  }
+  picker.focus();
+  picker.click();
+}
+
+// ===== Add Entry =====
 function addEntry(type){
   const amount = parseInt(document.getElementById('amountInput').value);
   if(!amount) return;
@@ -267,6 +286,7 @@ function addEntry(type){
   save();
 }
 
+// ===== Save / Cancel =====
 function save(){
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   updateUI();
@@ -281,6 +301,7 @@ function cancelEdit(){
 
 function handleGlobalClick(){ if(state.editingId) cancelEdit(); }
 
+// ===== Update UI =====
 function updateUI(){
   const list = document.getElementById('expenseList');
   const now = state.currentView;
@@ -309,11 +330,13 @@ function updateUI(){
   `).join('');
 }
 
+// ===== Delete =====
 function deleteEntry(id){
   state.expenses = state.expenses.filter(e=>e.id!==id);
   save();
 }
 
+// ===== Swipe / Long Press =====
 let startX=0;
 function handleStart(e,id){
   startX = e.touches[0].pageX;
@@ -334,7 +357,7 @@ function handleMove(e){
   if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
 }
 
-// ==== NISA ====
+// ===== NISA =====
 function renderStocks(){
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s,i)=>{
@@ -360,9 +383,10 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-// 初期化
+// ===== Init =====
 document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
 updateUI();
+
 </script>
 
 </body>
