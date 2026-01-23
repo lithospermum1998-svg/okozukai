@@ -27,14 +27,15 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-/* ページ切り替え */
 .page { display: none; }
 .page.active { display: block; }
 
-/* 先に貼った家計/NISAタブ見た目 */
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-header h1 { font-size: 20px; margin: 0; flex: 1; text-align: center; letter-spacing: 1px; }
-.nav-btn { color: var(--ios-blue); font-weight: bold; cursor: pointer; width: 70px; font-size: 14px; border:none; background:none; }
+/* ヘッダー部分（タイトル + 家計/NISAボタン） */
+header { display: block; margin-bottom: 15px; }
+header h1 { font-size: 20px; margin: 0; text-align: center; letter-spacing: 1px; }
+.header-tabs { display: flex; justify-content: center; margin-top: 10px; gap: 20px; }
+.header-tabs button { padding: 8px 20px; border-radius: 20px; border: 1px solid #e5e5ea; background: #fff; cursor: pointer; font-weight: bold; color: var(--ios-blue); }
+.header-tabs button.active { background: var(--ios-blue); color: #fff; }
 
 /* 収支ログ用 */
 .summary { background: var(--bg-color); padding: 15px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; }
@@ -69,11 +70,13 @@ input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px; mar
 
 <div class="container" onclick="event.stopPropagation()">
 
-  <!-- ヘッダー（家計/NISAボタン見た目を先に貼ったコードから移植） -->
+  <!-- ヘッダー部分（タイトル + 家計/NISAボタン） -->
   <header>
-    <button class="nav-btn" onclick="switchPage('logPage')">家計</button>
     <h1>MONEY LOG</h1>
-    <button class="nav-btn" onclick="switchPage('stockPage')">NISA</button>
+    <div class="header-tabs">
+      <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
+      <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
+    </div>
   </header>
 
   <!-- 家計ページ -->
@@ -111,10 +114,15 @@ let state = {
   editingId: null
 };
 
-// 画面遷移ロジック（後に貼ったコードから）
+// 画面切り替え
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+
+  // ヘッダーのアクティブボタン切替
+  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
+  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+
   if(id==='stockPage') renderStocks();
 }
 
