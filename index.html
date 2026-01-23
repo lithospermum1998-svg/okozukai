@@ -32,7 +32,6 @@ body {
 }
 
 /* ===== Header ===== */
-
 .header-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -70,7 +69,6 @@ body {
 }
 
 /* ===== Content ===== */
-
 .content-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -82,7 +80,6 @@ body {
 .page.active { display: block; }
 
 /* ===== Summary ===== */
-
 .summary {
   background: var(--bg-color);
   padding: 15px;
@@ -94,8 +91,8 @@ body {
 .month-switch {
   display: flex;
   align-items: center;
-  justify-content: center;   /* ← 中央寄せ */
-  gap: 8px;                  /* ← 年月と矢印を近づける */
+  justify-content: center;   /* 中央寄せ */
+  gap: 8px;                  /* 年月と矢印の距離 */
   margin-bottom: 6px;
 }
 
@@ -129,12 +126,13 @@ body {
 }
 
 /* ===== Inputs ===== */
-
 input {
   width: 100%;
+  max-width: 360px;       /* ← summaryカードに合わせる */
+  margin: 0 auto 10px auto; /* 中央基準 */
+  box-sizing: border-box;
   font-size: 16px;
   padding: 12px;
-  margin-bottom: 10px;
   border: 1px solid #e5e5ea;
   border-radius: var(--radius);
   background: #fafafa;
@@ -143,6 +141,8 @@ input {
 .action-row {
   display: flex;
   gap: 10px;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
 .btn {
@@ -159,7 +159,6 @@ input {
 .btn-invest { background: var(--ios-green); }
 
 /* ===== List ===== */
-
 #expenseList {
   list-style: none;
   padding: 0;
@@ -170,7 +169,6 @@ input {
 .amount.invest { color: var(--ios-green); font-weight: bold; }
 
 /* ===== Stock ===== */
-
 .stock-card {
   background: #f9f9fb;
   padding: 16px;
@@ -179,16 +177,9 @@ input {
   border: 1px solid #e5e5ea;
 }
 
-.stock-name {
-  font-weight: bold;
-  margin-bottom: 6px;
-}
+.stock-name { font-weight: bold; margin-bottom: 6px; }
+.valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
 
-.valuation {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 10px;
-}
 </style>
 </head>
 
@@ -206,7 +197,7 @@ input {
 
   <div class="content-card">
 
-    <!-- 家計 -->
+    <!-- 家計ページ -->
     <div id="logPage" class="page active">
       <div class="summary">
         <div class="month-switch">
@@ -230,7 +221,7 @@ input {
       <ul id="expenseList"></ul>
     </div>
 
-    <!-- NISA -->
+    <!-- NISAページ -->
     <div id="stockPage" class="page">
       <div id="stockList"></div>
     </div>
