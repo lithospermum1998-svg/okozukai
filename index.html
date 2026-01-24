@@ -43,7 +43,7 @@ body {
 .header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-/* Main Island - タイトに凝縮 */
+/* Main Island */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -59,7 +59,6 @@ body {
 
 .valuation { font-size: 22px; font-weight: 800; margin: 4px 0; }
 
-/* 入力欄：上下幅を狭く */
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .ios-input {
   width: 100%;
@@ -83,20 +82,49 @@ body {
   background: var(--ios-blue);
 }
 
-/* 履歴：シュッとした枠線付き */
+/* 履歴エリア */
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 10px; margin-bottom: 8px; }
+
+/* スライド削除を正常化するための構造 */
+.swipe-item { 
+  position: relative; 
+  overflow: hidden; 
+  background-color: var(--ios-red); /* 下地に赤 */
+  border-radius: 10px; 
+  margin-bottom: 8px; 
+}
 
 .item-content { 
   display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px;
-  position: relative; z-index: 2; transition: 0.3s;
+  padding: 10px 14px; 
+  background: #f9f9fb; /* コンテンツ自体の背景 */
+  border: 1px solid var(--input-border); 
+  border-radius: 10px;
+  position: relative; 
+  z-index: 2; /* 赤い削除ボタンより上に配置 */
+  transition: transform 0.3s ease; /* スライドのアニメーション */
 }
 
-/* NISAカードもタイトに */
+.swipe-delete-btn { 
+  position: absolute; 
+  right: 0; 
+  top: 0; 
+  bottom: 0; 
+  width: 70px; 
+  background: var(--ios-red); 
+  color: white; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 13px; 
+  font-weight: bold; 
+  z-index: 1; /* コンテンツの下に配置 */
+}
+
+/* NISA */
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
@@ -210,11 +238,13 @@ function updateUI(){
   const view = state.currentView;
   const selDate = new Date(state.selectedDate);
   document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
+  
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+  
   list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
     <li class="swipe-item">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
@@ -263,9 +293,11 @@ function updateStock(index, field, value) {
   renderStocks();
 }
 
+/* スワイプ操作のロジック */
 let startX=0;
 function handleStart(e,id){
   startX = e.touches[0].pageX;
+  // 長押しで編集モード
   window.ptimer=setTimeout(()=>{
     const target = state.expenses.find(ex=>ex.id===id);
     document.getElementById('amountInput').value=target.amount;
@@ -275,11 +307,17 @@ function handleStart(e,id){
     updateUI();
   },800);
 }
+
 function handleMove(e){
   clearTimeout(window.ptimer);
   const diff = startX - e.touches[0].pageX;
-  if(diff>60) e.currentTarget.style.transform="translateX(-70px)";
-  if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
+  const content = e.currentTarget;
+  // スライドの制御
+  if(diff > 40) {
+    content.style.transform = "translateX(-70px)";
+  } else if(diff < -40) {
+    content.style.transform = "translateX(0px)";
+  }
 }
 
 updateUI();
