@@ -26,8 +26,12 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.container { max-width: 420px; margin: 0 auto; }
+.container {
+  max-width: 420px;
+  margin: 0 auto;
+}
 
+/* ---------- HEADER ---------- */
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -35,6 +39,7 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
 }
+
 .island-header h1 {
   font-size: 16px;
   margin: 0 0 12px;
@@ -49,6 +54,7 @@ body {
   border-radius: 10px;
   padding: 2px;
 }
+
 .header-tabs button {
   flex: 1;
   padding: 6px 0;
@@ -58,6 +64,7 @@ body {
   font-size: 13px;
   color: var(--text-sub);
 }
+
 .header-tabs button.active {
   background: var(--card-bg);
   border-radius: 8px;
@@ -65,6 +72,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* ---------- ISLAND ---------- */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -73,23 +81,47 @@ body {
   margin-bottom: 12px;
 }
 
-.summary { text-align: center; }
+/* ---------- TITLE (白ピル) ---------- */
+.island-title {
+  position: relative;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+  padding-left: 16px;
+}
 
-/* ▼▼ 見た目調整ここ ▼▼ */
+.island-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 4px;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* ---------- SUMMARY ---------- */
+.summary {
+  text-align: center;
+}
+
 .valuation {
   font-size: 26px;
   font-weight: 800;
-  margin: 4px 0 2px; /* TOTALと前日比の間を詰める */
+  margin: 4px 0 2px;
 }
 
 .diff {
   font-size: 13px;
   font-weight: 700;
-  color: var(--text-sub); /* 色分け廃止：常にグレー */
-  margin-top: 0;
+  color: var(--text-sub);
 }
-/* ▲▲ ここまで ▲▲ */
 
+/* ---------- DATE ---------- */
 .month-switch {
   display: flex;
   align-items: center;
@@ -110,6 +142,7 @@ body {
   cursor: pointer;
 }
 
+/* ---------- INPUT ---------- */
 .input-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -138,20 +171,12 @@ body {
   font-size: 15px;
 }
 
+/* ---------- LIST ---------- */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.island-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-bottom: 8px;
-  border-left: 3px solid var(--text-sub);
-  padding-left: 8px;
 }
 
 #expenseList {
@@ -176,6 +201,7 @@ body {
   font-size: 14px;
 }
 
+/* ---------- STOCK ---------- */
 .stock-card {
   background: #f9f9fb;
   padding: 12px;
@@ -197,6 +223,7 @@ body {
   display: block;
 }
 
+/* ---------- PAGE ---------- */
 .page { display: none; }
 .page.active { display: block; }
 </style>
@@ -216,6 +243,7 @@ body {
   <!-- 家計 -->
   <div id="logPage" class="page active">
     <div class="island-main">
+      <div class="island-title">MONTHLY SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
           <button class="month-btn" onclick="changeMonth(-1)">◀</button>
@@ -233,7 +261,7 @@ body {
     </div>
 
     <div class="island-output">
-      <div class="island-title">最近の履歴</div>
+      <div class="island-title">RECENT</div>
       <ul id="expenseList"></ul>
     </div>
   </div>
@@ -371,16 +399,12 @@ function renderStocks(){
     `;
   }).join('');
 
-  document.getElementById('stockTotal').textContent =
-    total.toLocaleString();
+  document.getElementById('stockTotal').textContent = total.toLocaleString();
 
   const diff = total - state.prevStockTotal;
-  const rate = state.prevStockTotal
-    ? (diff / state.prevStockTotal * 100)
-    : 0;
+  const rate = state.prevStockTotal ? (diff / state.prevStockTotal * 100) : 0;
 
-  const diffEl = document.getElementById('stockDiff');
-  diffEl.textContent =
+  document.getElementById('stockDiff').textContent =
     `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
 
   state.prevStockTotal = total;
