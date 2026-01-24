@@ -8,11 +8,12 @@
 <style>
 :root {
   --ios-black: #000000;
-  --ios-red: #ff3b30;
   --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #8e8e93; /* 落ち着いたグレー */
+  --text-sub: #8e8e93; 
+  --btn-gray: #707074; /* 一段落としたグレー */
+  --delete-gray: #3a3a3c; /* 赤の代わりのダークグレー */
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
@@ -71,7 +72,7 @@ body {
   color: var(--text-main);
 }
 
-/* ボタン：グレーにして主張を抑える */
+/* 記録ボタン：さらに色味を落としたグレー */
 .btn-record { 
   width: 100%;
   padding: 12px; 
@@ -80,7 +81,7 @@ body {
   color: #fff; 
   font-weight: 800; 
   font-size: 15px; 
-  background: var(--text-sub); /* グレーに変更 */
+  background: var(--btn-gray);
 }
 
 /* 履歴エリア */
@@ -97,7 +98,7 @@ body {
 .swipe-item { 
   position: relative; 
   overflow: hidden; 
-  background-color: var(--ios-red); 
+  background-color: var(--delete-gray); /* 削除背景をダークグレーに */
   border-radius: 10px; 
   margin-bottom: 8px;
   animation: slideDown 0.2s ease-out forwards;
@@ -114,11 +115,17 @@ body {
   transition: transform 0.3s ease;
 }
 
+/* 削除ボタン：赤を廃止 */
 .swipe-delete-btn { 
   position: absolute; right: 0; top: 0; bottom: 0; width: 70px; 
-  background: var(--ios-red); color: white; display: flex; 
-  align-items: center; justify-content: center; font-size: 13px; 
-  font-weight: bold; z-index: 1;
+  background: var(--delete-gray); 
+  color: #d1d1d6; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 13px; 
+  font-weight: bold; 
+  z-index: 1;
 }
 
 .amount-text { color: var(--ios-black); font-weight: 700; font-size: 14px; }
@@ -134,197 +141,195 @@ body {
 </head>
 
 <body>
-
-<div class="container">
-  <div class="island-header">
-    <h1>MONEY LOG</h1>
-    <div class="header-tabs">
-      <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
-      <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
+  <div class="container">
+    <div class="island-header">
+      <h1>MONEY LOG</h1>
+      <div class="header-tabs">
+        <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
+        <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
+      </div>
     </div>
-  </div>
-
-  <div id="logPage" class="page active">
-    <div class="island-main">
-      <div class="summary">
-        <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="dateLabel" onclick="showDatePicker()"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶</button>
+  
+    <div id="logPage" class="page active">
+      <div class="island-main">
+        <div class="summary">
+          <div class="month-switch">
+            <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+            <div id="dateLabel" onclick="showDatePicker()"></div>
+            <button class="month-btn" onclick="changeMonth(1)">▶</button>
+          </div>
+          <div class="valuation">¥<span id="monthlyTotal">0</span></div>
         </div>
-        <div class="valuation">¥<span id="monthlyTotal">0</span></div>
+  
+        <div class="input-grid">
+          <input type="number" id="amountInput" class="ios-input" placeholder="金額" inputmode="decimal">
+          <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
+        </div>
+        <button class="btn-record" onclick="addEntry('record')">記録</button>
       </div>
-
-      <div class="input-grid">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額" inputmode="decimal">
-        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
+  
+      <div class="island-output">
+        <div class="island-title">最近の履歴</div>
+        <ul id="expenseList"></ul>
       </div>
-      <button class="btn-record" onclick="addEntry('record')">記録</button>
     </div>
-
-    <div class="island-output">
-      <div class="island-title">最近の履歴</div>
-      <ul id="expenseList"></ul>
+  
+    <div id="stockPage" class="page">
+      <div class="island-main">
+        <div class="island-title">MY ASSETS</div>
+        <div id="stockList"></div>
+      </div>
     </div>
   </div>
-
-  <div id="stockPage" class="page">
-    <div class="island-main">
-      <div class="island-title">MY ASSETS</div>
-      <div id="stockList"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-// (中略：JavaScript部分は前回と同様です)
-let state = {
-  expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-  stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", price: 0, holding: 0 },
-    { name: "WCM世界成長株激選", price: 0, holding: 0 },
-    { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
-  ],
-  currentView: new Date(),
-  selectedDate: new Date().toISOString().split('T')[0]
-};
-
-function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
-  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
-  if(id === 'stockPage') renderStocks();
-}
-
-function changeMonth(diff){
-  state.currentView.setMonth(state.currentView.getMonth() + diff);
-  state.selectedDate = new Date(state.currentView.getFullYear(), state.currentView.getMonth(), state.currentView.getDate()).toISOString().split('T')[0];
-  updateUI();
-}
-
-function showDatePicker(){
-  const picker = document.createElement('input');
-  picker.type = 'date';
-  picker.value = state.selectedDate;
-  picker.style.position = 'absolute'; picker.style.opacity = 0;
-  document.body.appendChild(picker);
-  picker.onchange = ()=> {
-    state.selectedDate = picker.value;
-    state.currentView = new Date(picker.value);
-    document.body.removeChild(picker);
+  
+  <script>
+  let state = {
+    expenses: JSON.parse(localStorage.getItem('expenses')) || [],
+    stocks: JSON.parse(localStorage.getItem('stocks')) || [
+      { name: "ブラックロック・ゴールド", price: 0, holding: 0 },
+      { name: "WCM世界成長株激選", price: 0, holding: 0 },
+      { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
+    ],
+    currentView: new Date(),
+    selectedDate: new Date().toISOString().split('T')[0]
+  };
+  
+  function switchPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('tab-log').classList.toggle('active', id==='logPage');
+    document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+    if(id === 'stockPage') renderStocks();
+  }
+  
+  function changeMonth(diff){
+    state.currentView.setMonth(state.currentView.getMonth() + diff);
+    state.selectedDate = new Date(state.currentView.getFullYear(), state.currentView.getMonth(), state.currentView.getDate()).toISOString().split('T')[0];
     updateUI();
   }
-  picker.focus(); picker.click();
-}
-
-function addEntry(type){
-  const amountInput = document.getElementById('amountInput');
-  const memoInput = document.getElementById('memoInput');
-  const amount = parseInt(amountInput.value);
-  if(!amount) return;
-  state.expenses.push({ id: Date.now(), type, amount, memo: memoInput.value, date: state.selectedDate });
-  amountInput.value = ""; memoInput.value = "";
-  save();
-}
-
-function save(){
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  updateUI();
-}
-
-function updateUI(){
-  const list = document.getElementById('expenseList');
-  const view = state.currentView;
-  const selDate = new Date(state.selectedDate);
-  document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
-  const filtered = state.expenses.filter(e=>{
-    const d = new Date(e.date);
-    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
-  });
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
-    <li class="swipe-item">
-      <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
-      <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="handleEnd(event)" ontouchmove="handleMove(event)">
-        <div>
-          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
-          <div style="font-size:10px; color:var(--text-sub)">${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}</div>
-        </div>
-        <div style="color:#c7c7cc; font-size:10px;">●</div>
-      </div>
-    </li>
-  `).join('');
-}
-
-function deleteEntry(id){
-  state.expenses = state.expenses.filter(e=>e.id!==id);
-  save();
-}
-
-function renderStocks() {
-  const container = document.getElementById('stockList');
-  container.innerHTML = state.stocks.map((s, i) => {
-    const valuation = Math.floor((s.price * s.holding) / 10000);
-    return `
-      <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="valuation">¥${valuation.toLocaleString()}</div>
-        <div class="input-grid">
-          <div>
-            <span class="stock-label">基準価額</span>
-            <input type="number" class="ios-input" value="${s.price}" onchange="updateStock(${i}, 'price', this.value)" inputmode="decimal">
-          </div>
-          <div>
-            <span class="stock-label">保有口数</span>
-            <input type="number" class="ios-input" value="${s.holding}" onchange="updateStock(${i}, 'holding', this.value)" inputmode="decimal">
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function updateStock(index, field, value) {
-  state.stocks[index][field] = parseFloat(value) || 0;
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
-  renderStocks();
-}
-
-let startX=0;
-let pressTimer=null;
-
-function handleStart(e,id){
-  startX = e.touches[0].pageX;
-  if(pressTimer) clearTimeout(pressTimer);
-  pressTimer = setTimeout(()=>{
-    const target = state.expenses.find(ex=>ex.id===id);
-    if(target){
-      document.getElementById('amountInput').value=target.amount;
-      document.getElementById('memoInput').value=target.memo;
-      state.selectedDate = target.date;
-      state.currentView = new Date(target.date);
-      e.currentTarget.style.opacity="0.5";
-      setTimeout(()=>{e.currentTarget.style.opacity="1"},200);
+  
+  function showDatePicker(){
+    const picker = document.createElement('input');
+    picker.type = 'date';
+    picker.value = state.selectedDate;
+    picker.style.position = 'absolute'; picker.style.opacity = 0;
+    document.body.appendChild(picker);
+    picker.onchange = ()=> {
+      state.selectedDate = picker.value;
+      state.currentView = new Date(picker.value);
+      document.body.removeChild(picker);
       updateUI();
-      window.scrollTo({top:0, behavior:'smooth'});
     }
-  },800);
-}
-
-function handleMove(e){
-  const diff = startX - e.touches[0].pageX;
-  if(Math.abs(diff)>5) clearTimeout(pressTimer);
-  const content = e.currentTarget;
-  if(diff > 40) content.style.transform = "translateX(-70px)";
-  else if(diff < -40) content.style.transform = "translateX(0px)";
-}
-
-function handleEnd(e){
-  clearTimeout(pressTimer);
-}
-
-updateUI();
-</script>
+    picker.focus(); picker.click();
+  }
+  
+  function addEntry(type){
+    const amountInput = document.getElementById('amountInput');
+    const memoInput = document.getElementById('memoInput');
+    const amount = parseInt(amountInput.value);
+    if(!amount) return;
+    state.expenses.push({ id: Date.now(), type, amount, memo: memoInput.value, date: state.selectedDate });
+    amountInput.value = ""; memoInput.value = "";
+    save();
+  }
+  
+  function save(){
+    localStorage.setItem('expenses', JSON.stringify(state.expenses));
+    updateUI();
+  }
+  
+  function updateUI(){
+    const list = document.getElementById('expenseList');
+    const view = state.currentView;
+    const selDate = new Date(state.selectedDate);
+    document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
+    const filtered = state.expenses.filter(e=>{
+      const d = new Date(e.date);
+      return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
+    });
+    document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+    list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
+      <li class="swipe-item">
+        <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
+        <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="handleEnd(event)" ontouchmove="handleMove(event)">
+          <div>
+            <div class="amount-text">¥${e.amount.toLocaleString()}</div>
+            <div style="font-size:10px; color:var(--text-sub)">${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}</div>
+          </div>
+          <div style="color:#c7c7cc; font-size:10px;">●</div>
+        </div>
+      </li>
+    `).join('');
+  }
+  
+  function deleteEntry(id){
+    state.expenses = state.expenses.filter(e=>e.id!==id);
+    save();
+  }
+  
+  function renderStocks() {
+    const container = document.getElementById('stockList');
+    container.innerHTML = state.stocks.map((s, i) => {
+      const valuation = Math.floor((s.price * s.holding) / 10000);
+      return `
+        <div class="stock-card">
+          <div class="stock-name">${s.name}</div>
+          <div class="valuation">¥${valuation.toLocaleString()}</div>
+          <div class="input-grid">
+            <div>
+              <span class="stock-label">基準価額</span>
+              <input type="number" class="ios-input" value="${s.price}" onchange="updateStock(${i}, 'price', this.value)" inputmode="decimal">
+            </div>
+            <div>
+              <span class="stock-label">保有口数</span>
+              <input type="number" class="ios-input" value="${s.holding}" onchange="updateStock(${i}, 'holding', this.value)" inputmode="decimal">
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  function updateStock(index, field, value) {
+    state.stocks[index][field] = parseFloat(value) || 0;
+    localStorage.setItem('stocks', JSON.stringify(state.stocks));
+    renderStocks();
+  }
+  
+  let startX=0;
+  let pressTimer=null;
+  
+  function handleStart(e,id){
+    startX = e.touches[0].pageX;
+    if(pressTimer) clearTimeout(pressTimer);
+    pressTimer = setTimeout(()=>{
+      const target = state.expenses.find(ex=>ex.id===id);
+      if(target){
+        document.getElementById('amountInput').value=target.amount;
+        document.getElementById('memoInput').value=target.memo;
+        state.selectedDate = target.date;
+        state.currentView = new Date(target.date);
+        e.currentTarget.style.opacity="0.5";
+        setTimeout(()=>{e.currentTarget.style.opacity="1"},200);
+        updateUI();
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+    },800);
+  }
+  
+  function handleMove(e){
+    const diff = startX - e.touches[0].pageX;
+    if(Math.abs(diff)>5) clearTimeout(pressTimer);
+    const content = e.currentTarget;
+    if(diff > 40) content.style.transform = "translateX(-70px)";
+    else if(diff < -40) content.style.transform = "translateX(0px)";
+  }
+  
+  function handleEnd(e){
+    clearTimeout(pressTimer);
+  }
+  
+  updateUI();
+  </script>
 </body>
 </html>
