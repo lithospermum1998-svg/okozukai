@@ -73,7 +73,10 @@ body {
   margin-bottom: 12px;
 }
 
-.summary { text-align: center; }
+.summary {
+  text-align: center;
+}
+
 .valuation {
   font-size: 26px;
   font-weight: 800;
@@ -86,11 +89,13 @@ body {
   justify-content: center;
   gap: 8px;
 }
+
 #dateLabel {
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
 }
+
 .month-btn {
   font-size: 12px;
   background: none;
@@ -137,7 +142,7 @@ body {
   font-size: 12px;
   font-weight: 700;
   color: var(--text-sub);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border-left: 3px solid var(--text-sub);
   padding-left: 8px;
 }
@@ -230,8 +235,8 @@ body {
   <div id="stockPage" class="page">
     <!-- Summary Island -->
     <div class="island-main">
+      <div class="island-title">TOTAL ASSETS</div>
       <div class="summary">
-        <div class="island-title">TOTAL ASSETS</div>
         <div class="valuation">¥<span id="stockTotal">0</span></div>
       </div>
     </div>
