@@ -3,24 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG PRO</title>
+<title>MONEY LOG</title>
 
 <style>
 :root {
   --ios-blue: #007aff;
   --ios-green: #34c759;
-  --bg-color: #f6f7fb; 
+  --ios-red: #ff3b30;
+  --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #a1a1a6;
-  --radius: 24px;
+  --text-sub: #8e8e93; 
+  --radius: 20px;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
   background: var(--bg-color);
   margin: 0;
-  padding: 12px;
+  padding: 16px;
   color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
 }
@@ -31,91 +32,155 @@ body {
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 12px 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-  margin-bottom: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
 }
 
-.island-header h1 { font-size: 13px; margin: 0 0 10px; text-align: center; letter-spacing: 4px; font-weight: 900; color: #d1d1d6; }
+.island-header h1 { 
+  font-size: 18px; 
+  margin: 0 0 16px; 
+  text-align: center; 
+  letter-spacing: 2px;
+  font-weight: 800;
+}
 
-.header-tabs { display: flex; background: #efeff4; border-radius: 12px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 10px 0; border: none; background: transparent; font-weight: 700; font-size: 13px; color: var(--text-sub); }
-.header-tabs button.active { background: var(--card-bg); border-radius: 10px; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+.header-tabs {
+  display: flex;
+  background: #e5e5ea;
+  border-radius: 12px;
+  padding: 2px;
+}
 
-/* 第二の島：メイン操作（ここをカッコよく配置） */
+.header-tabs button {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.header-tabs button.active {
+  background: var(--card-bg);
+  border-radius: 10px;
+  color: var(--text-main);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 第二の島：Input & Summary */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 20px 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-  margin-bottom: 12px;
+  padding: 24px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
 }
 
-.summary { text-align: center; margin-bottom: 15px; }
-.month-switch { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 4px; }
-#monthLabel { font-size: 14px; font-weight: 800; color: var(--text-main); cursor: pointer; padding: 4px 12px; border-radius: 20px; background: #f2f2f7; }
-.month-btn { font-size: 12px; color: #000; background: none; border: none; cursor: pointer; padding: 10px; }
+.summary { text-align: center; margin-bottom: 20px; }
 
-#monthlyTotal { font-size: 44px; font-weight: 900; letter-spacing: -2px; margin: 0; }
-.summary-label { font-size: 10px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
-
-/* 入力欄の配置をスタイリッシュに */
-.input-area {
-  margin: 15px 0;
+.month-switch {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
+#monthLabel { 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: var(--text-main); 
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+/* 三角ボタンは黒 */
+.month-btn {
+  font-size: 14px;
+  color: #000000; 
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+.summary-label { font-size: 12px; color: var(--text-sub); }
+
+/* 入力エリア：横並びをキープ */
 .input-box {
   display: flex;
   align-items: center;
-  background: #f4f4f7;
-  border-radius: 16px;
-  padding: 0 16px;
+  background: #f2f2f7;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  overflow: hidden;
 }
 
 input {
-  width: 100%;
-  height: 54px;
+  padding: 14px;
+  font-size: 16px;
   border: none;
   background: transparent;
-  font-size: 17px;
-  font-weight: 600;
   color: var(--text-main);
+  box-sizing: border-box;
 }
-input:focus { outline: none; }
-#amountInput { flex: 4; border-right: 1px solid #e5e5ea; padding-right: 12px; }
-#memoInput { flex: 6; padding-left: 12px; }
 
-/* ボタンの配置 */
-.action-row { display: flex; gap: 8px; }
+#amountInput { flex: 4; border-right: 1px solid #e5e5ea; }
+#memoInput { flex: 6; }
+
+input:focus { outline: none; }
+
+.action-row { display: flex; gap: 12px; }
 .btn { 
   flex: 1; 
-  height: 56px;
-  border-radius: 16px; 
+  padding: 16px; 
+  border-radius: 14px; 
   border: none; 
   color: #fff; 
   font-weight: 800; 
   font-size: 16px; 
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn:active { transform: scale(0.95); opacity: 0.8; }
-.btn-record { background: #1c1c1e; } /* 記録ボタンをあえての黒 */
+.btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 第三の島：履歴 */
-.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 20px 16px; }
-.island-title { font-size: 11px; font-weight: 800; color: var(--text-sub); margin-bottom: 16px; border-left: 3px solid #e5e5ea; padding-left: 10px; letter-spacing: 1px; }
+/* 第三の島：History */
+.island-output {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* 履歴横の棒は文字と同じ薄グレー */
+.island-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-sub);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--text-sub);
+  padding-left: 8px;
+}
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.swipe-item { position: relative; overflow: hidden; background-color: #ff3b30; border-radius: 16px; margin-bottom: 8px; }
-.item-content { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #fff; position: relative; z-index: 2; transition: 0.3s; border-radius: 16px; border: 1px solid #f2f2f7; }
+.swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 12px; margin-bottom: 8px; }
 
-.amount.record { color: var(--text-main); font-weight: 800; font-size: 17px; }
-.amount.invest { color: var(--ios-green); font-weight: 800; font-size: 17px; }
+.item-content { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 14px 16px; 
+  background: #f9f9fb; 
+  position: relative; 
+  z-index: 2; 
+  transition: 0.3s;
+}
 
-.swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: #ff3b30; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.amount.record { color: var(--ios-blue); font-weight: 700; }
+.amount.invest { color: var(--ios-green); font-weight: 700; }
+
+.swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -127,10 +192,10 @@ input:focus { outline: none; }
 <div class="container">
 
   <div class="island-header">
-    <h1>MONEY ARCHIVE</h1>
+    <h1>MONEY LOG</h1>
     <div class="header-tabs">
-      <button id="tab-log" class="active" onclick="switchPage('logPage')">Wallet</button>
-      <button id="tab-stock" onclick="switchPage('stockPage')">Assets</button>
+      <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
+      <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
     </div>
   </div>
 
@@ -142,15 +207,13 @@ input:focus { outline: none; }
           <div id="monthLabel" onclick="showDatePicker()"></div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
-        <div id="monthlyTotal">0</div>
-        <div class="summary-label">Total Spending</div>
+        <div class="summary-label">今月の支出合計</div>
+        <span id="monthlyTotal">0</span><small> 円</small>
       </div>
 
-      <div class="input-area">
-        <div class="input-box">
-          <input type="number" id="amountInput" placeholder="¥ 0" inputmode="decimal">
-          <input type="text" id="memoInput" placeholder="Memo">
-        </div>
+      <div class="input-box">
+        <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
+        <input type="text" id="memoInput" placeholder="メモ">
       </div>
 
       <div class="action-row">
@@ -160,7 +223,7 @@ input:focus { outline: none; }
     </div>
 
     <div class="island-output">
-      <div class="island-title">TIMELINE</div>
+      <div class="island-title">最近の履歴</div>
       <ul id="expenseList"></ul>
     </div>
   </div>
@@ -175,9 +238,9 @@ input:focus { outline: none; }
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "Gold Fund", price:0, holding:0 },
-    { name: "Global Growth", price:0, holding:0 },
-    { name: "US Trend", price:0, holding:0 }
+    { name: "ブラックロック・ゴールド", price:0, holding:0 },
+    { name: "WCM世界成長株激選", price:0, holding:0 },
+    { name: "SMT米国トレンドランキング", price:0, holding:0 }
   ],
   currentView: new Date(),
   selectedDate: new Date().toISOString().split('T')[0]
@@ -234,7 +297,7 @@ function updateUI(){
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
-  document.getElementById('monthlyTotal').innerHTML = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   
   list.innerHTML = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).reverse().map(e=>`
     <li class="swipe-item">
@@ -242,9 +305,9 @@ function updateUI(){
       <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
         <div>
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
-          <div style="font-size:11px; color:var(--text-sub); font-weight:600;">${e.date.slice(5)} • ${e.memo || '-'}</div>
+          <div style="font-size:11px; color:var(--text-sub)">${e.date.slice(5)} ${e.memo || ''}</div>
         </div>
-        <div style="color:#e5e5ea;">〉</div>
+        <div style="color:#c7c7cc; font-size:12px;">●</div>
       </div>
     </li>
   `).join('');
@@ -279,12 +342,12 @@ function renderStocks(){
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s,i)=>{
     const valuation = Math.floor(s.price*s.holding/10000);
-    return `<div style="background:#fff; padding:18px; border-radius:20px; margin-bottom:12px; border:1px solid #f2f2f7;">
-      <div style="font-size:11px; font-weight:800; color:var(--text-sub); margin-bottom:2px;">${s.name}</div>
-      <div style="font-size:24px; font-weight:900;">¥${valuation.toLocaleString()}</div>
-      <div style="display:flex; gap:10px; margin-top:10px;">
-        <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" style="height:40px; font-size:14px; background:#f4f4f7; padding:0 10px; border-radius:10px;">
-        <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" style="height:40px; font-size:14px; background:#f4f4f7; padding:0 10px; border-radius:10px;">
+    return `<div style="background:#f9f9fb; padding:16px; border-radius:16px; margin-bottom:12px; border-left:4px solid var(--ios-green);">
+      <div style="font-size:14px; font-weight:bold; margin-bottom:4px;">${s.name}</div>
+      <div style="font-size:24px; font-weight:800; margin-bottom:12px;">¥${valuation.toLocaleString()}</div>
+      <div style="display:flex; gap:10px;">
+        <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" style="flex:1; background:#fff; padding:8px; border-radius:8px; font-size:14px;">
+        <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" style="flex:1; background:#fff; padding:8px; border-radius:8px; font-size:14px;">
       </div>
     </div>`;
   }).join('');
