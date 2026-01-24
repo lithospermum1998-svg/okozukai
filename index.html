@@ -13,7 +13,7 @@
   --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #8e8e93; /* 履歴横の棒に使用する色 */
+  --text-sub: #8e8e93; 
   --radius: 20px;
 }
 
@@ -21,156 +21,105 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
   background: var(--bg-color);
   margin: 0;
-  padding: 16px;
+  padding: 12px;
   color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
 }
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 第一の島：Header */
+/* 第一の島 */
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.island-header h1 { 
-  font-size: 18px; 
-  margin: 0 0 16px; 
-  text-align: center; 
-  letter-spacing: 2px;
-  font-weight: 800;
-}
+.island-header h1 { font-size: 16px; margin: 0 0 12px; text-align: center; letter-spacing: 2px; font-weight: 800; }
 
-.header-tabs {
-  display: flex;
-  background: #e5e5ea;
-  border-radius: 12px;
-  padding: 2px;
-}
+.header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
+.header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
+.header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-.header-tabs button {
-  flex: 1;
-  padding: 8px 0;
-  border: none;
-  background: transparent;
-  font-weight: bold;
-  font-size: 14px;
-  color: var(--text-sub);
-}
-
-.header-tabs button.active {
-  background: var(--card-bg);
-  border-radius: 10px;
-  color: var(--text-main);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 第二の島：Input & Summary */
+/* 第二の島：究極の圧縮版 */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.summary { text-align: center; margin-bottom: 24px; }
+.summary { text-align: center; margin-bottom: 14px; }
 
 .month-switch {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
-#monthLabel { font-size: 18px; font-weight: 700; color: var(--text-main); }
-
-/* 三角ボタンを黒に修正 */
-.month-btn {
-  font-size: 14px;
-  color: #000000; 
-  background: none;
-  border: none;
+/* 年月ラベルをタップ可能なスタイルに */
+#monthLabel { 
+  font-size: 16px; 
+  font-weight: 700; 
+  color: var(--text-main); 
   cursor: pointer;
-  padding: 5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
 }
+#monthLabel:active { background: #e5e5ea; }
 
-#monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
-.summary-label { font-size: 12px; color: var(--text-sub); text-transform: uppercase; }
+.month-btn { font-size: 12px; color: #000; background: none; border: none; cursor: pointer; padding: 10px; }
+
+#monthlyTotal { font-size: 34px; font-weight: 800; letter-spacing: -1px; margin: 2px 0; }
+.summary-label { font-size: 10px; color: var(--text-sub); font-weight: 600; }
+
+/* 入力エリア：金額とメモのみに集約 */
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 
 input {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
+  padding: 12px;
+  font-size: 15px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #f2f2f7;
   box-sizing: border-box;
-  margin-bottom: 12px;
   color: var(--text-main);
 }
 
-#dateInput { text-align: center; font-weight: 600; cursor: pointer; }
+#amountInput { flex: 4; } /* 金額欄を少し広めに */
+#memoInput { flex: 6; }   /* メモ欄 */
 
-.action-row { display: flex; gap: 12px; }
-.btn { flex: 1; padding: 16px; border-radius: 14px; border: none; color: #fff; font-weight: 800; font-size: 16px; }
+.action-row { display: flex; gap: 10px; }
+.btn { flex: 1; padding: 14px; border-radius: 12px; border: none; color: #fff; font-weight: 800; font-size: 15px; }
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 第三の島：Output (History) */
-.island-output {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-/* 履歴横の棒を文字と同じ色（var(--text-sub)）に修正 */
-.island-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-bottom: 16px;
-  border-left: 3px solid var(--text-sub);
-  padding-left: 8px;
-}
-
+/* 第三の島 */
+.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
 .swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 12px; margin-bottom: 8px; }
-
-.item-content { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center;
-  padding: 14px 16px; 
-  background: #f9f9fb; 
-  position: relative; 
-  z-index: 2; 
-  transition: 0.3s;
-}
-
+.item-content { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #f9f9fb; position: relative; z-index: 2; transition: 0.3s; }
 .amount.record { color: var(--ios-blue); font-weight: 700; }
 .amount.invest { color: var(--ios-green); font-weight: 700; }
-
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
 .page { display: none; }
 .page.active { display: block; }
-
-/* NISA Card */
-.stock-card { background: #f9f9fb; padding: 18px; border-radius: 16px; margin-bottom: 12px; border-left: 4px solid var(--ios-green); }
-.stock-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
-.valuation { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
-.stock-inputs input { background: #fff; margin-top: 4px; padding: 8px; font-size: 14px; }
 </style>
 </head>
 
-<body onclick="handleGlobalClick()">
+<body>
 
 <div class="container">
 
@@ -187,16 +136,17 @@ input {
       <div class="summary">
         <div class="month-switch">
           <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="monthLabel"></div>
+          <div id="monthLabel" onclick="showDatePicker()"></div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
         <div class="summary-label">今月の支出合計</div>
-        <span id="monthlyTotal">0</span><small> 円</small>
+        <div id="monthlyTotal">0</div>
       </div>
 
-      <input type="text" id="dateInput" readonly onclick="showDatePicker()" placeholder="日付を選択">
-      <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
-      <input type="text" id="memoInput" placeholder="メモ">
+      <div class="input-group">
+        <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
+        <input type="text" id="memoInput" placeholder="メモ">
+      </div>
 
       <div class="action-row">
         <button class="btn btn-record" onclick="addEntry('record')">記録</button>
@@ -211,9 +161,7 @@ input {
   </div>
 
   <div id="stockPage" class="page">
-    <div class="island-main">
-      <div id="stockList"></div>
-    </div>
+    <div class="island-main"><div id="stockList"></div></div>
   </div>
 
 </div>
@@ -227,6 +175,7 @@ let state = {
     { name: "SMT米国トレンドランキング", price:0, holding:0 }
   ],
   currentView: new Date(),
+  selectedDate: new Date().toISOString().split('T')[0], // 記録用の日付
   editingId: null
 };
 
@@ -240,19 +189,23 @@ function switchPage(id){
 
 function changeMonth(diff){
   state.currentView.setMonth(state.currentView.getMonth() + diff);
+  // 表示月が変わったら、selectedDateもその月の1日に合わせる（直感的な操作のため）
+  state.selectedDate = state.currentView.toISOString().split('T')[0];
   updateUI();
 }
 
 function showDatePicker(){
   const picker = document.createElement('input');
   picker.type = 'date';
-  picker.value = document.getElementById('dateInput').value;
+  picker.value = state.selectedDate;
   picker.style.position = 'absolute';
   picker.style.opacity = 0;
   document.body.appendChild(picker);
   picker.onchange = ()=> {
-    document.getElementById('dateInput').value = picker.value;
+    state.selectedDate = picker.value;
+    state.currentView = new Date(picker.value);
     document.body.removeChild(picker);
+    updateUI();
   }
   picker.focus();
   picker.click();
@@ -262,11 +215,17 @@ function addEntry(type){
   const amountInput = document.getElementById('amountInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
-  if(state.editingId) state.expenses = state.expenses.filter(e=>e.id!==state.editingId);
-  state.expenses.push({ id: Date.now(), type, amount, memo: document.getElementById('memoInput').value, date: document.getElementById('dateInput').value });
+
+  state.expenses.push({ 
+    id: Date.now(), 
+    type, 
+    amount, 
+    memo: document.getElementById('memoInput').value, 
+    date: state.selectedDate 
+  });
+  
   amountInput.value = "";
   document.getElementById('memoInput').value = "";
-  state.editingId = null;
   save();
 }
 
@@ -277,15 +236,20 @@ function save(){
 
 function updateUI(){
   const list = document.getElementById('expenseList');
-  const now = state.currentView;
-  document.getElementById('monthLabel').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
+  const view = state.currentView;
+  
+  // 年月ラベルの表示を更新
+  document.getElementById('monthLabel').textContent = `${view.getFullYear()}年${view.getMonth()+1}月`;
+
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
-    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  list.innerHTML = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`
-    <li class="swipe-item" onclick="event.stopPropagation()">
+  
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString() + " 円";
+  
+  list.innerHTML = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).reverse().map(e=>`
+    <li class="swipe-item">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
       <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
         <div>
@@ -308,10 +272,11 @@ function handleStart(e,id){
   startX = e.touches[0].pageX;
   window.ptimer=setTimeout(()=>{
     const target = state.expenses.find(ex=>ex.id===id);
-    state.editingId=id;
     document.getElementById('amountInput').value=target.amount;
     document.getElementById('memoInput').value=target.memo;
-    document.getElementById('dateInput').value=target.date;
+    state.selectedDate = target.date;
+    state.expenses = state.expenses.filter(ex=>ex.id!==id); // 編集のため一旦削除
+    updateUI();
     document.getElementById('amountInput').focus();
   },800);
 }
@@ -327,12 +292,12 @@ function renderStocks(){
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s,i)=>{
     const valuation = Math.floor(s.price*s.holding/10000);
-    return `<div class="stock-card">
-      <div class="stock-name">${s.name}</div>
-      <div class="valuation">¥${valuation.toLocaleString()}</div>
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1; font-size:11px; color:var(--text-sub);">基準価額<input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal"></div>
-        <div style="flex:1; font-size:11px; color:var(--text-sub);">保有口数<input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal"></div>
+    return `<div style="background:#f9f9fb; padding:14px; border-radius:16px; margin-bottom:12px; border-left:4px solid var(--ios-green);">
+      <div style="font-size:13px; font-weight:bold; margin-bottom:2px;">${s.name}</div>
+      <div style="font-size:20px; font-weight:800; margin-bottom:8px;">¥${valuation.toLocaleString()}</div>
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1; font-size:10px; color:var(--text-sub);">基準価額<input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" style="padding:6px; font-size:13px;"></div>
+        <div style="flex:1; font-size:10px; color:var(--text-sub);">保有口数<input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" style="padding:6px; font-size:13px;"></div>
       </div>
     </div>`;
   }).join('');
@@ -344,9 +309,7 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-function handleGlobalClick(){}
-
-document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+// 初期化
 updateUI();
 </script>
 </body>
