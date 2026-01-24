@@ -105,28 +105,25 @@ body {
 
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
 
-/* 家計用入力ボックス（金額3.5 : メモ6.5） */
+/* 入力ボックス：NISA画面のスタイルに完全移植（細身） */
 .log-input-box {
   display: flex;
-  align-items: center;
-  background: #f2f2f7;
-  border-radius: 14px;
+  gap: 8px;
   margin-bottom: 12px;
-  overflow: hidden;
 }
 
 input {
-  padding: 14px;
-  font-size: 16px;
-  border: none;
-  background: transparent;
+  padding: 8px 10px; /* 上下幅を細く */
+  font-size: 14px;
+  border: 1px solid #e5e5ea;
+  border-radius: 12px;
+  background: #fff; /* 白背景 */
   color: var(--text-main);
   box-sizing: border-box;
-  width: 100%;
 }
-input:focus { outline: none; }
+input:focus { outline: none; border-color: var(--ios-blue); }
 
-.log-amount { flex: 3.5; border-right: 1px solid #e5e5ea; }
+.log-amount { flex: 3.5; }
 .log-memo { flex: 6.5; }
 
 /* ボタン */
@@ -179,13 +176,13 @@ input:focus { outline: none; }
 
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
-/* 指定されたNISA画面のCSSを完全移植 */
+/* 指定されたNISA画面のCSS（移植） */
 .stock-card { background: #f9f9fb; padding: 16px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e5e5ea; }
 .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
 .valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
 .stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .stock-inputs div { font-size: 11px; color: var(--text-sub); }
-.stock-inputs input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; margin-bottom: 4px; border: 1px solid #e5e5ea; border-radius: 12px; background: #fafafa; }
+.stock-inputs input { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px; margin-bottom: 4px; border: 1px solid #e5e5ea; border-radius: 12px; background: #fff; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -346,7 +343,6 @@ function handleMove(e){
   if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
 }
 
-/* 指定されたNISAレンダリングロジックを完全移植 */
 function renderStocks() {
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s, i) => {
