@@ -7,15 +7,14 @@
 
 <style>
 :root {
-  --ios-black: #000000;
   --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
   --text-sub: #8e8e93; 
-  --btn-light: #e5e5ea;
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
+  --btn-light: #e5e5ea;
 }
 
 body {
@@ -29,7 +28,6 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* ---------- Header ---------- */
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -67,13 +65,84 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* ---------- Common Island ---------- */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
+}
+
+.summary { text-align: center; }
+
+/* ▼▼ 見た目調整ここ ▼▼ */
+.valuation {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 4px 0 2px; /* TOTALと前日比の間を詰める */
+}
+
+.diff {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-sub); /* 色分け廃止：常にグレー */
+  margin-top: 0;
+}
+/* ▲▲ ここまで ▲▲ */
+
+.month-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#dateLabel {
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.month-btn {
+  font-size: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.ios-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  background: var(--input-bg);
+}
+
+.btn-record {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: var(--btn-light);
+  color: var(--text-sub);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.island-output {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .island-title {
@@ -85,63 +154,11 @@ body {
   padding-left: 8px;
 }
 
-.summary {
-  text-align: center;
-}
-
-/* ★ 調整ポイント① */
-.valuation {
-  font-size: 26px;
-  font-weight: 800;
-  margin: 4px 0 2px; /* ← 詰めた */
-}
-
-/* ★ 調整ポイント② */
-.diff {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-sub); /* ← 常にグレー */
-  margin: 0;
-}
-
-/* ---------- Inputs ---------- */
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.ios-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 10px;
-  font-size: 13px;
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
-  background: var(--input-bg);
-  color: var(--text-main);
-  outline: none;
-}
-
-.btn-record { 
-  width: 100%;
-  padding: 12px; 
-  border-radius: 12px; 
-  border: none; 
-  color: var(--text-sub); 
-  font-weight: 700; 
-  font-size: 15px; 
-  background: var(--btn-light);
-}
-
-/* ---------- Log ---------- */
 #expenseList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
-.item-row { margin-bottom: 8px; }
 
 .item-content {
   display: flex;
@@ -151,15 +168,14 @@ body {
   background: #f9f9fb;
   border: 1px solid var(--input-border);
   border-radius: 10px;
+  margin-bottom: 8px;
 }
 
 .amount-text {
-  color: var(--ios-black);
   font-weight: 700;
   font-size: 14px;
 }
 
-/* ---------- Stock ---------- */
 .stock-card {
   background: #f9f9fb;
   padding: 12px;
@@ -189,7 +205,6 @@ body {
 <body>
 
 <div class="container">
-
   <div class="island-header">
     <h1>MONEY LOG</h1>
     <div class="header-tabs">
@@ -201,20 +216,24 @@ body {
   <!-- 家計 -->
   <div id="logPage" class="page active">
     <div class="island-main">
-      <div class="island-title">MONTHLY SUMMARY</div>
       <div class="summary">
+        <div class="month-switch">
+          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+          <div id="dateLabel" onclick="showDatePicker()"></div>
+          <button class="month-btn" onclick="changeMonth(1)">▶</button>
+        </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
 
-      <div class="input-grid" style="margin-top:12px">
-        <input id="amountInput" type="number" class="ios-input" placeholder="金額">
-        <input id="memoInput" type="text" class="ios-input" placeholder="メモ">
+      <div class="input-grid">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額">
+        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
       </div>
       <button class="btn-record" onclick="addEntry()">記録</button>
     </div>
 
-    <div class="island-main">
-      <div class="island-title">RECENT</div>
+    <div class="island-output">
+      <div class="island-title">最近の履歴</div>
       <ul id="expenseList"></ul>
     </div>
   </div>
@@ -225,7 +244,7 @@ body {
       <div class="island-title">TOTAL ASSETS</div>
       <div class="summary">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div class="diff" id="stockDiff">±0 (0.00%)</div>
+        <div id="stockDiff" class="diff">±0 (0.00%)</div>
       </div>
     </div>
 
@@ -234,7 +253,6 @@ body {
       <div id="stockList"></div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -245,7 +263,9 @@ let state = {
     { name: "WCM世界成長株激選", price: 0, holding: 0 },
     { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
   ],
-  prevTotal: Number(localStorage.getItem('prevTotal')) || 0
+  prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
+  currentView: new Date(),
+  selectedDate: new Date().toISOString().split('T')[0]
 };
 
 function switchPage(id){
@@ -253,55 +273,97 @@ function switchPage(id){
   document.getElementById(id).classList.add('active');
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+  if(id === 'stockPage') renderStocks();
 }
 
-/* 家計 */
+function changeMonth(diff){
+  state.currentView.setMonth(state.currentView.getMonth() + diff);
+  updateUI();
+}
+
+function showDatePicker(){
+  const picker = document.createElement('input');
+  picker.type = 'date';
+  picker.value = state.selectedDate;
+  picker.style.position = 'absolute';
+  picker.style.opacity = 0;
+  document.body.appendChild(picker);
+  picker.onchange = ()=>{
+    state.selectedDate = picker.value;
+    state.currentView = new Date(picker.value);
+    document.body.removeChild(picker);
+    updateUI();
+  }
+  picker.click();
+}
+
 function addEntry(){
-  const amount = Number(amountInput.value);
+  const amount = parseInt(amountInput.value);
   if(!amount) return;
-  state.expenses.push({ id: Date.now(), amount, memo: memoInput.value });
+  state.expenses.push({
+    id: Date.now(),
+    amount,
+    memo: memoInput.value,
+    date: state.selectedDate
+  });
   amountInput.value = memoInput.value = "";
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  renderExpenses();
+  save();
 }
 
-function renderExpenses(){
-  let total = 0;
-  expenseList.innerHTML = state.expenses.slice().reverse().map(e=>{
-    total += e.amount;
-    return `
-      <li class="item-row">
-        <div class="item-content">
-          <div>
-            <div class="amount-text">¥${e.amount.toLocaleString()}</div>
-            <div style="font-size:10px;color:var(--text-sub)">${e.memo||''}</div>
+function save(){
+  localStorage.setItem('expenses', JSON.stringify(state.expenses));
+  updateUI();
+}
+
+function updateUI(){
+  const view = state.currentView;
+  document.getElementById('dateLabel').textContent =
+    `${view.getFullYear()}.${view.getMonth()+1}`;
+
+  const filtered = state.expenses.filter(e=>{
+    const d = new Date(e.date);
+    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
+  });
+
+  document.getElementById('monthlyTotal').textContent =
+    filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+
+  expenseList.innerHTML = filtered.reverse().map(e=>`
+    <li>
+      <div class="item-content">
+        <div>
+          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--text-sub)">
+            ${e.date.replaceAll('-','.')} ${e.memo||''}
           </div>
         </div>
-      </li>
-    `;
-  }).join('');
-  monthlyTotal.textContent = total.toLocaleString();
+      </div>
+    </li>
+  `).join('');
 }
 
-/* NISA */
 function renderStocks(){
+  const container = document.getElementById('stockList');
   let total = 0;
-  stockList.innerHTML = state.stocks.map((s,i)=>{
-    const value = Math.floor((s.price * s.holding) / 10000);
-    total += value;
+
+  container.innerHTML = state.stocks.map((s,i)=>{
+    const valuation = Math.floor((s.price * s.holding) / 10000);
+    total += valuation;
     return `
       <div class="stock-card">
         <div class="stock-name">${s.name}</div>
-        <div class="valuation" style="font-size:18px">¥${value.toLocaleString()}</div>
+        <div class="amount-text">¥${valuation.toLocaleString()}</div>
         <div class="input-grid">
           <div>
             <span class="stock-label">基準価額</span>
-            <input class="ios-input" type="number" value="${s.price}"
+            <input class="ios-input" type="number"
+              value="${s.price}"
               onchange="updateStock(${i},'price',this.value)">
           </div>
           <div>
             <span class="stock-label">保有口数</span>
-            <input class="ios-input" type="number" value="${s.holding}"
+            <input class="ios-input" type="number"
+              value="${s.holding}"
               onchange="updateStock(${i},'holding',this.value)">
           </div>
         </div>
@@ -309,22 +371,29 @@ function renderStocks(){
     `;
   }).join('');
 
-  stockTotal.textContent = total.toLocaleString();
-  const diff = total - state.prevTotal;
-  const rate = state.prevTotal ? diff / state.prevTotal * 100 : 0;
-  stockDiff.textContent = `${diff>=0?'+':''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
-  state.prevTotal = total;
-  localStorage.setItem('prevTotal', total);
+  document.getElementById('stockTotal').textContent =
+    total.toLocaleString();
+
+  const diff = total - state.prevStockTotal;
+  const rate = state.prevStockTotal
+    ? (diff / state.prevStockTotal * 100)
+    : 0;
+
+  const diffEl = document.getElementById('stockDiff');
+  diffEl.textContent =
+    `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
+
+  state.prevStockTotal = total;
+  localStorage.setItem('prevStockTotal', total);
 }
 
-function updateStock(i,f,v){
-  state.stocks[i][f] = Number(v)||0;
+function updateStock(i,field,value){
+  state.stocks[i][field] = parseFloat(value) || 0;
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
 }
 
-renderExpenses();
-renderStocks();
+updateUI();
 </script>
 
 </body>
