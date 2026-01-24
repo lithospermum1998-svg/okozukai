@@ -1,173 +1,166 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>MONEY LOG</title>
+import SwiftUI
 
-<style>
-:root {
-  --bg: #ffffff;
-  --card-bg: #f2f2f7;
-  --text-main: #000000;
-  --text-sub: #8e8e93;
-  --accent: #007aff;
+// MARK: - Data Model
+struct Expense: Identifiable, Codable {
+    var id = UUID()
+    let title: String
+    let amount: Int
+    let category: String
+    let date: Date
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  background: var(--bg);
-  margin: 0;
-  color: var(--text-main);
-  -webkit-tap-highlight-color: transparent;
+// MARK: - Main View
+struct ContentView: View {
+    // 簡易的にデータを保持（本来はSwiftDataやUserDefaults推奨）
+    @State private var expenses: [Expense] = [
+        Expense(title: "ランチ", amount: 1200, category: "食費", date: Date()),
+        Expense(title: "電車代", amount: 450, category: "交通費", date: Date())
+    ]
+    @State private var isShowingAddView = false
+
+    // 合計金額の計算
+    var totalAmount: Int {
+        expenses.reduce(0) { $0 + $1.amount }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                List {
+                    // 合計金額表示セクション
+                    Section {
+                        HStack {
+                            Text("今月の合計支出")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("¥\(totalAmount)")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.primary)
+                        }
+                        .padding(.vertical, 8)
+                    }
+
+                    // 履歴表示セクション
+                    Section(header: Text("支出履歴")) {
+                        if expenses.isEmpty {
+                            Text("記録がありません")
+                                .foregroundColor(.secondary)
+                        } else {
+                            ForEach(expenses) { expense in
+                                HStack(spacing: 15) {
+                                    // カテゴリに応じたアイコン（簡易版）
+                                    Image(systemName: categoryIcon(for: expense.category))
+                                        .foregroundColor(.white)
+                                        .frame(width: 32, height: 32)
+                                        .background(Color.blue.gradient)
+                                        .cornerRadius(8)
+                                    
+                                    VStack(alignment: .leading) {
+                                        Text(expense.title)
+                                            .font(.body)
+                                        Text(expense.date.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    Text("¥\(expense.amount)")
+                                        .font(.system(.body, design: .rounded))
+                                        .fontWeight(.semibold)
+                                }
+                                .padding(.vertical, 4)
+                            }
+                            .onDelete(perform: deleteExpense)
+                        }
+                    }
+                }
+                .navigationTitle("お小遣い帳")
+                
+                // iOS風のフローティング追加ボタン
+                Button(action: { isShowingAddView = true }) {
+                    Image(systemName: "plus")
+                        .font(.title.bold())
+                        .foregroundColor(.white)
+                        .frame(width: 60, height: 60)
+                        .background(Color.blue.shadow(.drop(radius: 4, x: 0, y: 4)))
+                        .clipShape(Circle())
+                }
+                .padding(.trailing, 25)
+                .padding(.bottom, 20)
+            }
+            .sheet(isPresented: &isShowingAddView) {
+                AddExpenseView { newExpense in
+                    expenses.insert(newExpense, at: 0)
+                }
+            }
+        }
+    }
+
+    func deleteExpense(at offsets: IndexSet) {
+        expenses.remove(atOffsets: offsets)
+    }
+
+    func categoryIcon(for category: String) -> String {
+        switch category {
+        case "食費": return "fork.knife"
+        case "交通費": return "bus"
+        case "娯楽": return "gamecontroller"
+        default: return "bag"
+        }
+    }
 }
 
-.container { max-width: 400px; margin: 0 auto; padding: 20px; }
+// MARK: - Add Expense View
+struct AddExpenseView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var title = ""
+    @State private var amount = ""
+    @State private var category = "食費"
+    
+    let categories = ["食費", "日用品", "娯楽", "交通費", "その他"]
+    var onSave: (Expense) -> Void
 
-/* ヘッダー島（構造は維持、見た目をよりフラットに） */
-.island-header {
-  background: #fff;
-  border-radius: 20px;
-  padding: 8px;
-  margin-bottom: 40px;
-  border: 1px solid #efeff4;
-}
-.island-header h1 { 
-  font-size: 13px; text-align: center; letter-spacing: 4px; font-weight: 800; margin: 12px 0;
-}
-.header-tabs { display: flex; background: #f2f2f7; border-radius: 12px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 10px 0; border: none; background: transparent; font-weight: 600; font-size: 13px; color: var(--text-sub); }
-.header-tabs button.active { background: #fff; border-radius: 10px; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-/* メイン入力：余白を活かしたミニマルデザイン */
-.input-section { text-align: center; margin-bottom: 40px; }
-.amount-input-wrap { margin-bottom: 10px; }
-#amountInput {
-  width: 100%; border: none; background: transparent; font-size: 64px; font-weight: 700; text-align: center; outline: none; letter-spacing: -3px; color: var(--text-main);
-}
-#amountInput::placeholder { color: #e5e5ea; }
-
-#memoInput {
-  width: 100%; border: none; background: transparent; font-size: 16px; text-align: center; outline: none; color: var(--text-sub);
-}
-
-/* 記録ボタン：細いラインまたはフラットなベタ */
-.btn-save {
-  width: 80%;
-  margin: 30px auto;
-  display: block;
-  background: var(--text-main);
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  padding: 16px;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 2px;
-}
-
-/* 履歴：ボーダーレスで清潔感のあるリスト */
-.history-wrap { margin-top: 50px; }
-.history-title { font-size: 11px; font-weight: 700; color: var(--text-sub); letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #f2f2f7; padding-bottom: 10px; }
-
-.history-item {
-  display: flex; justify-content: space-between; align-items: baseline; padding: 15px 0; border-bottom: 1px solid #f9f9f9;
-}
-.item-memo { font-size: 16px; font-weight: 500; }
-.item-date { font-size: 10px; color: var(--text-sub); margin-left: 8px; font-weight: 400; }
-.item-amount { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-.page { display: none; }
-.page.active { display: block; }
-</style>
-</head>
-
-<body>
-
-<div class="container">
-  <div class="island-header">
-    <h1>MONEY LOG</h1>
-    <div class="header-tabs">
-      <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
-      <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
-    </div>
-  </div>
-
-  <div id="logPage" class="page active">
-    <div class="input-section">
-      <div class="amount-input-wrap">
-        <input type="number" id="amountInput" placeholder="0" inputmode="decimal">
-      </div>
-      <input type="text" id="memoInput" placeholder="メモを入力">
-      <button class="btn-save" onclick="addEntry()">記録を保存</button>
-    </div>
-
-    <div class="history-wrap">
-      <div class="history-title">最近の記録</div>
-      <div id="expenseList"></div>
-    </div>
-  </div>
-
-  <div id="stockPage" class="page" style="text-align:center; padding-top:100px; color:var(--text-sub); font-size:13px;">
-    表示するデータがありません
-  </div>
-</div>
-
-<script>
-let state = {
-  expenses: JSON.parse(localStorage.getItem('expenses')) || []
-};
-
-function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
-  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("内容")) {
+                    TextField("項目名（例：ビール）", text: &title)
+                    TextField("金額", text: &amount)
+                        .keyboardType(.numberPad)
+                }
+                
+                Section(header: Text("分類")) {
+                    Picker("カテゴリ", selection: &category) {
+                        ForEach(categories, id: \.self) { cat in
+                            Text(cat)
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
+                }
+            }
+            .navigationTitle("新規支出")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("追加") {
+                        if let amountInt = Int(amount), !title.isEmpty {
+                            let new = Expense(title: title, amount: amountInt, category: category, date: Date())
+                            onSave(new)
+                            dismiss()
+                        }
+                    }
+                    .disabled(title.isEmpty || amount.isEmpty)
+                }
+            }
+        }
+    }
 }
 
-function addEntry(){
-  const a = document.getElementById('amountInput');
-  const m = document.getElementById('memoInput');
-  if(!a.value) return;
-
-  state.expenses.unshift({
-    id: Date.now(),
-    amount: parseInt(a.value),
-    memo: m.value || "支出",
-    date: new Date().toLocaleDateString('ja-JP', {month:'short', day:'numeric'})
-  });
-
-  a.value = ""; m.value = "";
-  document.activeElement.blur();
-  save();
+// MARK: - Preview
+#Preview {
+    ContentView()
 }
-
-function save(){
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  render();
-}
-
-function render(){
-  const list = document.getElementById('expenseList');
-  list.innerHTML = state.expenses.map(e => `
-    <div class="history-item" onclick="deleteEntry(${e.id})">
-      <div>
-        <span class="item-memo">${e.memo}</span>
-        <span class="item-date">${e.date}</span>
-      </div>
-      <div class="item-amount">¥${e.amount.toLocaleString()}</div>
-    </div>
-  `).join('');
-}
-
-function deleteEntry(id){
-  if(confirm("削除しますか？")){
-    state.expenses = state.expenses.filter(e => e.id !== id);
-    save();
-  }
-}
-
-render();
-</script>
-</body>
-</html>
