@@ -100,22 +100,10 @@ body {
   color: #000000; 
   background: none;
   border: none;
+  cursor: pointer;
 }
 
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
-
-/* 日付選択 */
-#dateInput {
-  width: 100%;
-  padding: 12px;
-  font-size: 14px;
-  border: 1px solid #e5e5ea;
-  border-radius: 14px;
-  background: #f2f2f7;
-  margin-bottom: 10px;
-  text-align: center;
-  box-sizing: border-box;
-}
 
 /* 家計用入力ボックス（金額3.5 : メモ6.5） */
 .log-input-box {
@@ -191,33 +179,20 @@ input:focus { outline: none; }
 
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
-/* 画像から復元した NISA画面のスタイル */
-.stock-card {
-  background: #f9f9fb;
-  padding: 16px;
-  border-radius: 16px;
-  margin-bottom: 12px;
-  border: 1px solid #e5e5ea;
-}
-.stock-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; color: var(--text-main); }
-.stock-val { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-.stock-inputs { display: flex; gap: 8px; }
-.stock-inputs input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #e5e5ea;
-  border-radius: 10px;
-  font-size: 14px;
-  background: #fff;
-  text-align: center;
-}
+/* 指定されたNISA画面のCSSを完全移植 */
+.stock-card { background: #f9f9fb; padding: 16px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e5e5ea; }
+.stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
+.valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+.stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stock-inputs div { font-size: 11px; color: var(--text-sub); }
+.stock-inputs input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; margin-bottom: 4px; border: 1px solid #e5e5ea; border-radius: 12px; background: #fafafa; }
 
 .page { display: none; }
 .page.active { display: block; }
 </style>
 </head>
 
-<body onclick="handleGlobalClick()">
+<body>
 
 <div class="container">
 
@@ -237,11 +212,9 @@ input:focus { outline: none; }
           <div id="monthLabel" onclick="showDatePicker()"></div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
-        <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 4px;">今月の支出合計</div>
+        <div style="font-size:12px; color:var(--text-sub); margin-bottom:4px;">今月の支出合計</div>
         <span id="monthlyTotal">0</span><small> 円</small>
       </div>
-
-      <input type="text" id="dateInput" readonly onclick="showDatePicker()" placeholder="日付を選択">
 
       <div class="log-input-box">
         <div class="log-amount"><input type="number" id="amountInput" placeholder="金額" inputmode="decimal"></div>
@@ -262,7 +235,7 @@ input:focus { outline: none; }
 
   <div id="stockPage" class="page">
     <div class="island-main">
-      <div class="island-title">保有資産状況</div>
+      <div class="island-title">MY ASSETS</div>
       <div id="stockList"></div>
     </div>
   </div>
@@ -273,13 +246,12 @@ input:focus { outline: none; }
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", price:0, holding:0 },
-    { name: "WCM世界成長株激選", price:0, holding:0 },
-    { name: "SMT米国トレンドランキング", price:0, holding:0 }
+    { name: "ブラックロック・ゴールド", price: 0, holding: 0 },
+    { name: "WCM世界成長株激選", price: 0, holding: 0 },
+    { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
   ],
   currentView: new Date(),
-  selectedDate: new Date().toISOString().split('T')[0],
-  editingId: null
+  selectedDate: new Date().toISOString().split('T')[0]
 };
 
 function switchPage(id){
@@ -305,7 +277,6 @@ function showDatePicker(){
   picker.onchange = ()=> {
     state.selectedDate = picker.value;
     state.currentView = new Date(picker.value);
-    document.getElementById('dateInput').value = picker.value;
     document.body.removeChild(picker);
     updateUI();
   }
@@ -316,15 +287,8 @@ function addEntry(type){
   const amountInput = document.getElementById('amountInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
-  if(state.editingId) state.expenses = state.expenses.filter(e=>e.id!==state.editingId);
-  state.expenses.push({ 
-    id: Date.now(), 
-    type, 
-    amount, 
-    memo: document.getElementById('memoInput').value, 
-    date: state.selectedDate 
-  });
-  cancelEdit();
+  state.expenses.push({ id: Date.now(), type, amount, memo: document.getElementById('memoInput').value, date: state.selectedDate });
+  amountInput.value = ""; document.getElementById('memoInput').value = "";
   save();
 }
 
@@ -332,15 +296,6 @@ function save(){
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   updateUI();
 }
-
-function cancelEdit(){
-  state.editingId = null;
-  document.getElementById('amountInput').value = "";
-  document.getElementById('memoInput').value = "";
-  updateUI();
-}
-
-function handleGlobalClick(){ if(state.editingId) cancelEdit(); }
 
 function updateUI(){
   const list = document.getElementById('expenseList');
@@ -353,7 +308,7 @@ function updateUI(){
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   
   list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
-    <li class="swipe-item" onclick="event.stopPropagation()">
+    <li class="swipe-item">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
       <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
         <div>
@@ -376,11 +331,10 @@ function handleStart(e,id){
   startX = e.touches[0].pageX;
   window.ptimer=setTimeout(()=>{
     const target = state.expenses.find(ex=>ex.id===id);
-    state.editingId=id;
     document.getElementById('amountInput').value=target.amount;
     document.getElementById('memoInput').value=target.memo;
     state.selectedDate = target.date;
-    document.getElementById('dateInput').value = target.date;
+    state.expenses = state.expenses.filter(ex=>ex.id!==id);
     updateUI();
   },800);
 }
@@ -392,28 +346,36 @@ function handleMove(e){
   if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
 }
 
-function renderStocks(){
+/* 指定されたNISAレンダリングロジックを完全移植 */
+function renderStocks() {
   const container = document.getElementById('stockList');
-  container.innerHTML = state.stocks.map((s,i)=>{
-    const valuation = Math.floor(s.price*s.holding/10000);
-    return `<div class="stock-card">
-      <div class="stock-name">${s.name}</div>
-      <div class="stock-val">¥${valuation.toLocaleString()}</div>
-      <div class="stock-inputs">
-        <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" placeholder="基準価額" inputmode="decimal">
-        <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" placeholder="保有口数" inputmode="decimal">
+  container.innerHTML = state.stocks.map((s, i) => {
+    const valuation = Math.floor((s.price * s.holding) / 10000);
+    return `
+      <div class="stock-card">
+        <div class="stock-name">${s.name}</div>
+        <div class="valuation">¥${valuation.toLocaleString()}</div>
+        <div class="stock-inputs">
+          <div>
+            基準価額 (1万口当り)
+            <input type="number" value="${s.price}" onchange="updateStock(${i}, 'price', this.value)" inputmode="decimal">
+          </div>
+          <div>
+            保有口数
+            <input type="number" value="${s.holding}" onchange="updateStock(${i}, 'holding', this.value)" inputmode="decimal">
+          </div>
+        </div>
       </div>
-    </div>`;
+    `;
   }).join('');
 }
 
-function updateStock(index,field,value){
-  state.stocks[index][field] = parseFloat(value)||0;
+function updateStock(index, field, value) {
+  state.stocks[index][field] = parseFloat(value) || 0;
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
 }
 
-document.getElementById('dateInput').value = state.selectedDate;
 updateUI();
 </script>
 </body>
