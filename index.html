@@ -7,114 +7,122 @@
 
 <style>
 :root {
+  --accent: #000; /* 黒をアクセントにしたモノトーンベース */
   --ios-blue: #007aff;
-  --ios-green: #34c759;
-  --ios-red: #ff3b30;
-  --ios-bg: #f2f2f7; 
-  --ios-card: #ffffff;
-  --text-main: #000000;
-  --text-sub: #8e8e93; 
-  --radius-lg: 16px;
-  --radius-sm: 10px;
+  --bg: #f9f9fb;
+  --card: #ffffff;
+  --sub-text: #a1a1a6;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-  background: var(--ios-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  background: var(--bg);
   margin: 0;
-  padding: 0;
-  color: var(--text-main);
+  color: #1d1d1f;
   -webkit-tap-highlight-color: transparent;
 }
 
-.container { max-width: 420px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
+.container { max-width: 400px; margin: 0 auto; padding: 20px; }
 
-/* ヘッダーの島（現状維持） */
+/* ヘッダー（構造維持・デザイン微調整） */
 .island-header {
-  background: var(--ios-card);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 20px;
+  background: var(--card);
+  border-radius: 24px;
+  padding: 12px;
+  margin-bottom: 30px;
 }
-.island-header h1 { font-size: 17px; margin: 0 0 16px; text-align: center; letter-spacing: 1px; font-weight: 700; }
-.header-tabs { display: flex; background: #e5e5ea; border-radius: 12px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 8px 0; border: none; background: transparent; font-weight: 600; font-size: 14px; color: var(--text-sub); }
-.header-tabs button.active { background: var(--ios-card); border-radius: 10px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.island-header h1 { 
+  font-size: 14px; 
+  text-align: center; 
+  letter-spacing: 3px; 
+  font-weight: 800;
+  margin: 8px 0 12px;
+}
+.header-tabs { display: flex; background: #efeff4; border-radius: 14px; padding: 2px; }
+.header-tabs button { flex: 1; padding: 10px 0; border: none; background: transparent; font-weight: 600; font-size: 13px; color: var(--sub-text); transition: 0.2s; }
+.header-tabs button.active { background: var(--card); border-radius: 12px; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-/* 入力エリア：iOSのカードスタイル */
-.input-group {
-  background: var(--ios-card);
-  border-radius: var(--radius-lg);
+/* メイン入力エリア */
+.main-card {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 30px 24px;
   margin-bottom: 24px;
-  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 
-.input-row {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 0.5px solid #e5e5ea;
+.amount-display {
+  text-align: center;
+  margin-bottom: 24px;
 }
-.input-row:last-child { border-bottom: none; }
-
-.input-label { width: 80px; font-size: 15px; font-weight: 500; color: var(--text-main); }
-.input-field {
-  flex: 1;
-  border: none;
-  font-size: 17px;
-  padding: 8px 0;
-  outline: none;
-  background: transparent;
-}
-
-/* 記録ボタン：iOS風の大きなボタン */
-.btn-record {
+.amount-display input {
   width: 100%;
-  background: var(--ios-blue);
-  color: white;
   border: none;
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  font-size: 17px;
-  font-weight: 600;
-  margin-top: 8px;
-  transition: opacity 0.2s;
+  background: transparent;
+  font-size: 48px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  letter-spacing: -2px;
 }
-.btn-record:active { opacity: 0.7; }
+.amount-display input::placeholder { color: #ebebeb; }
 
-/* 履歴セクション */
-.section-title {
-  font-size: 20px;
+.memo-input {
+  border-top: 0.5px solid #eee;
+  padding-top: 20px;
+}
+.memo-input input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+  color: #1d1d1f;
+}
+
+/* 記録ボタン（フローティング風） */
+.action-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin: 0 0 12px 4px;
+  letter-spacing: 1px;
+  transition: transform 0.1s, opacity 0.2s;
 }
+.action-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-.history-card {
-  background: var(--ios-card);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+/* 履歴リスト */
+.history-section { margin-top: 40px; }
+.history-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sub-text);
+  margin-left: 10px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
-
+.history-list {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 8px 0;
+}
 .history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  border-bottom: 0.5px solid #e5e5ea;
-  transition: background 0.2s;
+  padding: 16px 20px;
+  border-bottom: 0.5px solid #f2f2f2;
 }
 .history-item:last-child { border-bottom: none; }
-.history-item:active { background-color: #f2f2f7; }
-
-.item-left { display: flex; flex-direction: column; gap: 2px; }
-.item-memo { font-size: 16px; font-weight: 400; }
-.item-date { font-size: 12px; color: var(--text-sub); }
-.item-amount { font-size: 17px; font-weight: 600; font-family: "SF Pro Rounded", sans-serif; }
-
-/* ページ切り替え用 */
-.page { display: none; }
-.page.active { display: block; }
+.item-info { display: flex; flex-direction: column; }
+.item-memo { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+.item-date { font-size: 11px; color: var(--sub-text); letter-spacing: 0.5px; }
+.item-price { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 
@@ -129,31 +137,26 @@ body {
     </div>
   </div>
 
-  <div id="logPage" class="page active">
-    <div class="input-group">
-      <div class="input-row">
-        <span class="input-label">金額</span>
-        <input type="number" id="amountInput" class="input-field" placeholder="¥0" inputmode="decimal">
+  <div id="logPage" class="page">
+    <div class="main-card">
+      <div class="amount-display">
+        <input type="number" id="amountInput" placeholder="0" inputmode="decimal">
       </div>
-      <div class="input-row">
-        <span class="input-label">メモ</span>
-        <input type="text" id="memoInput" class="input-field" placeholder="何に使った？">
+      <div class="memo-input">
+        <input type="text" id="memoInput" placeholder="Memo...">
       </div>
     </div>
     
-    <button class="btn-record" onclick="addEntry()">記録する</button>
+    <button class="action-btn" onclick="addEntry()">CONFIRM</button>
 
-    <div style="margin-top: 32px;">
-      <h2 class="section-title">履歴</h2>
-      <div class="history-card" id="expenseList">
-        </div>
+    <div class="history-section">
+      <div class="history-label">Recent Activity</div>
+      <div class="history-list" id="expenseList"></div>
     </div>
   </div>
 
-  <div id="stockPage" class="page">
-    <div style="text-align:center; color:var(--text-sub); margin-top:100px;">
-      NISA機能は現在オフです
-    </div>
+  <div id="stockPage" class="page" style="display:none; text-align:center; padding-top:50px; color:var(--sub-text);">
+    COMING SOON
   </div>
 </div>
 
@@ -163,32 +166,43 @@ let state = {
 };
 
 function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
-  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+  const logPage = document.getElementById('logPage');
+  const stockPage = document.getElementById('stockPage');
+  const tabLog = document.getElementById('tab-log');
+  const tabStock = document.getElementById('tab-stock');
+
+  if(id === 'logPage') {
+    logPage.style.display = 'block';
+    stockPage.style.display = 'none';
+    tabLog.classList.add('active');
+    tabStock.classList.remove('active');
+  } else {
+    logPage.style.display = 'none';
+    stockPage.style.display = 'block';
+    tabLog.classList.remove('active');
+    tabStock.classList.add('active');
+  }
 }
 
 function addEntry(){
-  const amountInput = document.getElementById('amountInput');
-  const memoInput = document.getElementById('memoInput');
-  const amount = parseInt(amountInput.value);
-  
-  if(!amount) return;
+  const amountVal = document.getElementById('amountInput').value;
+  const memoVal = document.getElementById('memoInput').value;
+  if(!amountVal) return;
 
   const now = new Date();
-  const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const date = `${now.getMonth()+1}/${now.getDate()}`;
 
   state.expenses.unshift({
     id: Date.now(),
-    amount: amount,
-    memo: memoInput.value || "未分類",
-    date: dateStr
+    amount: parseInt(amountVal),
+    memo: memoVal || "No Memo",
+    date: `${date} ${time}`
   });
 
-  amountInput.value = "";
-  memoInput.value = "";
-  document.activeElement.blur(); // キーボードを閉じる
+  document.getElementById('amountInput').value = "";
+  document.getElementById('memoInput').value = "";
+  document.activeElement.blur();
   
   save();
 }
@@ -200,30 +214,27 @@ function save(){
 
 function render(){
   const list = document.getElementById('expenseList');
-  if (state.expenses.length === 0) {
-    list.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-sub); font-size:14px;">履歴はありません</div>`;
+  if(state.expenses.length === 0) {
+    list.innerHTML = `<div style="padding:30px; text-align:center; font-size:13px; color:var(--sub-text);">Empty</div>`;
     return;
   }
-
   list.innerHTML = state.expenses.map(e => `
     <div class="history-item" onclick="deleteEntry(${e.id})">
-      <div class="item-left">
+      <div class="item-info">
         <span class="item-memo">${e.memo}</span>
         <span class="item-date">${e.date}</span>
       </div>
-      <div class="item-amount">¥${e.amount.toLocaleString()}</div>
+      <div class="item-price">¥${e.amount.toLocaleString()}</div>
     </div>
   `).join('');
 }
 
 function deleteEntry(id){
-  if(confirm("この記録を削除しますか？")){
-    state.expenses = state.expenses.filter(e => e.id !== id);
-    save();
-  }
+  // スタイリッシュなデザインを損なわないよう、あえてシンプルな削除
+  state.expenses = state.expenses.filter(e => e.id !== id);
+  save();
 }
 
-// 初期描画
 render();
 </script>
 
