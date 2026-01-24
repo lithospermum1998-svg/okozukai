@@ -12,7 +12,7 @@
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
   --text-sub: #8e8e93; 
-  --btn-light: #e5e5ea; /* 淡いグレー */
+  --btn-light: #e5e5ea;
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
@@ -29,7 +29,6 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* Header */
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -43,7 +42,6 @@ body {
 .header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-/* Main Island */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -72,19 +70,18 @@ body {
   outline: none;
 }
 
-/* 記録ボタン：淡く、背景に溶け込む */
+/* 記録ボタン：文字も灰色に馴染ませる */
 .btn-record { 
   width: 100%;
   padding: 12px; 
   border-radius: 12px; 
   border: none; 
-  color: var(--text-main); 
+  color: var(--text-sub); 
   font-weight: 700; 
   font-size: 15px; 
   background: var(--btn-light);
 }
 
-/* 履歴エリア */
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 
@@ -106,12 +103,10 @@ body {
   background: #f9f9fb; 
   border: 1px solid var(--input-border); 
   border-radius: 10px;
-  transition: background 0.2s;
 }
 
 .amount-text { color: var(--ios-black); font-weight: 700; font-size: 14px; }
 
-/* NISAカード */
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
@@ -277,7 +272,7 @@ function updateStock(index, field, value) {
   renderStocks();
 }
 
-/* 編集・削除統合ロジック */
+/* 修正：編集機能の復元と削除分岐 */
 let startX=0;
 let pressTimer=null;
 
@@ -287,19 +282,26 @@ function handleStart(e,id){
   pressTimer = setTimeout(()=>{
     const target = state.expenses.find(ex=>ex.id===id);
     if(target){
-      // 触覚代わりの反応
+      // 1. まずフォームに値をセット（編集モード起動）
+      document.getElementById('amountInput').value=target.amount;
+      document.getElementById('memoInput').value=target.memo;
+      state.selectedDate = target.date;
+      state.currentView = new Date(target.date);
+      
+      // 2. 視覚的フィードバック
+      const originalBg = e.currentTarget.style.background;
       e.currentTarget.style.background = "#e5e5ea";
       
-      if(confirm("この記録を削除しますか？\n(キャンセルで編集フォームへ戻す)")){
-        deleteEntry(id);
-      } else {
-        document.getElementById('amountInput').value=target.amount;
-        document.getElementById('memoInput').value=target.memo;
-        state.selectedDate = target.date;
-        state.currentView = new Date(target.date);
+      // 3. 削除の確認
+      setTimeout(() => {
+        if(confirm("この記録を削除しますか？\n(キャンセルで編集を続行)")){
+          deleteEntry(id);
+          document.getElementById('amountInput').value="";
+          document.getElementById('memoInput').value="";
+        }
         updateUI();
         window.scrollTo({top:0, behavior:'smooth'});
-      }
+      }, 50);
     }
   },700);
 }
