@@ -40,7 +40,7 @@ body {
 .island-header h1 { font-size: 16px; margin: 0 0 12px; text-align: center; letter-spacing: 2px; font-weight: 800; }
 
 .header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); transition: 0.2s; }
+.header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
 /* Main Island */
@@ -69,10 +69,8 @@ body {
   border-radius: 10px;
   background: var(--input-bg);
   color: var(--text-main);
-  transition: background 0.3s;
 }
 
-/* ボタンの沈み込みアニメーション */
 .btn-record { 
   width: 100%;
   padding: 12px; 
@@ -82,11 +80,6 @@ body {
   font-weight: 800; 
   font-size: 15px; 
   background: var(--ios-blue);
-  transition: transform 0.1s ease, opacity 0.1s;
-}
-.btn-record:active {
-  transform: scale(0.96);
-  opacity: 0.9;
 }
 
 /* 履歴エリア */
@@ -95,9 +88,9 @@ body {
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
 
-/* 挿入アニメーション */
+/* 挿入アニメーション（これのみ残しました） */
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-20px); }
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -107,7 +100,7 @@ body {
   background-color: var(--ios-red); 
   border-radius: 10px; 
   margin-bottom: 8px;
-  animation: slideDown 0.3s ease-out forwards; /* 新規追加時にスライド */
+  animation: slideDown 0.2s ease-out forwards;
 }
 
 .item-content { 
@@ -118,7 +111,7 @@ body {
   border-radius: 10px;
   position: relative; 
   z-index: 2; 
-  transition: transform 0.3s ease, opacity 0.2s;
+  transition: transform 0.3s ease;
 }
 
 .swipe-delete-btn { 
@@ -227,12 +220,8 @@ function addEntry(type){
   const memoInput = document.getElementById('memoInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
-  
   state.expenses.push({ id: Date.now(), type, amount, memo: memoInput.value, date: state.selectedDate });
-  
-  // 入力欄をクリアする際のアニメーション演出
   amountInput.value = ""; memoInput.value = "";
-  
   save();
 }
 
@@ -246,13 +235,11 @@ function updateUI(){
   const view = state.currentView;
   const selDate = new Date(state.selectedDate);
   document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
-  
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  
   list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
     <li class="swipe-item">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
@@ -301,7 +288,6 @@ function updateStock(index, field, value) {
   renderStocks();
 }
 
-/* スワイプ・長押し編集のロジック */
 let startX=0;
 let pressTimer=null;
 
