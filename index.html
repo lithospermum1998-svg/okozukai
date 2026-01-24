@@ -36,11 +36,35 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
 }
-.island-header h1 { font-size: 16px; margin: 0 0 12px; text-align: center; letter-spacing: 2px; font-weight: 800; }
+.island-header h1 {
+  font-size: 16px;
+  margin: 0 0 12px;
+  text-align: center;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
 
-.header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
-.header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.header-tabs {
+  display: flex;
+  background: #e5e5ea;
+  border-radius: 10px;
+  padding: 2px;
+}
+.header-tabs button {
+  flex: 1;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+.header-tabs button.active {
+  background: var(--card-bg);
+  border-radius: 8px;
+  color: var(--text-main);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
 .island-main {
   background: var(--card-bg);
@@ -51,26 +75,50 @@ body {
 }
 
 .summary { text-align: center; margin-bottom: 12px; }
-.month-switch { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
-#dateLabel { font-size: 17px; font-weight: 700; color: var(--text-main); cursor: pointer; }
-.month-btn { font-size: 12px; background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-main); }
 
-.valuation { font-size: 26px; font-weight: 800; margin: 8px 0; color: var(--ios-black); }
+.month-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+#dateLabel {
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.month-btn {
+  font-size: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.valuation {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 8px 0;
+  color: var(--ios-black);
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
 .ios-input {
   width: 100%;
-  box-sizing: border-box;
   padding: 8px 10px;
   font-size: 13px;
   border: 1px solid var(--input-border);
   border-radius: 10px;
   background: var(--input-bg);
-  color: var(--text-main);
   outline: none;
 }
 
-/* 記録ボタン：文字も灰色に馴染ませる */
 .btn-record { 
   width: 100%;
   padding: 12px; 
@@ -82,8 +130,21 @@ body {
   background: var(--btn-light);
 }
 
-.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
+.island-output {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.island-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-sub);
+  margin-bottom: 12px;
+  border-left: 3px solid var(--text-sub);
+  padding-left: 8px;
+}
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
 
@@ -92,24 +153,46 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.item-row { 
+.item-row {
   margin-bottom: 8px;
   animation: slideDown 0.2s ease-out forwards;
 }
 
-.item-content { 
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px; 
-  background: #f9f9fb; 
-  border: 1px solid var(--input-border); 
+.item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f9f9fb;
+  border: 1px solid var(--input-border);
   border-radius: 10px;
 }
 
-.amount-text { color: var(--ios-black); font-weight: 700; font-size: 14px; }
+.amount-text {
+  font-weight: 700;
+  font-size: 14px;
+}
 
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
-.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
+.stock-card {
+  background: #f9f9fb;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--input-border);
+}
+
+.stock-name {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.stock-label {
+  font-size: 10px;
+  color: var(--text-sub);
+  display: block;
+  margin-bottom: 2px;
+}
 
 .page { display: none; }
 .page.active { display: block; }
@@ -117,8 +200,8 @@ body {
 </head>
 
 <body>
-
 <div class="container">
+
   <div class="island-header">
     <h1>MONEY LOG</h1>
     <div class="header-tabs">
@@ -139,7 +222,7 @@ body {
       </div>
 
       <div class="input-grid">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額" inputmode="decimal">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額">
         <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
       </div>
       <button class="btn-record" onclick="addEntry()">記録</button>
@@ -157,6 +240,7 @@ body {
       <div id="stockList"></div>
     </div>
   </div>
+
 </div>
 
 <script>
@@ -181,7 +265,6 @@ function switchPage(id){
 
 function changeMonth(diff){
   state.currentView.setMonth(state.currentView.getMonth() + diff);
-  state.selectedDate = new Date(state.currentView.getFullYear(), state.currentView.getMonth(), state.currentView.getDate()).toISOString().split('T')[0];
   updateUI();
 }
 
@@ -189,24 +272,29 @@ function showDatePicker(){
   const picker = document.createElement('input');
   picker.type = 'date';
   picker.value = state.selectedDate;
-  picker.style.position = 'absolute'; picker.style.opacity = 0;
+  picker.style.position = 'absolute';
+  picker.style.opacity = 0;
   document.body.appendChild(picker);
-  picker.onchange = ()=> {
+  picker.onchange = () => {
     state.selectedDate = picker.value;
     state.currentView = new Date(picker.value);
     document.body.removeChild(picker);
     updateUI();
-  }
-  picker.focus(); picker.click();
+  };
+  picker.click();
 }
 
 function addEntry(){
-  const amountInput = document.getElementById('amountInput');
-  const memoInput = document.getElementById('memoInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
-  state.expenses.push({ id: Date.now(), amount, memo: memoInput.value, date: state.selectedDate });
-  amountInput.value = ""; memoInput.value = "";
+  state.expenses.push({
+    id: Date.now(),
+    amount,
+    memo: memoInput.value,
+    date: state.selectedDate
+  });
+  amountInput.value = "";
+  memoInput.value = "";
   save();
 }
 
@@ -216,26 +304,36 @@ function save(){
 }
 
 function updateUI(){
-  const list = document.getElementById('expenseList');
   const view = state.currentView;
-  const selDate = new Date(state.selectedDate);
-  document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
+  const sel = new Date(state.selectedDate);
+
+  dateLabel.textContent = `${sel.getFullYear()}.${sel.getMonth()+1}.${sel.getDate()}`;
+
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  list.innerHTML = filtered.sort((a,b)=>new Date(a.date)-new Date(b.date)).reverse().map(e=>`
-    <li class="item-row">
-      <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="handleEnd()" ontouchmove="handleMove(event)">
-        <div>
-          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
-          <div style="font-size:10px; color:var(--text-sub)">${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}</div>
+
+  monthlyTotal.textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+
+  expenseList.innerHTML = filtered
+    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .map(e=>`
+      <li class="item-row">
+        <div class="item-content"
+          ontouchstart="handleStart(event,${e.id})"
+          ontouchmove="handleMove(event)"
+          ontouchend="handleEnd()">
+          <div>
+            <div class="amount-text">¥${e.amount.toLocaleString()}</div>
+            <div style="font-size:10px;color:var(--text-sub)">
+              ${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}
+            </div>
+          </div>
+          <div style="color:#c7c7cc;font-size:10px;">●</div>
         </div>
-        <div style="color:#c7c7cc; font-size:10px;">●</div>
-      </div>
-    </li>
-  `).join('');
+      </li>
+    `).join('');
 }
 
 function deleteEntry(id){
@@ -243,10 +341,9 @@ function deleteEntry(id){
   save();
 }
 
-function renderStocks() {
-  const container = document.getElementById('stockList');
-  container.innerHTML = state.stocks.map((s, i) => {
-    const valuation = Math.floor((s.price * s.holding) / 10000);
+function renderStocks(){
+  stockList.innerHTML = state.stocks.map((s,i)=>{
+    const valuation = Math.floor((s.price*s.holding)/10000);
     return `
       <div class="stock-card">
         <div class="stock-name">${s.name}</div>
@@ -254,11 +351,13 @@ function renderStocks() {
         <div class="input-grid">
           <div>
             <span class="stock-label">基準価額</span>
-            <input type="number" class="ios-input" value="${s.price}" onchange="updateStock(${i}, 'price', this.value)" inputmode="decimal">
+            <input class="ios-input" type="number" value="${s.price}"
+              onchange="updateStock(${i},'price',this.value)">
           </div>
           <div>
             <span class="stock-label">保有口数</span>
-            <input type="number" class="ios-input" value="${s.holding}" onchange="updateStock(${i}, 'holding', this.value)" inputmode="decimal">
+            <input class="ios-input" type="number" value="${s.holding}"
+              onchange="updateStock(${i},'holding',this.value)">
           </div>
         </div>
       </div>
@@ -266,54 +365,41 @@ function renderStocks() {
   }).join('');
 }
 
-function updateStock(index, field, value) {
-  state.stocks[index][field] = parseFloat(value) || 0;
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+function updateStock(i,f,v){
+  state.stocks[i][f]=parseFloat(v)||0;
+  localStorage.setItem('stocks',JSON.stringify(state.stocks));
   renderStocks();
 }
 
-/* 修正：編集機能の復元と削除分岐 */
-let startX=0;
-let pressTimer=null;
+/* 長押し編集・削除 */
+let startX=0, pressTimer=null;
 
 function handleStart(e,id){
   startX = e.touches[0].pageX;
-  if(pressTimer) clearTimeout(pressTimer);
   pressTimer = setTimeout(()=>{
-    const target = state.expenses.find(ex=>ex.id===id);
-    if(target){
-      // 1. まずフォームに値をセット（編集モード起動）
-      document.getElementById('amountInput').value=target.amount;
-      document.getElementById('memoInput').value=target.memo;
-      state.selectedDate = target.date;
-      state.currentView = new Date(target.date);
-      
-      // 2. 視覚的フィードバック
-      const originalBg = e.currentTarget.style.background;
-      e.currentTarget.style.background = "#e5e5ea";
-      
-      // 3. 削除の確認
-      setTimeout(() => {
-        if(confirm("この記録を削除しますか？\n(キャンセルで編集を続行)")){
-          deleteEntry(id);
-          document.getElementById('amountInput').value="";
-          document.getElementById('memoInput').value="";
-        }
-        updateUI();
-        window.scrollTo({top:0, behavior:'smooth'});
-      }, 50);
-    }
+    const t = state.expenses.find(x=>x.id===id);
+    if(!t) return;
+    amountInput.value=t.amount;
+    memoInput.value=t.memo;
+    state.selectedDate=t.date;
+    state.currentView=new Date(t.date);
+
+    setTimeout(()=>{
+      if(confirm("この記録を削除しますか？\n(キャンセルで編集を続行)")){
+        deleteEntry(id);
+        amountInput.value="";
+        memoInput.value="";
+      }
+      updateUI();
+      scrollTo({top:0,behavior:'smooth'});
+    },50);
   },700);
 }
 
 function handleMove(e){
-  const diff = Math.abs(startX - e.touches[0].pageX);
-  if(diff > 10) clearTimeout(pressTimer);
+  if(Math.abs(startX-e.touches[0].pageX)>10) clearTimeout(pressTimer);
 }
-
-function handleEnd(){
-  clearTimeout(pressTimer);
-}
+function handleEnd(){ clearTimeout(pressTimer); }
 
 updateUI();
 </script>
