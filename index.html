@@ -106,8 +106,8 @@ body {
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
 .summary-label { font-size: 12px; color: var(--text-sub); }
 
-/* 入力ボックス共通スタイル */
-.input-box {
+/* 家計用入力ボックス（金額3.5 : メモ6.5） */
+.log-input-box {
   display: flex;
   align-items: center;
   background: #f2f2f7;
@@ -125,12 +125,35 @@ input {
   box-sizing: border-box;
   width: 100%;
 }
-
 input:focus { outline: none; }
 
-/* 比率の調整 */
-.input-box .left-field { flex: 3.5; border-right: 1px solid #e5e5ea; }
-.input-box .right-field { flex: 6.5; }
+.log-amount { flex: 3.5; border-right: 1px solid #e5e5ea; }
+.log-memo { flex: 6.5; }
+
+/* NISA用入力ボックス（均等 1:1） */
+.stock-input-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.stock-input-field {
+  flex: 1;
+}
+.stock-input-field label {
+  display: block;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--text-sub);
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+.stock-input-field input {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #e5e5ea;
+}
 
 /* ボタン */
 .action-row { display: flex; gap: 12px; }
@@ -146,7 +169,7 @@ input:focus { outline: none; }
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 第三の島：History/Stock List */
+/* 第三の島 */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -182,7 +205,7 @@ input:focus { outline: none; }
 
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
-/* NISAカード専用 */
+/* NISAカード */
 .stock-card {
   background: #f9f9fb;
   padding: 16px;
@@ -220,9 +243,9 @@ input:focus { outline: none; }
         <span id="monthlyTotal">0</span><small> 円</small>
       </div>
 
-      <div class="input-box">
-        <div class="left-field"><input type="number" id="amountInput" placeholder="金額" inputmode="decimal"></div>
-        <div class="right-field"><input type="text" id="memoInput" placeholder="メモ"></div>
+      <div class="log-input-box">
+        <div class="log-amount"><input type="number" id="amountInput" placeholder="金額" inputmode="decimal"></div>
+        <div class="log-memo"><input type="text" id="memoInput" placeholder="メモ"></div>
       </div>
 
       <div class="action-row">
@@ -355,15 +378,17 @@ function renderStocks(){
   container.innerHTML = state.stocks.map((s,i)=>{
     const valuation = Math.floor(s.price*s.holding/10000);
     return `<div class="stock-card">
-      <div style="font-size:14px; font-weight:bold; margin-bottom:8px;">${s.name}</div>
-      <div style="font-size:24px; font-weight:800; margin-bottom:12px;">¥${valuation.toLocaleString()}</div>
-      <div class="input-box" style="margin-bottom:0; background:#fff;">
-        <div class="left-field"><input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" placeholder="価額"></div>
-        <div class="right-field"><input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" placeholder="口数"></div>
-      </div>
-      <div style="display:flex; font-size:10px; color:var(--text-sub); margin-top:4px;">
-        <div style="flex:3.5;">基準価額</div>
-        <div style="flex:6.5; padding-left:12px;">保有口数</div>
+      <div style="font-size:14px; font-weight:bold; margin-bottom:4px;">${s.name}</div>
+      <div style="font-size:24px; font-weight:800;">¥${valuation.toLocaleString()}</div>
+      <div class="stock-input-row">
+        <div class="stock-input-field">
+          <label>基準価額</label>
+          <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal">
+        </div>
+        <div class="stock-input-field">
+          <label>保有口数</label>
+          <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal">
+        </div>
       </div>
     </div>`;
   }).join('');
