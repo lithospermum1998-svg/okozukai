@@ -69,7 +69,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* 第二の島：Input & Summary */
+/* 第二の島：Main Container */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -93,10 +93,8 @@ body {
   font-weight: 700; 
   color: var(--text-main); 
   cursor: pointer;
-  padding: 4px 8px;
 }
 
-/* 三角ボタンは黒 */
 .month-btn {
   font-size: 14px;
   color: #000000; 
@@ -108,7 +106,7 @@ body {
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
 .summary-label { font-size: 12px; color: var(--text-sub); }
 
-/* 入力エリア：横並びをキープ */
+/* 入力ボックス共通スタイル */
 .input-box {
   display: flex;
   align-items: center;
@@ -125,13 +123,16 @@ input {
   background: transparent;
   color: var(--text-main);
   box-sizing: border-box;
+  width: 100%;
 }
-
-#amountInput { flex: 4; border-right: 1px solid #e5e5ea; }
-#memoInput { flex: 6; }
 
 input:focus { outline: none; }
 
+/* 比率の調整 */
+.input-box .left-field { flex: 3.5; border-right: 1px solid #e5e5ea; }
+.input-box .right-field { flex: 6.5; }
+
+/* ボタン */
 .action-row { display: flex; gap: 12px; }
 .btn { 
   flex: 1; 
@@ -145,7 +146,7 @@ input:focus { outline: none; }
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 第三の島：History */
+/* 第三の島：History/Stock List */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -153,7 +154,6 @@ input:focus { outline: none; }
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* 履歴横の棒は文字と同じ薄グレー */
 .island-title {
   font-size: 13px;
   font-weight: 700;
@@ -181,6 +181,15 @@ input:focus { outline: none; }
 .amount.invest { color: var(--ios-green); font-weight: 700; }
 
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
+
+/* NISAカード専用 */
+.stock-card {
+  background: #f9f9fb;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--ios-green);
+}
 
 .page { display: none; }
 .page.active { display: block; }
@@ -212,8 +221,8 @@ input:focus { outline: none; }
       </div>
 
       <div class="input-box">
-        <input type="number" id="amountInput" placeholder="金額" inputmode="decimal">
-        <input type="text" id="memoInput" placeholder="メモ">
+        <div class="left-field"><input type="number" id="amountInput" placeholder="金額" inputmode="decimal"></div>
+        <div class="right-field"><input type="text" id="memoInput" placeholder="メモ"></div>
       </div>
 
       <div class="action-row">
@@ -229,7 +238,10 @@ input:focus { outline: none; }
   </div>
 
   <div id="stockPage" class="page">
-    <div class="island-main"><div id="stockList"></div></div>
+    <div class="island-main">
+      <div class="island-title">保有資産状況</div>
+      <div id="stockList"></div>
+    </div>
   </div>
 
 </div>
@@ -342,12 +354,16 @@ function renderStocks(){
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s,i)=>{
     const valuation = Math.floor(s.price*s.holding/10000);
-    return `<div style="background:#f9f9fb; padding:16px; border-radius:16px; margin-bottom:12px; border-left:4px solid var(--ios-green);">
-      <div style="font-size:14px; font-weight:bold; margin-bottom:4px;">${s.name}</div>
+    return `<div class="stock-card">
+      <div style="font-size:14px; font-weight:bold; margin-bottom:8px;">${s.name}</div>
       <div style="font-size:24px; font-weight:800; margin-bottom:12px;">¥${valuation.toLocaleString()}</div>
-      <div style="display:flex; gap:10px;">
-        <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" style="flex:1; background:#fff; padding:8px; border-radius:8px; font-size:14px;">
-        <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" style="flex:1; background:#fff; padding:8px; border-radius:8px; font-size:14px;">
+      <div class="input-box" style="margin-bottom:0; background:#fff;">
+        <div class="left-field"><input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal" placeholder="価額"></div>
+        <div class="right-field"><input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal" placeholder="口数"></div>
+      </div>
+      <div style="display:flex; font-size:10px; color:var(--text-sub); margin-top:4px;">
+        <div style="flex:3.5;">基準価額</div>
+        <div style="flex:6.5; padding-left:12px;">保有口数</div>
       </div>
     </div>`;
   }).join('');
