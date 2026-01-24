@@ -43,7 +43,7 @@ body {
 .header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-/* Main Island */
+/* Main Island - ラベルを消してさらにタイトに */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -53,11 +53,12 @@ body {
 }
 
 .summary { text-align: center; margin-bottom: 12px; }
-.month-switch { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 2px; }
+.month-switch { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
 #dateLabel { font-size: 17px; font-weight: 700; color: var(--text-main); cursor: pointer; }
 .month-btn { font-size: 12px; background: none; border: none; cursor: pointer; padding: 4px; }
 
-.valuation { font-size: 22px; font-weight: 800; margin: 4px 0; }
+/* 金額を際立たせる */
+.valuation { font-size: 26px; font-weight: 800; margin: 8px 0; }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .ios-input {
@@ -88,11 +89,10 @@ body {
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
 
-/* スライド削除を正常化するための構造 */
 .swipe-item { 
   position: relative; 
   overflow: hidden; 
-  background-color: var(--ios-red); /* 下地に赤 */
+  background-color: var(--ios-red); 
   border-radius: 10px; 
   margin-bottom: 8px; 
 }
@@ -100,12 +100,12 @@ body {
 .item-content { 
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 14px; 
-  background: #f9f9fb; /* コンテンツ自体の背景 */
+  background: #f9f9fb; 
   border: 1px solid var(--input-border); 
   border-radius: 10px;
   position: relative; 
-  z-index: 2; /* 赤い削除ボタンより上に配置 */
-  transition: transform 0.3s ease; /* スライドのアニメーション */
+  z-index: 2; 
+  transition: transform 0.3s ease;
 }
 
 .swipe-delete-btn { 
@@ -121,7 +121,7 @@ body {
   justify-content: center; 
   font-size: 13px; 
   font-weight: bold; 
-  z-index: 1; /* コンテンツの下に配置 */
+  z-index: 1;
 }
 
 /* NISA */
@@ -153,7 +153,6 @@ body {
           <div id="dateLabel" onclick="showDatePicker()"></div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
-        <div style="font-size:10px; color:var(--text-sub);">【今月の合計】</div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
 
@@ -293,11 +292,9 @@ function updateStock(index, field, value) {
   renderStocks();
 }
 
-/* スワイプ操作のロジック */
 let startX=0;
 function handleStart(e,id){
   startX = e.touches[0].pageX;
-  // 長押しで編集モード
   window.ptimer=setTimeout(()=>{
     const target = state.expenses.find(ex=>ex.id===id);
     document.getElementById('amountInput').value=target.amount;
@@ -312,7 +309,6 @@ function handleMove(e){
   clearTimeout(window.ptimer);
   const diff = startX - e.touches[0].pageX;
   const content = e.currentTarget;
-  // スライドの制御
   if(diff > 40) {
     content.style.transform = "translateX(-70px)";
   } else if(diff < -40) {
