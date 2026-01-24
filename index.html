@@ -92,7 +92,7 @@ body {
   font-size: 18px; 
   font-weight: 700; 
   color: var(--text-main); 
-  cursor: pointer; /* タップ可能であることを示す */
+  cursor: pointer;
 }
 
 .month-btn {
@@ -247,8 +247,8 @@ let state = {
     { name: "WCM世界成長株激選", price: 0, holding: 0 },
     { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
   ],
-  currentView: new Date(),
-  selectedDate: new Date().toISOString().split('T')[0]
+  currentView: new Date(), // 現在表示・計算対象の年月基準
+  selectedDate: new Date().toISOString().split('T')[0] // 記録に使用する具体的な日付
 };
 
 function switchPage(id){
@@ -259,13 +259,14 @@ function switchPage(id){
   if(id==='stockPage') renderStocks();
 }
 
+// 月単位で遷移する
 function changeMonth(diff){
-  state.currentView.setDate(state.currentView.getDate() + diff);
-  state.selectedDate = state.currentView.toISOString().split('T')[0];
+  state.currentView.setMonth(state.currentView.getMonth() + diff);
+  // 表示月が切り替わった際、記録用の日付もその月の同じ日に合わせる
+  state.selectedDate = new Date(state.currentView.getFullYear(), state.currentView.getMonth(), state.currentView.getDate()).toISOString().split('T')[0];
   updateUI();
 }
 
-// 日付選択機能を復元
 function showDatePicker(){
   const picker = document.createElement('input');
   picker.type = 'date';
@@ -298,10 +299,12 @@ function save(){
 function updateUI(){
   const list = document.getElementById('expenseList');
   const view = state.currentView;
+  const selDate = new Date(state.selectedDate);
   
-  // 表示形式をドット区切りに統一
-  document.getElementById('dateLabel').textContent = `${view.getFullYear()}.${view.getMonth()+1}.${view.getDate()}`;
+  // 表示は 2026.1.25 形式
+  document.getElementById('dateLabel').textContent = `${selDate.getFullYear()}.${selDate.getMonth()+1}.${selDate.getDate()}`;
   
+  // 合計は表示されている「月」に基づいて集計
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
