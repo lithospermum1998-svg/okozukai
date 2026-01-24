@@ -71,7 +71,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Main Container */
+/* Main Container (家計・NISA共通) */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -105,13 +105,10 @@ body {
   cursor: pointer;
 }
 
-/* 赤枠部分：NISA側の .valuation スタイルに統一 */
-#monthlyTotal { 
-  font-size: 24px; 
-  font-weight: 800; 
-}
+/* 合計金額表示スタイル */
+.valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
 
-/* 緑枠部分：NISA側の .stock-inputs スタイルに統一 */
+/* 入力ボックススタイル */
 .log-input-box {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -144,7 +141,7 @@ body {
 }
 .btn-record { background: var(--ios-blue); }
 
-/* 履歴表示 */
+/* 履歴表示：緑枠内も枠線を付けて統一 */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -162,14 +159,23 @@ body {
 }
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 12px; margin-bottom: 8px; }
+.swipe-item { 
+  position: relative; 
+  overflow: hidden; 
+  background-color: var(--ios-red); 
+  border-radius: 12px; 
+  margin-bottom: 12px; 
+}
 
+/* 履歴アイテムにも枠線を付けてNISAカードと統一 */
 .item-content { 
   display: flex; 
   justify-content: space-between; 
   align-items: center;
   padding: 14px 16px; 
   background: #f9f9fb; 
+  border: 1px solid var(--input-border); /* 枠線を追加 */
+  border-radius: 12px;
   position: relative; 
   z-index: 2; 
   transition: 0.3s;
@@ -181,10 +187,6 @@ body {
 /* NISA画面用 */
 .stock-card { background: #f9f9fb; padding: 16px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--input-border); }
 .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
-.valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-.stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.stock-inputs div { font-size: 11px; color: var(--text-sub); }
-.stock-inputs input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; margin-bottom: 4px; border: 1px solid var(--input-border); border-radius: 12px; background: var(--input-bg); }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -211,7 +213,7 @@ body {
           <div id="dateLabel" onclick="showDatePicker()"></div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
-        <div style="font-size:11px; color:var(--text-sub); margin-bottom:4px;">今月の支出合計</div>
+        <div style="font-size:11px; color:var(--text-sub); margin-bottom:4px;">【今月の合計】</div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
 
