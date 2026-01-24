@@ -7,7 +7,7 @@
 
 <style>
 :root {
-  --ios-blue: #007aff;
+  --ios-black: #000000;
   --ios-red: #ff3b30;
   --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
@@ -55,9 +55,10 @@ body {
 .summary { text-align: center; margin-bottom: 12px; }
 .month-switch { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
 #dateLabel { font-size: 17px; font-weight: 700; color: var(--text-main); cursor: pointer; }
-.month-btn { font-size: 12px; background: none; border: none; cursor: pointer; padding: 4px; }
+.month-btn { font-size: 12px; background: none; border: none; cursor: pointer; padding: 4px; color: var(--text-main); }
 
-.valuation { font-size: 26px; font-weight: 800; margin: 8px 0; }
+/* 金額表示：黒で引き締める */
+.valuation { font-size: 26px; font-weight: 800; margin: 8px 0; color: var(--ios-black); }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .ios-input {
@@ -71,6 +72,7 @@ body {
   color: var(--text-main);
 }
 
+/* ボタンを黒に */
 .btn-record { 
   width: 100%;
   padding: 12px; 
@@ -79,7 +81,7 @@ body {
   color: #fff; 
   font-weight: 800; 
   font-size: 15px; 
-  background: var(--ios-blue);
+  background: var(--ios-black);
 }
 
 /* 履歴エリア */
@@ -88,7 +90,6 @@ body {
 
 #expenseList { list-style: none; padding: 0; margin: 0; }
 
-/* 挿入アニメーション（これのみ残しました） */
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -121,7 +122,10 @@ body {
   font-weight: bold; z-index: 1;
 }
 
-/* NISA */
+/* 履歴内の金額も黒に */
+.amount-text { color: var(--ios-black); font-weight: 700; font-size: 14px; }
+
+/* NISAカード */
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
@@ -245,7 +249,7 @@ function updateUI(){
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
       <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="handleEnd(event)" ontouchmove="handleMove(event)">
         <div>
-          <div class="amount record" style="color:var(--ios-blue); font-weight:700; font-size:14px;">¥${e.amount.toLocaleString()}</div>
+          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
           <div style="font-size:10px; color:var(--text-sub)">${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}</div>
         </div>
         <div style="color:#c7c7cc; font-size:10px;">●</div>
