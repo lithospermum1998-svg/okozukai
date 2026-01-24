@@ -10,11 +10,11 @@
   --ios-blue: #007aff;
   --ios-green: #34c759;
   --ios-red: #ff3b30;
-  --bg-color: #f2f2f7; /* 背景：少し濃いめのグレー */
+  --bg-color: #f2f2f7; 
   --card-bg: #ffffff;
   --text-main: #1c1c1e;
-  --text-sub: #8e8e93;
-  --radius: 20px; /* 島（カード）の丸みを強調 */
+  --text-sub: #8e8e93; /* 履歴横の棒に使用する色 */
+  --radius: 20px;
 }
 
 body {
@@ -24,12 +24,11 @@ body {
   padding: 16px;
   color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
-  line-height: 1.5;
 }
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 第一の島：Header & Tabs */
+/* 第一の島：Header */
 .island-header {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -61,7 +60,6 @@ body {
   font-weight: bold;
   font-size: 14px;
   color: var(--text-sub);
-  transition: 0.2s;
 }
 
 .header-tabs button.active {
@@ -71,7 +69,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* 第二の島：Input & Summary Area */
+/* 第二の島：Input & Summary */
 .island-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -80,10 +78,7 @@ body {
   margin-bottom: 16px;
 }
 
-.summary {
-  text-align: center;
-  margin-bottom: 24px;
-}
+.summary { text-align: center; margin-bottom: 24px; }
 
 .month-switch {
   display: flex;
@@ -95,18 +90,19 @@ body {
 
 #monthLabel { font-size: 18px; font-weight: 700; color: var(--text-main); }
 
+/* 三角ボタンを黒に修正 */
 .month-btn {
-  font-size: 18px;
-  color: var(--ios-blue);
+  font-size: 14px;
+  color: #000000; 
   background: none;
   border: none;
   cursor: pointer;
+  padding: 5px;
 }
 
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
 .summary-label { font-size: 12px; color: var(--text-sub); text-transform: uppercase; }
 
-/* Input Styles */
 input {
   width: 100%;
   padding: 14px;
@@ -119,55 +115,33 @@ input {
   color: var(--text-main);
 }
 
-input:focus { outline: 2px solid #d1d1d6; }
-
 #dateInput { text-align: center; font-weight: 600; cursor: pointer; }
 
-/* Action Buttons */
 .action-row { display: flex; gap: 12px; }
-
-.btn { 
-  flex: 1; 
-  padding: 16px; 
-  border-radius: 14px; 
-  border: none; 
-  color: #fff; 
-  font-weight: 800; 
-  font-size: 16px; 
-  transition: transform 0.1s active;
-}
-
-.btn:active { transform: scale(0.97); }
+.btn { flex: 1; padding: 16px; border-radius: 14px; border: none; color: #fff; font-weight: 800; font-size: 16px; }
 .btn-record { background: var(--ios-blue); }
 .btn-invest { background: var(--ios-green); }
 
-/* 第三の島：Output Area (History) */
+/* 第三の島：Output (History) */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  min-height: 200px;
 }
 
+/* 履歴横の棒を文字と同じ色（var(--text-sub)）に修正 */
 .island-title {
   font-size: 13px;
   font-weight: 700;
   color: var(--text-sub);
   margin-bottom: 16px;
-  border-left: 3px solid var(--ios-blue);
+  border-left: 3px solid var(--text-sub);
   padding-left: 8px;
 }
 
-/* List Items */
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.swipe-item { 
-  position: relative; 
-  overflow: hidden; 
-  background-color: var(--ios-red); 
-  border-radius: 12px; 
-  margin-bottom: 8px; 
-}
+.swipe-item { position: relative; overflow: hidden; background-color: var(--ios-red); border-radius: 12px; margin-bottom: 8px; }
 
 .item-content { 
   display: flex; 
@@ -183,29 +157,16 @@ input:focus { outline: 2px solid #d1d1d6; }
 .amount.record { color: var(--ios-blue); font-weight: 700; }
 .amount.invest { color: var(--ios-green); font-weight: 700; }
 
-.swipe-delete-btn { 
-  position: absolute; right: 0; top: 0; bottom: 0; width: 70px; 
-  background: var(--ios-red); color: white; 
-  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; 
-}
+.swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
-/* Page Control */
 .page { display: none; }
 .page.active { display: block; }
 
-/* NISA Card Customization */
-.stock-card { 
-  background: #f9f9fb; 
-  padding: 18px; 
-  border-radius: 16px; 
-  margin-bottom: 12px; 
-  border-left: 4px solid var(--ios-green); 
-}
+/* NISA Card */
+.stock-card { background: #f9f9fb; padding: 18px; border-radius: 16px; margin-bottom: 12px; border-left: 4px solid var(--ios-green); }
 .stock-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
 .valuation { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
-.stock-inputs div { font-size: 11px; color: var(--text-sub); }
 .stock-inputs input { background: #fff; margin-top: 4px; padding: 8px; font-size: 14px; }
-
 </style>
 </head>
 
@@ -225,9 +186,9 @@ input:focus { outline: 2px solid #d1d1d6; }
     <div class="island-main">
       <div class="summary">
         <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀︎</button>
+          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
           <div id="monthLabel"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶︎</button>
+          <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
         <div class="summary-label">今月の支出合計</div>
         <span id="monthlyTotal">0</span><small> 円</small>
@@ -301,18 +262,8 @@ function addEntry(type){
   const amountInput = document.getElementById('amountInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
-
   if(state.editingId) state.expenses = state.expenses.filter(e=>e.id!==state.editingId);
-  
-  state.expenses.push({
-    id: Date.now(),
-    type,
-    amount,
-    memo: document.getElementById('memoInput').value,
-    date: document.getElementById('dateInput').value
-  });
-  
-  // 入力後リセット
+  state.expenses.push({ id: Date.now(), type, amount, memo: document.getElementById('memoInput').value, date: document.getElementById('dateInput').value });
   amountInput.value = "";
   document.getElementById('memoInput').value = "";
   state.editingId = null;
@@ -328,20 +279,15 @@ function updateUI(){
   const list = document.getElementById('expenseList');
   const now = state.currentView;
   document.getElementById('monthLabel').textContent = `${now.getFullYear()}年${now.getMonth()+1}月`;
-
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
   });
-
-  document.getElementById('monthlyTotal').textContent =
-    filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   list.innerHTML = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`
     <li class="swipe-item" onclick="event.stopPropagation()">
       <div class="swipe-delete-btn" onclick="deleteEntry(${e.id})">削除</div>
-      <div class="item-content" 
-           ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
+      <div class="item-content" ontouchstart="handleStart(event,${e.id})" ontouchend="clearTimeout(window.ptimer)" ontouchmove="handleMove(event)">
         <div>
           <div class="amount ${e.type}">¥${e.amount.toLocaleString()}</div>
           <div style="font-size:11px; color:var(--text-sub)">${e.date.slice(5)} ${e.memo}</div>
@@ -366,7 +312,6 @@ function handleStart(e,id){
     document.getElementById('amountInput').value=target.amount;
     document.getElementById('memoInput').value=target.memo;
     document.getElementById('dateInput').value=target.date;
-    // 編集モードを視覚化
     document.getElementById('amountInput').focus();
   },800);
 }
@@ -385,13 +330,9 @@ function renderStocks(){
     return `<div class="stock-card">
       <div class="stock-name">${s.name}</div>
       <div class="valuation">¥${valuation.toLocaleString()}</div>
-      <div class="stock-inputs" style="display:flex; gap:10px;">
-        <div style="flex:1;">基準価額
-          <input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal">
-        </div>
-        <div style="flex:1;">保有口数
-          <input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal">
-        </div>
+      <div style="display:flex; gap:10px;">
+        <div style="flex:1; font-size:11px; color:var(--text-sub);">基準価額<input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal"></div>
+        <div style="flex:1; font-size:11px; color:var(--text-sub);">保有口数<input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal"></div>
       </div>
     </div>`;
   }).join('');
@@ -403,11 +344,8 @@ function updateStock(index,field,value){
   renderStocks();
 }
 
-function handleGlobalClick(){
-  // 編集キャンセル等の処理が必要な場合
-}
+function handleGlobalClick(){}
 
-// Init
 document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
 updateUI();
 </script>
