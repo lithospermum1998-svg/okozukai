@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>MONEY LOG</title>
+<title>MONEY LOG PRO</title>
 
 <style>
 :root {
-  --accent: #000; /* 黒をアクセントにしたモノトーンベース */
+  --accent: #000;
   --ios-blue: #007aff;
+  --ios-green: #34c759;
   --bg: #f9f9fb;
   --card: #ffffff;
   --sub-text: #a1a1a6;
+  --radius: 24px;
 }
 
 body {
@@ -24,105 +26,72 @@ body {
 
 .container { max-width: 400px; margin: 0 auto; padding: 20px; }
 
-/* ヘッダー（構造維持・デザイン微調整） */
+/* ヘッダー（島デザイン維持） */
 .island-header {
   background: var(--card);
-  border-radius: 24px;
+  border-radius: var(--radius);
   padding: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 .island-header h1 { 
-  font-size: 14px; 
-  text-align: center; 
-  letter-spacing: 3px; 
-  font-weight: 800;
-  margin: 8px 0 12px;
+  font-size: 14px; text-align: center; letter-spacing: 3px; font-weight: 800; margin: 8px 0 12px;
 }
 .header-tabs { display: flex; background: #efeff4; border-radius: 14px; padding: 2px; }
 .header-tabs button { flex: 1; padding: 10px 0; border: none; background: transparent; font-weight: 600; font-size: 13px; color: var(--sub-text); transition: 0.2s; }
 .header-tabs button.active { background: var(--card); border-radius: 12px; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-/* メイン入力エリア */
+/* サマリー（月次合計） */
+.summary-area { text-align: center; margin-bottom: 24px; }
+.month-nav { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 4px; font-weight: 700; }
+.month-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 10px; }
+#monthlyTotal { font-size: 38px; font-weight: 800; letter-spacing: -1px; }
+
+/* 入力カード */
 .main-card {
   background: var(--card);
   border-radius: 28px;
   padding: 30px 24px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
-
-.amount-display {
-  text-align: center;
-  margin-bottom: 24px;
-}
 .amount-display input {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 48px;
-  font-weight: 800;
-  text-align: center;
-  outline: none;
-  letter-spacing: -2px;
+  width: 100%; border: none; background: transparent; font-size: 48px; font-weight: 800; text-align: center; outline: none; letter-spacing: -2px;
 }
-.amount-display input::placeholder { color: #ebebeb; }
+.memo-input { border-top: 0.5px solid #f2f2f2; padding-top: 20px; margin-top: 10px; }
+.memo-input input { width: 100%; border: none; background: transparent; font-size: 16px; text-align: center; outline: none; }
 
-.memo-input {
-  border-top: 0.5px solid #eee;
-  padding-top: 20px;
-}
-.memo-input input {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  text-align: center;
-  outline: none;
-  color: #1d1d1f;
-}
-
-/* 記録ボタン（フローティング風） */
-.action-btn {
-  width: 100%;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 18px;
-  padding: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  transition: transform 0.1s, opacity 0.2s;
-}
-.action-btn:active { transform: scale(0.98); opacity: 0.9; }
+/* アクションボタン */
+.action-grid { display: flex; gap: 12px; }
+.btn { flex: 1; padding: 18px; border-radius: 18px; border: none; font-size: 15px; font-weight: 700; transition: 0.1s; color: #fff; }
+.btn-log { background: var(--accent); }
+.btn-invest { background: var(--ios-green); }
+.btn:active { transform: scale(0.96); opacity: 0.8; }
 
 /* 履歴リスト */
-.history-section { margin-top: 40px; }
-.history-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--sub-text);
-  margin-left: 10px;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-.history-list {
-  background: var(--card);
-  border-radius: 24px;
-  padding: 8px 0;
-}
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 0.5px solid #f2f2f2;
+.history-label { font-size: 12px; font-weight: 700; color: var(--sub-text); margin: 30px 0 12px 10px; text-transform: uppercase; letter-spacing: 1px; }
+.history-card { background: var(--card); border-radius: 24px; overflow: hidden; }
+.history-item { 
+  display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 0.5px solid #f2f2f2; 
+  position: relative; background: var(--card); transition: transform 0.3s;
 }
 .history-item:last-child { border-bottom: none; }
 .item-info { display: flex; flex-direction: column; }
-.item-memo { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
-.item-date { font-size: 11px; color: var(--sub-text); letter-spacing: 0.5px; }
-.item-price { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.item-memo { font-size: 15px; font-weight: 500; }
+.item-date { font-size: 11px; color: var(--sub-text); }
+.item-price { font-size: 16px; font-weight: 700; }
+.item-price.invest { color: var(--ios-green); }
+
+/* NISAカード */
+.stock-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+.stock-name { font-size: 13px; font-weight: 700; color: var(--sub-text); margin-bottom: 8px; }
+.stock-val { font-size: 24px; font-weight: 800; margin-bottom: 15px; }
+.stock-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stock-inputs div { font-size: 10px; color: var(--sub-text); font-weight: 600; }
+.stock-inputs input { width: 100%; border: 1px solid #efeff4; background: #f9f9fb; padding: 8px; border-radius: 10px; font-size: 13px; margin-top: 4px; outline: none; }
+
+.page { display: none; }
+.page.active { display: block; }
 </style>
 </head>
 
@@ -137,7 +106,17 @@ body {
     </div>
   </div>
 
-  <div id="logPage" class="page">
+  <div id="logPage" class="page active">
+    <div class="summary-area">
+      <div class="month-nav">
+        <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+        <span id="monthLabel" onclick="showDatePicker()">2024.01</span>
+        <button class="month-btn" onclick="changeMonth(1)">›</button>
+      </div>
+      <div style="font-size:11px; color:var(--sub-text); font-weight:600;">MONTHLY TOTAL</div>
+      <div><span id="monthlyTotal">0</span><small style="font-size:14px; font-weight:700;"> JPY</small></div>
+    </div>
+
     <div class="main-card">
       <div class="amount-display">
         <input type="number" id="amountInput" placeholder="0" inputmode="decimal">
@@ -147,96 +126,141 @@ body {
       </div>
     </div>
     
-    <button class="action-btn" onclick="addEntry()">CONFIRM</button>
-
-    <div class="history-section">
-      <div class="history-label">Recent Activity</div>
-      <div class="history-list" id="expenseList"></div>
+    <div class="action-grid">
+      <button class="btn btn-log" onclick="addEntry('record')">RECORD</button>
+      <button class="btn btn-invest" onclick="addEntry('invest')">INVEST</button>
     </div>
+
+    <div class="history-label">Activity</div>
+    <div class="history-card" id="expenseList"></div>
   </div>
 
-  <div id="stockPage" class="page" style="display:none; text-align:center; padding-top:50px; color:var(--sub-text);">
-    COMING SOON
+  <div id="stockPage" class="page">
+    <div class="history-label">My Assets (万円)</div>
+    <div id="stockList"></div>
   </div>
 </div>
 
 <script>
 let state = {
-  expenses: JSON.parse(localStorage.getItem('expenses')) || []
+  expenses: JSON.parse(localStorage.getItem('expenses')) || [],
+  stocks: JSON.parse(localStorage.getItem('stocks')) || [
+    { name: "BLACKROCK GOLD", price: 0, holding: 0 },
+    { name: "WCM WORLD GROWTH", price: 0, holding: 0 },
+    { name: "SMT US TREND", price: 0, holding: 0 }
+  ],
+  currentView: new Date()
 };
 
 function switchPage(id){
-  const logPage = document.getElementById('logPage');
-  const stockPage = document.getElementById('stockPage');
-  const tabLog = document.getElementById('tab-log');
-  const tabStock = document.getElementById('tab-stock');
-
-  if(id === 'logPage') {
-    logPage.style.display = 'block';
-    stockPage.style.display = 'none';
-    tabLog.classList.add('active');
-    tabStock.classList.remove('active');
-  } else {
-    logPage.style.display = 'none';
-    stockPage.style.display = 'block';
-    tabLog.classList.remove('active');
-    tabStock.classList.add('active');
-  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
+  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
+  if(id==='stockPage') renderStocks();
 }
 
-function addEntry(){
-  const amountVal = document.getElementById('amountInput').value;
-  const memoVal = document.getElementById('memoInput').value;
-  if(!amountVal) return;
+function changeMonth(diff){
+  state.currentView.setMonth(state.currentView.getMonth() + diff);
+  updateUI();
+}
 
-  const now = new Date();
-  const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const date = `${now.getMonth()+1}/${now.getDate()}`;
+function showDatePicker(){
+  const picker = document.createElement('input');
+  picker.type = 'month';
+  picker.style.position='absolute'; picker.style.opacity=0;
+  document.body.appendChild(picker);
+  picker.onchange = () => {
+    state.currentView = new Date(picker.value + "-01");
+    updateUI();
+    document.body.removeChild(picker);
+  };
+  picker.click();
+}
+
+function addEntry(type){
+  const aInput = document.getElementById('amountInput');
+  const mInput = document.getElementById('memoInput');
+  const amount = parseInt(aInput.value);
+  if(!amount) return;
 
   state.expenses.unshift({
     id: Date.now(),
-    amount: parseInt(amountVal),
-    memo: memoVal || "No Memo",
-    date: `${date} ${time}`
+    type,
+    amount,
+    memo: mInput.value || (type === 'invest' ? "Investment" : "Expense"),
+    date: new Date().toISOString()
   });
 
-  document.getElementById('amountInput').value = "";
-  document.getElementById('memoInput').value = "";
+  aInput.value = ""; mInput.value = "";
   document.activeElement.blur();
-  
   save();
 }
 
 function save(){
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  render();
+  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  updateUI();
 }
 
-function render(){
+function updateUI(){
   const list = document.getElementById('expenseList');
-  if(state.expenses.length === 0) {
-    list.innerHTML = `<div style="padding:30px; text-align:center; font-size:13px; color:var(--sub-text);">Empty</div>`;
-    return;
-  }
-  list.innerHTML = state.expenses.map(e => `
-    <div class="history-item" onclick="deleteEntry(${e.id})">
+  const view = state.currentView;
+  document.getElementById('monthLabel').textContent = `${view.getFullYear()}.${String(view.getMonth()+1).padStart(2,'0')}`;
+  
+  const filtered = state.expenses.filter(e => {
+    const d = new Date(e.date);
+    return d.getFullYear() === view.getFullYear() && d.getMonth() === view.getMonth();
+  });
+
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+  
+  list.innerHTML = filtered.length ? filtered.map(e => {
+    const d = new Date(e.date);
+    return `
+    <div class="history-item" onclick="handleItemClick(${e.id})">
       <div class="item-info">
         <span class="item-memo">${e.memo}</span>
-        <span class="item-date">${e.date}</span>
+        <span class="item-date">${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}</span>
       </div>
-      <div class="item-price">¥${e.amount.toLocaleString()}</div>
+      <div class="item-price ${e.type === 'invest' ? 'invest' : ''}">
+        ${e.type === 'invest' ? '↑' : ''} ¥${e.amount.toLocaleString()}
+      </div>
     </div>
-  `).join('');
+  `}).join('') : `<div style="padding:40px; text-align:center; color:var(--sub-text); font-size:13px;">No activity this month</div>`;
 }
 
-function deleteEntry(id){
-  // スタイリッシュなデザインを損なわないよう、あえてシンプルな削除
-  state.expenses = state.expenses.filter(e => e.id !== id);
+function handleItemClick(id){
+  if(confirm("Delete this record?")) {
+    state.expenses = state.expenses.filter(e => e.id !== id);
+    save();
+  }
+}
+
+function renderStocks(){
+  const container = document.getElementById('stockList');
+  container.innerHTML = state.stocks.map((s, i) => {
+    const valuation = Math.floor((s.price * s.holding) / 10000);
+    return `
+      <div class="stock-card">
+        <div class="stock-name">${s.name}</div>
+        <div class="stock-val">¥${valuation.toLocaleString()}</div>
+        <div class="stock-inputs">
+          <div>基準価額<input type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)" inputmode="decimal"></div>
+          <div>保有口数<input type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)" inputmode="decimal"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateStock(i, field, val){
+  state.stocks[i][field] = parseFloat(val) || 0;
   save();
+  renderStocks();
 }
 
-render();
+updateUI();
 </script>
-
 </body>
 </html>
