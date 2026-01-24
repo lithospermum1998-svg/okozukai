@@ -80,32 +80,16 @@ body {
 
 .summary { text-align: center; margin-bottom: 20px; }
 
-.month-switch {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-#monthLabel { 
+#dateLabel { 
   font-size: 18px; 
   font-weight: 700; 
   color: var(--text-main); 
-  cursor: pointer;
-}
-
-.month-btn {
-  font-size: 14px;
-  color: #000000; 
-  background: none;
-  border: none;
-  cursor: pointer;
+  margin-bottom: 4px;
 }
 
 #monthlyTotal { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
 
-/* 家計用入力ボックス（金額3.5 : メモ6.5） */
+/* 入力ボックス */
 .log-input-box {
   display: flex;
   align-items: center;
@@ -129,8 +113,8 @@ input:focus { outline: none; }
 .log-amount { flex: 3.5; border-right: 1px solid #e5e5ea; }
 .log-memo { flex: 6.5; }
 
-/* ボタン */
-.action-row { display: flex; gap: 12px; }
+/* ボタン：記録ボタンのみ1カラムで表示 */
+.action-row { display: flex; }
 .btn { 
   flex: 1; 
   padding: 16px; 
@@ -141,9 +125,8 @@ input:focus { outline: none; }
   font-size: 16px; 
 }
 .btn-record { background: var(--ios-blue); }
-.btn-invest { background: var(--ios-green); }
 
-/* 第三の島 */
+/* 第三の島：履歴 */
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -175,11 +158,10 @@ input:focus { outline: none; }
 }
 
 .amount.record { color: var(--ios-blue); font-weight: 700; }
-.amount.invest { color: var(--ios-green); font-weight: 700; }
 
 .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 70px; background: var(--ios-red); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
 
-/* 指定されたNISA画面のCSSを完全移植 */
+/* NISA画面 */
 .stock-card { background: #f9f9fb; padding: 16px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e5e5ea; }
 .stock-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
 .valuation { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
@@ -207,11 +189,7 @@ input:focus { outline: none; }
   <div id="logPage" class="page active">
     <div class="island-main">
       <div class="summary">
-        <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="monthLabel" onclick="showDatePicker()"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶</button>
-        </div>
+        <div id="dateLabel"></div>
         <div style="font-size:12px; color:var(--text-sub); margin-bottom:4px;">今月の支出合計</div>
         <span id="monthlyTotal">0</span><small> 円</small>
       </div>
@@ -223,7 +201,6 @@ input:focus { outline: none; }
 
       <div class="action-row">
         <button class="btn btn-record" onclick="addEntry('record')">記録</button>
-        <button class="btn btn-invest" onclick="addEntry('invest')">投資</button>
       </div>
     </div>
 
@@ -250,7 +227,7 @@ let state = {
     { name: "WCM世界成長株激選", price: 0, holding: 0 },
     { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
   ],
-  currentView: new Date(),
+  // 日付を「今日」に固定
   selectedDate: new Date().toISOString().split('T')[0]
 };
 
@@ -262,31 +239,11 @@ function switchPage(id){
   if(id==='stockPage') renderStocks();
 }
 
-function changeMonth(diff){
-  state.currentView.setMonth(state.currentView.getMonth() + diff);
-  state.selectedDate = new Date(state.currentView.getFullYear(), state.currentView.getMonth(), 1).toISOString().split('T')[0];
-  updateUI();
-}
-
-function showDatePicker(){
-  const picker = document.createElement('input');
-  picker.type = 'date';
-  picker.value = state.selectedDate;
-  picker.style.position = 'absolute'; picker.style.opacity = 0;
-  document.body.appendChild(picker);
-  picker.onchange = ()=> {
-    state.selectedDate = picker.value;
-    state.currentView = new Date(picker.value);
-    document.body.removeChild(picker);
-    updateUI();
-  }
-  picker.focus(); picker.click();
-}
-
 function addEntry(type){
   const amountInput = document.getElementById('amountInput');
   const amount = parseInt(amountInput.value);
   if(!amount) return;
+  // 常に今日の日付で記録
   state.expenses.push({ id: Date.now(), type, amount, memo: document.getElementById('memoInput').value, date: state.selectedDate });
   amountInput.value = ""; document.getElementById('memoInput').value = "";
   save();
@@ -299,11 +256,14 @@ function save(){
 
 function updateUI(){
   const list = document.getElementById('expenseList');
-  const view = state.currentView;
-  document.getElementById('monthLabel').textContent = `${view.getFullYear()}年${view.getMonth()+1}月`;
+  const today = new Date();
+  
+  // 日付表示を今日に更新
+  document.getElementById('dateLabel').textContent = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+  
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
-    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
+    return d.getFullYear()===today.getFullYear() && d.getMonth()===today.getMonth();
   });
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   
@@ -333,7 +293,6 @@ function handleStart(e,id){
     const target = state.expenses.find(ex=>ex.id===id);
     document.getElementById('amountInput').value=target.amount;
     document.getElementById('memoInput').value=target.memo;
-    state.selectedDate = target.date;
     state.expenses = state.expenses.filter(ex=>ex.id!==id);
     updateUI();
   },800);
@@ -346,7 +305,6 @@ function handleMove(e){
   if(diff<-60) e.currentTarget.style.transform="translateX(0px)";
 }
 
-/* 指定されたNISAレンダリングロジックを完全移植 */
 function renderStocks() {
   const container = document.getElementById('stockList');
   container.innerHTML = state.stocks.map((s, i) => {
