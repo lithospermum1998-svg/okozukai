@@ -16,6 +16,9 @@
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
+
+  --row-bg: #f9f9fb;
+  --dot-gray: #c7c7cc;
 }
 
 body {
@@ -36,6 +39,7 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
 }
+
 .island-header h1 {
   font-size: 16px;
   margin: 0 0 12px;
@@ -50,6 +54,7 @@ body {
   border-radius: 10px;
   padding: 2px;
 }
+
 .header-tabs button {
   flex: 1;
   padding: 6px 0;
@@ -59,6 +64,7 @@ body {
   font-size: 13px;
   color: var(--text-sub);
 }
+
 .header-tabs button.active {
   background: var(--card-bg);
   border-radius: 8px;
@@ -83,11 +89,13 @@ body {
   gap: 8px;
   margin-bottom: 4px;
 }
+
 #dateLabel {
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
 }
+
 .month-btn {
   font-size: 12px;
   background: none;
@@ -100,6 +108,7 @@ body {
   font-weight: 800;
   margin: 8px 0;
   color: var(--ios-black);
+  text-align: center;
 }
 
 .input-grid {
@@ -111,6 +120,7 @@ body {
 
 .ios-input {
   width: 100%;
+  box-sizing: border-box;
   padding: 8px 10px;
   font-size: 13px;
   border: 1px solid var(--input-border);
@@ -163,7 +173,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 14px;
-  background: #f9f9fb;
+  background: var(--row-bg);
   border: 1px solid var(--input-border);
   border-radius: 10px;
 }
@@ -174,7 +184,7 @@ body {
 }
 
 .stock-card {
-  background: #f9f9fb;
+  background: var(--row-bg);
   padding: 12px;
   border-radius: 12px;
   margin-bottom: 12px;
@@ -208,6 +218,10 @@ body {
       <button id="tab-log" class="active" onclick="switchPage('logPage')">家計</button>
       <button id="tab-stock" onclick="switchPage('stockPage')">NISA</button>
     </div>
+
+    <div id="headerStockTotal" class="valuation" style="display:none;">
+      ¥<span id="headerStockVal">0</span>
+    </div>
   </div>
 
   <div id="logPage" class="page active">
@@ -237,6 +251,7 @@ body {
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title">MY ASSETS</div>
+      <div class="valuation">¥<span id="totalStockValuation">0</span></div>
       <div id="stockList"></div>
     </div>
   </div>
@@ -255,69 +270,78 @@ let state = {
   selectedDate: new Date().toISOString().split('T')[0]
 };
 
+function formatDateLabel(d){
+  return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+}
+
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
-  if(id === 'stockPage') renderStocks();
+
+  document.getElementById('headerStockTotal').style.display =
+    id==='stockPage' ? 'block' : 'none';
+
+  if(id==='stockPage') renderStocks();
 }
 
 function changeMonth(diff){
-  state.currentView.setMonth(state.currentView.getMonth() + diff);
+  state.currentView.setMonth(state.currentView.getMonth()+diff);
   updateUI();
 }
 
 function showDatePicker(){
-  const picker = document.createElement('input');
-  picker.type = 'date';
-  picker.value = state.selectedDate;
-  picker.style.position = 'absolute';
-  picker.style.opacity = 0;
-  document.body.appendChild(picker);
-  picker.onchange = () => {
-    state.selectedDate = picker.value;
-    state.currentView = new Date(picker.value);
-    document.body.removeChild(picker);
+  const p=document.createElement('input');
+  p.type='date';
+  p.value=state.selectedDate;
+  p.style.position='absolute';
+  p.style.opacity=0;
+  document.body.appendChild(p);
+  p.onchange=()=>{
+    state.selectedDate=p.value;
+    state.currentView=new Date(p.value);
+    document.body.removeChild(p);
     updateUI();
   };
-  picker.click();
+  p.click();
 }
 
 function addEntry(){
-  const amount = parseInt(amountInput.value);
-  if(!amount) return;
+  const a=parseInt(amountInput.value);
+  if(!a) return;
   state.expenses.push({
-    id: Date.now(),
-    amount,
-    memo: memoInput.value,
-    date: state.selectedDate
+    id:Date.now(),
+    amount:a,
+    memo:memoInput.value,
+    date:state.selectedDate
   });
-  amountInput.value = "";
-  memoInput.value = "";
+  amountInput.value="";
+  memoInput.value="";
   save();
 }
 
 function save(){
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
+  localStorage.setItem('expenses',JSON.stringify(state.expenses));
   updateUI();
 }
 
 function updateUI(){
-  const view = state.currentView;
-  const sel = new Date(state.selectedDate);
+  const view=state.currentView;
+  const sel=new Date(state.selectedDate);
+  dateLabel.textContent=formatDateLabel(sel);
 
-  dateLabel.textContent = `${sel.getFullYear()}.${sel.getMonth()+1}.${sel.getDate()}`;
-
-  const filtered = state.expenses.filter(e=>{
-    const d = new Date(e.date);
-    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
+  const filtered=state.expenses.filter(e=>{
+    e._d=e._d||new Date(e.date);
+    return e._d.getFullYear()===view.getFullYear() &&
+           e._d.getMonth()===view.getMonth();
   });
 
-  monthlyTotal.textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+  monthlyTotal.textContent=
+    filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
 
-  expenseList.innerHTML = filtered
-    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+  expenseList.innerHTML=filtered
+    .sort((a,b)=>b._d-a._d)
     .map(e=>`
       <li class="item-row">
         <div class="item-content"
@@ -327,27 +351,33 @@ function updateUI(){
           <div>
             <div class="amount-text">¥${e.amount.toLocaleString()}</div>
             <div style="font-size:10px;color:var(--text-sub)">
-              ${e.date.replaceAll('-', '.').slice(5)} ${e.memo || ''}
+              ${e.date.replaceAll('-','.').slice(5)} ${e.memo||''}
             </div>
           </div>
-          <div style="color:#c7c7cc;font-size:10px;">●</div>
+          <div style="color:var(--dot-gray);font-size:10px;">●</div>
         </div>
       </li>
     `).join('');
 }
 
 function deleteEntry(id){
-  state.expenses = state.expenses.filter(e=>e.id!==id);
+  state.expenses=state.expenses.filter(e=>e.id!==id);
   save();
 }
 
 function renderStocks(){
-  stockList.innerHTML = state.stocks.map((s,i)=>{
-    const valuation = Math.floor((s.price*s.holding)/10000);
+  const total=state.stocks.reduce((s,x)=>
+    s+Math.floor((x.price*x.holding)/10000),0);
+
+  totalStockValuation.textContent=total.toLocaleString();
+  headerStockVal.textContent=total.toLocaleString();
+
+  stockList.innerHTML=state.stocks.map((s,i)=>{
+    const v=Math.floor((s.price*s.holding)/10000);
     return `
       <div class="stock-card">
         <div class="stock-name">${s.name}</div>
-        <div class="valuation">¥${valuation.toLocaleString()}</div>
+        <div class="valuation">¥${v.toLocaleString()}</div>
         <div class="input-grid">
           <div>
             <span class="stock-label">基準価額</span>
@@ -371,13 +401,13 @@ function updateStock(i,f,v){
   renderStocks();
 }
 
-/* 長押し編集・削除 */
-let startX=0, pressTimer=null;
+/* 長押し */
+let startX=0,pressTimer=null;
 
 function handleStart(e,id){
-  startX = e.touches[0].pageX;
-  pressTimer = setTimeout(()=>{
-    const t = state.expenses.find(x=>x.id===id);
+  startX=e.touches[0].pageX;
+  pressTimer=setTimeout(()=>{
+    const t=state.expenses.find(x=>x.id===id);
     if(!t) return;
     amountInput.value=t.amount;
     memoInput.value=t.memo;
