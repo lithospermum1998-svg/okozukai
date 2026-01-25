@@ -15,6 +15,7 @@
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
+  --btn-active: #3a3a3c; /* 濃いグレー */
 }
 
 body {
@@ -129,15 +130,31 @@ body {
   background: var(--input-bg);
 }
 
+/* 記録ボタンの初期状態（無効） */
 .btn-record {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
   border: none;
   background: var(--btn-light);
-  color: var(--text-sub);
+  color: #aeaeb2;
   font-weight: 700;
   font-size: 15px;
+  transition: all 0.2s ease;
+  pointer-events: none; /* 入力がない時は反応させない */
+}
+
+/* 記録ボタンのアクティブ状態 */
+.btn-record.active {
+  background: var(--btn-active);
+  color: #ffffff;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.btn-record.active:active {
+  transform: scale(0.97); /* 押した時に少し縮む演出 */
+  opacity: 0.9;
 }
 
 .island-output {
@@ -215,7 +232,6 @@ body {
     </div>
   </div>
 
-  <!-- 家計 -->
   <div id="logPage" class="page active">
     <div class="island-main">
       <div class="island-title">MONTHLY SUMMARY</div>
@@ -229,10 +245,10 @@ body {
       </div>
 
       <div class="input-grid">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
         <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
       </div>
-      <button class="btn-record" onclick="addEntry()">記録</button>
+      <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
     </div>
 
     <div class="island-output">
@@ -241,7 +257,6 @@ body {
     </div>
   </div>
 
-  <!-- NISA -->
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title">TOTAL ASSETS</div>
@@ -270,6 +285,17 @@ let state = {
   currentView: new Date(),
   selectedDate: new Date().toISOString().split('T')[0]
 };
+
+// 入力状態を監視してボタンの色を変える
+function checkInput() {
+  const amount = document.getElementById('amountInput').value;
+  const btn = document.getElementById('recordBtn');
+  if (amount && parseInt(amount) > 0) {
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+}
 
 function switchPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -301,15 +327,22 @@ function showDatePicker(){
 }
 
 function addEntry(){
+  const amountInput = document.getElementById('amountInput');
+  const memoInput = document.getElementById('memoInput');
   const amount = parseInt(amountInput.value);
+  
   if(!amount) return;
+  
   state.expenses.push({
     id: Date.now(),
     amount,
     memo: memoInput.value,
     date: state.selectedDate
   });
-  amountInput.value = memoInput.value = "";
+  
+  amountInput.value = "";
+  memoInput.value = "";
+  checkInput(); // ボタンをグレーに戻す
   save();
 }
 
@@ -331,6 +364,7 @@ function updateUI(){
   document.getElementById('monthlyTotal').textContent =
     filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
 
+  const expenseList = document.getElementById('expenseList');
   expenseList.innerHTML = filtered.reverse().map(e=>`
     <li>
       <div class="item-content">
