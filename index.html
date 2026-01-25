@@ -19,13 +19,16 @@
   --accent: #007aff;
 }
 
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+/* ポコっと現れるアニメーション */
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  70% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.pop-anim { animation: pop 0.2s ease-out; }
+.new-item {
+  animation: popIn 0.3s ease-out;
+}
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
@@ -81,7 +84,6 @@ body {
   padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
-  transition: transform 0.2s;
 }
 
 .summary {
@@ -148,7 +150,6 @@ body {
 }
 
 .btn-record.active:active { transform: scale(0.96); }
-
 .btn-record.editing { box-shadow: 0 0 0 2px var(--accent); }
 
 .island-output {
@@ -168,10 +169,7 @@ body {
   padding: 10px 14px; background: #f9f9fb;
   border: 1px solid var(--input-border); border-radius: 10px;
   margin-bottom: 8px; cursor: pointer;
-  transition: transform 0.1s;
 }
-
-.item-content:active { transform: scale(0.98); }
 
 .amount-text { font-weight: 700; font-size: 14px; }
 
@@ -186,7 +184,6 @@ body {
 }
 
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
-
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 
 .page { display: none; }
@@ -206,7 +203,7 @@ body {
   </div>
 
   <div id="logPage" class="page active">
-    <div id="inputIsland" class="island-main">
+    <div class="island-main">
       <div class="island-title">SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
@@ -258,7 +255,8 @@ let state = {
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
-  editId: null
+  editId: null,
+  lastAddedId: null // ポコっと動かす要素を特定用
 };
 
 function save() {
@@ -294,13 +292,6 @@ function changeMonth(diff){
   updateUI();
 }
 
-function triggerPop(elId) {
-  const el = document.getElementById(elId);
-  el.classList.remove('pop-anim');
-  void el.offsetWidth; // reflow
-  el.classList.add('pop-anim');
-}
-
 function addEntry(){
   const aIn = document.getElementById('amountInput');
   const mIn = document.getElementById('memoInput');
@@ -312,12 +303,12 @@ function addEntry(){
     if(item) { item.amount = amount; item.memo = mIn.value; }
     state.editId = null;
     document.getElementById('recordBtn').textContent = "記録";
-    document.getElementById('recordBtn').classList.remove('editing');
   } else {
-    state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
+    const newId = Date.now();
+    state.expenses.push({ id: newId, amount, memo: mIn.value, date: state.selectedDate });
+    state.lastAddedId = newId; // 最後に足したIDを保存
   }
 
-  triggerPop('inputIsland');
   aIn.value = ""; mIn.value = "";
   checkInput();
   save();
@@ -339,17 +330,24 @@ function updateUI(){
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
 
-  document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
-    <li onclick="editEntry(${e.id})">
-      <div class="item-content">
-        <div>
-          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
-          <div style="font-size:10px;color:var(--text-sub)">${e.date.replaceAll('-','.')} ${e.memo||''}</div>
+  document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => {
+    // さっき足したやつならアニメーション用クラスを付ける
+    const isNew = e.id === state.lastAddedId ? 'new-item' : '';
+    return `
+      <li class="${isNew}" onclick="editEntry(${e.id})">
+        <div class="item-content">
+          <div>
+            <div class="amount-text">¥${e.amount.toLocaleString()}</div>
+            <div style="font-size:10px;color:var(--text-sub)">${e.date.replaceAll('-','.')} ${e.memo||''}</div>
+          </div>
+          <div class="delete-btn" onclick="deleteEntry(event, ${e.id})">×</div>
         </div>
-        <div class="delete-btn" onclick="deleteEntry(event, ${e.id})">×</div>
-      </div>
-    </li>
-  `).join('');
+      </li>
+    `;
+  }).join('');
+  
+  // 描画が終わったらフラグを下ろす（次の操作でポコポコしないように）
+  state.lastAddedId = null;
 }
 
 function editEntry(id) {
@@ -363,7 +361,6 @@ function editEntry(id) {
   btn.textContent = "更新";
   btn.classList.add('active', 'editing');
   updateUI();
-  triggerPop('inputIsland');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
