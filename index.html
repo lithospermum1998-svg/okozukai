@@ -15,7 +15,7 @@
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
-  --btn-active: #636366; 
+  --btn-active: #636366; /* 濃い灰色 */
 }
 
 body {
@@ -143,9 +143,8 @@ body {
   cursor: pointer;
 }
 
-/* 編集モードの強調（青い枠線） */
 .btn-record.editing {
-  box-shadow: 0 0 0 2px #007aff;
+  box-shadow: 0 0 0 2px #007aff; /* 編集中のインジケータ */
 }
 
 .btn-record.active:active {
@@ -193,17 +192,17 @@ body {
 }
 
 .delete-btn {
-  color: #ff3b30;
+  color: var(--btn-active); /* 黒系の濃い灰色に変更 */
   font-size: 18px;
   font-weight: bold;
   padding: 8px;
   margin-right: -8px;
-  opacity: 0.3;
+  opacity: 0.2; /* 普段は薄く */
   transition: opacity 0.2s;
 }
 
 .item-content:hover .delete-btn {
-  opacity: 1;
+  opacity: 0.8; /* ホバーやタップ時に少し濃く */
 }
 
 .stock-card {
