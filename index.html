@@ -16,7 +16,16 @@
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
   --btn-active: #636366; 
+  --accent: #007aff;
 }
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.pop-anim { animation: pop 0.2s ease-out; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
@@ -72,6 +81,7 @@ body {
   padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
+  transition: transform 0.2s;
 }
 
 .summary {
@@ -105,134 +115,79 @@ body {
 }
 
 #hiddenPicker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  border: none;
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer; border: none;
 }
 
 .month-btn {
-  font-size: 14px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-main);
-  padding: 8px;
+  font-size: 14px; background: none; border: none;
+  cursor: pointer; color: var(--text-main); padding: 8px;
 }
 
 .input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 12px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-bottom: 12px;
 }
 
 .ios-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 10px;
-  font-size: 13px;
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
-  background: var(--input-bg);
+  width: 100%; box-sizing: border-box; padding: 8px 10px;
+  font-size: 13px; border: 1px solid var(--input-border);
+  border-radius: 10px; background: var(--input-bg);
 }
 
 .btn-record {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: var(--btn-light);
-  color: #aeaeb2;
-  font-weight: 700;
-  font-size: 15px;
-  transition: all 0.25s ease;
-  pointer-events: none;
+  width: 100%; padding: 12px; border-radius: 12px; border: none;
+  background: var(--btn-light); color: #aeaeb2;
+  font-weight: 700; font-size: 15px;
+  transition: all 0.2s ease; pointer-events: none;
 }
 
 .btn-record.active {
-  background: var(--btn-active);
-  color: #ffffff;
-  pointer-events: auto;
-  cursor: pointer;
+  background: var(--btn-active); color: #ffffff;
+  pointer-events: auto; cursor: pointer;
 }
 
-.btn-record.editing {
-  box-shadow: 0 0 0 2px #007aff;
-}
+.btn-record.active:active { transform: scale(0.96); }
+
+.btn-record.editing { box-shadow: 0 0 0 2px var(--accent); }
 
 .island-output {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: var(--card-bg); border-radius: var(--radius);
+  padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .island-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-bottom: 8px;
-  border-left: 3px solid var(--text-sub);
-  padding-left: 8px;
+  font-size: 12px; font-weight: 700; color: var(--text-sub);
+  margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px;
 }
 
-#expenseList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+#expenseList { list-style: none; padding: 0; margin: 0; }
 
 .item-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: #f9f9fb;
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
-  margin-bottom: 8px;
-  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #f9f9fb;
+  border: 1px solid var(--input-border); border-radius: 10px;
+  margin-bottom: 8px; cursor: pointer;
+  transition: transform 0.1s;
 }
 
-.amount-text {
-  font-weight: 700;
-  font-size: 14px;
-}
+.item-content:active { transform: scale(0.98); }
+
+.amount-text { font-weight: 700; font-size: 14px; }
 
 .delete-btn {
-  color: var(--btn-active);
-  font-size: 18px;
-  font-weight: bold;
-  padding: 8px;
-  margin-right: -8px;
-  opacity: 0.2;
+  color: var(--btn-active); font-size: 18px; font-weight: bold;
+  padding: 8px; margin-right: -8px; opacity: 0.2;
 }
 
 .stock-card {
-  background: #f9f9fb;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  border: 1px solid var(--input-border);
+  background: #f9f9fb; padding: 12px; border-radius: 12px;
+  margin-bottom: 12px; border: 1px solid var(--input-border);
 }
 
-.stock-name {
-  font-weight: bold;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
+.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 
-.stock-label {
-  font-size: 10px;
-  color: var(--text-sub);
-  margin-bottom: 2px;
-  display: block;
-}
+.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -251,7 +206,7 @@ body {
   </div>
 
   <div id="logPage" class="page active">
-    <div class="island-main">
+    <div id="inputIsland" class="island-main">
       <div class="island-title">SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
@@ -339,6 +294,13 @@ function changeMonth(diff){
   updateUI();
 }
 
+function triggerPop(elId) {
+  const el = document.getElementById(elId);
+  el.classList.remove('pop-anim');
+  void el.offsetWidth; // reflow
+  el.classList.add('pop-anim');
+}
+
 function addEntry(){
   const aIn = document.getElementById('amountInput');
   const mIn = document.getElementById('memoInput');
@@ -355,6 +317,7 @@ function addEntry(){
     state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
   }
 
+  triggerPop('inputIsland');
   aIn.value = ""; mIn.value = "";
   checkInput();
   save();
@@ -400,6 +363,7 @@ function editEntry(id) {
   btn.textContent = "更新";
   btn.classList.add('active', 'editing');
   updateUI();
+  triggerPop('inputIsland');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -420,7 +384,7 @@ function renderStocks(){
         <div class="amount-text">
           ¥${valuation.toLocaleString()}
           <span style="font-size:11px; font-weight:normal; color:var(--text-sub); margin-left:4px;">
-            (${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%))
+            ${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)
           </span>
         </div>
         <div class="input-grid" style="margin-top:8px;">
@@ -440,12 +404,8 @@ function renderStocks(){
 function updateStock(i, f, v){
   state.stocks[i].prevValuation = Math.floor((state.stocks[i].price * state.stocks[i].holding) / 10000);
   state.stocks[i][f] = parseFloat(v) || 0;
-  
-  // 保存と再描画
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
-  
-  // 全体の前回値として、現在の合計を保存
   state.prevStockTotal = document.getElementById('stockTotal').textContent.replace(/,/g, '');
   localStorage.setItem('prevStockTotal', state.prevStockTotal);
 }
