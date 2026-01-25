@@ -36,7 +36,6 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
-/* Header */
 .island-header {
   background: var(--card-bg); border-radius: var(--radius);
   padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -61,23 +60,30 @@ body {
 
 .island-main {
   background: var(--card-bg); border-radius: var(--radius);
-  padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   margin-bottom: 12px;
 }
 
-/* Summary Area */
-.summary { text-align: center; margin-bottom: 14px; }
+.summary { text-align: center; margin-bottom: 8px; }
 .valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
 
 .month-switch {
   display: flex; align-items: center; justify-content: center; gap: 12px;
 }
+
+.date-container { position: relative; display: inline-block; }
 #dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; cursor: pointer; }
+#hiddenPicker {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer; border: none;
+}
+
+.month-btn { font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-main); padding: 8px; }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .ios-input {
-  width: 100%; box-sizing: border-box; padding: 7px 10px; font-size: 13px;
-  border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg);
+  width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 12px;
+  border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg);
 }
 
 .btn-record {
@@ -95,24 +101,25 @@ body {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px;
 }
+.amount-text { font-weight: 700; font-size: 14px; }
 
-/* INVEST 凝縮 & 改行レイアウト */
+/* INVEST 凝縮スタイル */
 .stock-card { 
-  background: #f9f9fb; padding: 12px; border-radius: 16px; 
-  margin-bottom: 10px; border: 1px solid var(--input-border); 
+  background: #f9f9fb; padding: 10px; border-radius: 14px; 
+  margin-bottom: 8px; border: 1px solid var(--input-border); 
 }
-.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+.stock-name { font-weight: bold; font-size: 12px; margin-bottom: 2px; }
 
 .stock-info-row { 
-  display: flex; justify-content: space-between; align-items: flex-start;
+  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;
 }
-.diff-sub { font-size: 11px; color: var(--text-sub); line-height: 1.4; margin-bottom: 10px; }
+.diff-container { display: flex; gap: 8px; font-size: 10px; color: var(--text-sub); }
 
 .compact-grid { 
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; 
+  display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 4px; 
 }
 .input-group { display: flex; flex-direction: column; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; margin-left: 2px; }
+.stock-label { font-size: 9px; color: var(--text-sub); margin-bottom: 1px; margin-left: 2px; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -136,7 +143,10 @@ body {
       <div class="summary">
         <div class="month-switch">
           <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="dateLabel"></div>
+          <div class="date-container">
+            <div id="dateLabel"></div>
+            <input type="date" id="hiddenPicker">
+          </div>
           <button class="month-btn" onclick="changeMonth(1)">▶</button>
         </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
@@ -156,11 +166,11 @@ body {
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title">TOTAL ASSETS</div>
-      <div class="summary" style="margin-bottom:4px;">
+      <div class="summary" style="margin-bottom:0;">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div class="diff-sub" style="margin-bottom:0;">
-          Prev: <span id="stockDiff">+0 (0.0%)</span><br>
-          Cost: <span id="totalProfit" style="font-weight: 700; color: var(--text-main);">+0 (0.0%)</span>
+        <div class="diff-container" style="justify-content: center; margin-top: 2px;">
+          <span id="stockDiff">P: +0 (0%)</span>
+          <span id="totalProfit" style="font-weight: 600; color: var(--text-main);">C: +0 (0%)</span>
         </div>
       </div>
     </div>
@@ -229,7 +239,7 @@ function addEntry(){
 
 function updateUI(){
   const [y, m, d] = state.selectedDate.split('-');
-  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}`;
+  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
   document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
@@ -275,9 +285,11 @@ function renderStocks(){
           <div class="stock-name">${s.name}</div>
           <div class="amount-text">¥${valuation.toLocaleString()}</div>
         </div>
-        <div class="diff-sub">
-          Prev: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(1)}%)<br>
-          Cost: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(1)}%)
+        <div class="stock-info-row" style="margin-bottom:8px;">
+          <div class="diff-container">
+            <span>P: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(1)}%)</span>
+            <span style="color:var(--text-main);">C: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(1)}%)</span>
+          </div>
         </div>
         <div class="compact-grid">
           <div class="input-group">
@@ -300,10 +312,10 @@ function renderStocks(){
   document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
   const totalProfit = currentTotal - totalCost;
   const totalProfitRate = totalCost ? (totalProfit / totalCost * 100) : 0;
-  document.getElementById('totalProfit').textContent = `${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate.toFixed(1)}%)`;
+  document.getElementById('totalProfit').textContent = `C: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate.toFixed(1)}%)`;
   const totalDiff = currentTotal - state.prevStockTotal;
   const totalRate = state.prevStockTotal ? (totalDiff / state.prevStockTotal * 100) : 0;
-  document.getElementById('stockDiff').textContent = `${totalDiff >= 0 ? '+' : ''}${totalDiff.toLocaleString()} (${totalRate.toFixed(1)}%)`;
+  document.getElementById('stockDiff').textContent = `P: ${totalDiff >= 0 ? '+' : ''}${totalDiff.toLocaleString()} (${totalRate.toFixed(1)}%)`;
 }
 
 function updateStock(i, f, v){
