@@ -15,7 +15,7 @@
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
-  --btn-active: #3a3a3c; /* 濃いグレー */
+  --btn-active: #636366; /* 黒すぎない濃い灰色 */
 }
 
 body {
@@ -85,13 +85,6 @@ body {
   margin: 4px 0 2px;
 }
 
-.diff {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-top: 0;
-}
-
 .month-switch {
   display: flex;
   align-items: center;
@@ -130,7 +123,6 @@ body {
   background: var(--input-bg);
 }
 
-/* 記録ボタンの初期状態（無効） */
 .btn-record {
   width: 100%;
   padding: 12px;
@@ -140,11 +132,10 @@ body {
   color: #aeaeb2;
   font-weight: 700;
   font-size: 15px;
-  transition: all 0.2s ease;
-  pointer-events: none; /* 入力がない時は反応させない */
+  transition: all 0.25s ease;
+  pointer-events: none;
 }
 
-/* 記録ボタンのアクティブ状態 */
 .btn-record.active {
   background: var(--btn-active);
   color: #ffffff;
@@ -153,7 +144,7 @@ body {
 }
 
 .btn-record.active:active {
-  transform: scale(0.97); /* 押した時に少し縮む演出 */
+  transform: scale(0.97);
   opacity: 0.9;
 }
 
@@ -265,7 +256,6 @@ body {
         <div id="stockDiff" class="diff">±0 (0.00%)</div>
       </div>
     </div>
-
     <div class="island-main">
       <div class="island-title">MY ASSETS</div>
       <div id="stockList"></div>
@@ -286,7 +276,6 @@ let state = {
   selectedDate: new Date().toISOString().split('T')[0]
 };
 
-// 入力状態を監視してボタンの色を変える
 function checkInput() {
   const amount = document.getElementById('amountInput').value;
   const btn = document.getElementById('recordBtn');
@@ -327,22 +316,13 @@ function showDatePicker(){
 }
 
 function addEntry(){
-  const amountInput = document.getElementById('amountInput');
-  const memoInput = document.getElementById('memoInput');
-  const amount = parseInt(amountInput.value);
-  
+  const aIn = document.getElementById('amountInput');
+  const mIn = document.getElementById('memoInput');
+  const amount = parseInt(aIn.value);
   if(!amount) return;
-  
-  state.expenses.push({
-    id: Date.now(),
-    amount,
-    memo: memoInput.value,
-    date: state.selectedDate
-  });
-  
-  amountInput.value = "";
-  memoInput.value = "";
-  checkInput(); // ボタンをグレーに戻す
+  state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
+  aIn.value = ""; mIn.value = "";
+  checkInput();
   save();
 }
 
@@ -353,26 +333,18 @@ function save(){
 
 function updateUI(){
   const view = state.currentView;
-  document.getElementById('dateLabel').textContent =
-    `${view.getFullYear()}.${view.getMonth()+1}`;
-
+  document.getElementById('dateLabel').textContent = `${view.getFullYear()}.${view.getMonth()+1}`;
   const filtered = state.expenses.filter(e=>{
     const d = new Date(e.date);
     return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
   });
-
-  document.getElementById('monthlyTotal').textContent =
-    filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-
-  const expenseList = document.getElementById('expenseList');
-  expenseList.innerHTML = filtered.reverse().map(e=>`
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
+  document.getElementById('expenseList').innerHTML = filtered.reverse().map(e=>`
     <li>
       <div class="item-content">
         <div>
           <div class="amount-text">¥${e.amount.toLocaleString()}</div>
-          <div style="font-size:10px;color:var(--text-sub)">
-            ${e.date.replaceAll('-','.')} ${e.memo||''}
-          </div>
+          <div style="font-size:10px;color:var(--text-sub)">${e.date.replaceAll('-','.')} ${e.memo||''}</div>
         </div>
       </div>
     </li>
@@ -382,7 +354,6 @@ function updateUI(){
 function renderStocks(){
   const container = document.getElementById('stockList');
   let total = 0;
-
   container.innerHTML = state.stocks.map((s,i)=>{
     const valuation = Math.floor((s.price * s.holding) / 10000);
     total += valuation;
@@ -391,46 +362,27 @@ function renderStocks(){
         <div class="stock-name">${s.name}</div>
         <div class="amount-text">¥${valuation.toLocaleString()}</div>
         <div class="input-grid">
-          <div>
-            <span class="stock-label">基準価額</span>
-            <input class="ios-input" type="number"
-              value="${s.price}"
-              onchange="updateStock(${i},'price',this.value)">
-          </div>
-          <div>
-            <span class="stock-label">保有口数</span>
-            <input class="ios-input" type="number"
-              value="${s.holding}"
-              onchange="updateStock(${i},'holding',this.value)">
-          </div>
+          <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
+          <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
         </div>
       </div>
     `;
   }).join('');
-
-  document.getElementById('stockTotal').textContent =
-    total.toLocaleString();
-
+  document.getElementById('stockTotal').textContent = total.toLocaleString();
   const diff = total - state.prevStockTotal;
-  const rate = state.prevStockTotal
-    ? (diff / state.prevStockTotal * 100)
-    : 0;
-
-  document.getElementById('stockDiff').textContent =
-    `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
-
+  const rate = state.prevStockTotal ? (diff / state.prevStockTotal * 100) : 0;
+  document.getElementById('stockDiff').textContent = `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
   state.prevStockTotal = total;
   localStorage.setItem('prevStockTotal', total);
 }
 
-function updateStock(i,field,value){
-  state.stocks[i][field] = parseFloat(value) || 0;
+function updateStock(i,f,v){
+  state.stocks[i][f] = parseFloat(v) || 0;
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
 }
 
 updateUI();
 </script>
-
 </body>
 </html>
