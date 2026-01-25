@@ -19,6 +19,14 @@
   --accent: #007aff;
 }
 
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  70% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.new-item { animation: popIn 0.3s ease-out; }
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
   background: var(--bg-color);
@@ -28,6 +36,7 @@ body {
 
 .container { max-width: 420px; margin: 0 auto; }
 
+/* Header */
 .island-header {
   background: var(--card-bg); border-radius: var(--radius);
   padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -56,13 +65,14 @@ body {
   margin-bottom: 12px;
 }
 
+/* Summary Area */
 .summary { text-align: center; margin-bottom: 14px; }
 .valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
 
 .month-switch {
   display: flex; align-items: center; justify-content: center; gap: 12px;
 }
-#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; }
+#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; cursor: pointer; }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .ios-input {
@@ -73,20 +83,30 @@ body {
 .btn-record {
   width: 100%; padding: 12px; border-radius: 12px; border: none;
   background: var(--btn-light); color: #aeaeb2;
-  font-weight: 700; font-size: 15px;
+  font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none;
 }
-.btn-record.active { background: var(--btn-active); color: #ffffff; cursor: pointer; }
+.btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 
+.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 
-/* INVEST 評価額独立レイアウト */
+#expenseList { list-style: none; padding: 0; margin: 0; }
+.item-content {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px;
+}
+
+/* INVEST 凝縮 & 改行レイアウト */
 .stock-card { 
-  background: #f9f9fb; padding: 14px; border-radius: 18px; 
+  background: #f9f9fb; padding: 12px; border-radius: 16px; 
   margin-bottom: 10px; border: 1px solid var(--input-border); 
 }
-.stock-name { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; font-weight: 600; }
-.stock-valuation { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--text-main); }
-.diff-sub { font-size: 11px; color: var(--text-sub); line-height: 1.5; margin-bottom: 12px; }
+.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+
+.stock-info-row { 
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.diff-sub { font-size: 11px; color: var(--text-sub); line-height: 1.4; margin-bottom: 10px; }
 
 .compact-grid { 
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; 
@@ -127,6 +147,10 @@ body {
       </div>
       <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
     </div>
+    <div class="island-output">
+      <div class="island-title">RECENT</div>
+      <ul id="expenseList"></ul>
+    </div>
   </div>
 
   <div id="stockPage" class="page">
@@ -153,7 +177,9 @@ let state = {
     { name: "SMT米国トレンドランキング", price: 0, holding: 0, cost: 0, prevValuation: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
-  selectedDate: new Date().toISOString().split('T')[0]
+  selectedDate: new Date().toISOString().split('T')[0],
+  editId: null,
+  lastAddedId: null
 };
 
 function save() {
@@ -165,7 +191,8 @@ function save() {
 
 function checkInput() {
   const amount = document.getElementById('amountInput').value;
-  document.getElementById('recordBtn').classList.toggle('active', !!(amount && parseInt(amount) > 0));
+  const btn = document.getElementById('recordBtn');
+  btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId);
 }
 
 function switchPage(id){
@@ -187,15 +214,46 @@ function addEntry(){
   const aIn = document.getElementById('amountInput'), mIn = document.getElementById('memoInput');
   const amount = parseInt(aIn.value);
   if(!amount) return;
-  state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
+  if (state.editId) {
+    const item = state.expenses.find(e => e.id === state.editId);
+    if(item) { item.amount = amount; item.memo = mIn.value; }
+    state.editId = null;
+    document.getElementById('recordBtn').textContent = "記録";
+  } else {
+    const newId = Date.now();
+    state.expenses.push({ id: newId, amount, memo: mIn.value, date: state.selectedDate });
+    state.lastAddedId = newId;
+  }
   aIn.value = ""; mIn.value = ""; checkInput(); save();
 }
 
 function updateUI(){
-  const [y, m] = state.selectedDate.split('-');
+  const [y, m, d] = state.selectedDate.split('-');
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}`;
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
+  document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
+    <li class="${e.id === state.lastAddedId ? 'new-item' : ''}" onclick="editEntry(${e.id})">
+      <div class="item-content">
+        <div>
+          <div class="amount-text">¥${e.amount.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--text-sub)">${e.memo||'支出'}</div>
+        </div>
+      </div>
+    </li>
+  `).join('');
+  state.lastAddedId = null;
+}
+
+function editEntry(id) {
+  const item = state.expenses.find(e => e.id === id);
+  if (!item) return;
+  document.getElementById('amountInput').value = item.amount;
+  document.getElementById('memoInput').value = item.memo;
+  state.selectedDate = item.date; state.editId = id;
+  const btn = document.getElementById('recordBtn');
+  btn.textContent = "更新"; btn.classList.add('active');
+  updateUI();
 }
 
 function renderStocks(){
@@ -213,16 +271,27 @@ function renderStocks(){
 
     return `
       <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="stock-valuation">¥${valuation.toLocaleString()}</div>
+        <div class="stock-info-row">
+          <div class="stock-name">${s.name}</div>
+          <div class="amount-text">¥${valuation.toLocaleString()}</div>
+        </div>
         <div class="diff-sub">
           Prev: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(1)}%)<br>
           Cost: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(1)}%)
         </div>
         <div class="compact-grid">
-          <div class="input-group"><span class="stock-label">価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
-          <div class="input-group"><span class="stock-label">口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
-          <div class="input-group"><span class="stock-label">元本</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)"></div>
+          <div class="input-group">
+            <span class="stock-label">価額</span>
+            <input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)">
+          </div>
+          <div class="input-group">
+            <span class="stock-label">口数</span>
+            <input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)">
+          </div>
+          <div class="input-group">
+            <span class="stock-label">元本</span>
+            <input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)">
+          </div>
         </div>
       </div>
     `;
