@@ -15,7 +15,7 @@
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
-  --btn-active: #636366; /* 濃い灰色 */
+  --btn-active: #636366; 
 }
 
 body {
@@ -89,21 +89,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 #dateLabel {
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
+  padding: 4px 8px;
+  background: #f2f2f7;
+  border-radius: 8px;
 }
 
 .month-btn {
-  font-size: 12px;
+  font-size: 14px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--text-main);
+  padding: 4px 8px;
 }
 
 .input-grid {
@@ -144,7 +148,7 @@ body {
 }
 
 .btn-record.editing {
-  box-shadow: 0 0 0 2px #007aff; /* 編集中のインジケータ */
+  box-shadow: 0 0 0 2px #007aff;
 }
 
 .btn-record.active:active {
@@ -192,17 +196,16 @@ body {
 }
 
 .delete-btn {
-  color: var(--btn-active); /* 黒系の濃い灰色に変更 */
+  color: var(--btn-active);
   font-size: 18px;
   font-weight: bold;
   padding: 8px;
   margin-right: -8px;
-  opacity: 0.2; /* 普段は薄く */
-  transition: opacity 0.2s;
+  opacity: 0.2;
 }
 
 .item-content:hover .delete-btn {
-  opacity: 0.8; /* ホバーやタップ時に少し濃く */
+  opacity: 0.8;
 }
 
 .stock-card {
@@ -244,12 +247,12 @@ body {
 
   <div id="logPage" class="page active">
     <div class="island-main">
-      <div class="island-title">MONTHLY SUMMARY</div>
+      <div class="island-title">DATE & SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+          <button class="month-btn" onclick="changeDate(-1)">◀</button>
           <div id="dateLabel" onclick="showDatePicker()"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶</button>
+          <button class="month-btn" onclick="changeDate(1)">▶</button>
         </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
@@ -282,6 +285,8 @@ body {
   </div>
 </div>
 
+<input type="date" id="hiddenPicker" style="position:fixed; top:-100px; opacity:0;">
+
 <script>
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
@@ -291,11 +296,12 @@ let state = {
     { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
-  currentView: new Date(),
+  // 初期値を「今日」に設定
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null
 };
 
+// 入力監視
 function checkInput() {
   const amount = document.getElementById('amountInput').value;
   const btn = document.getElementById('recordBtn');
@@ -314,56 +320,23 @@ function switchPage(id){
   if(id === 'stockPage') renderStocks();
 }
 
-function changeMonth(diff){
-  state.currentView.setMonth(state.currentView.getMonth() + diff);
+// ◀ ▶ ボタンで1日ずつ動かす
+function changeDate(diff){
+  const d = new Date(state.selectedDate);
+  d.setDate(d.getDate() + diff);
+  state.selectedDate = d.toISOString().split('T')[0];
   updateUI();
 }
 
+// 日付ラベルタップでカレンダー表示
 function showDatePicker(){
-  const picker = document.createElement('input');
-  picker.type = 'date';
+  const picker = document.getElementById('hiddenPicker');
   picker.value = state.selectedDate;
-  picker.style.position = 'absolute';
-  picker.style.opacity = 0;
-  document.body.appendChild(picker);
-  picker.onchange = ()=>{
-    state.selectedDate = picker.value;
-    state.currentView = new Date(picker.value);
-    document.body.removeChild(picker);
+  picker.onchange = (e) => {
+    state.selectedDate = e.target.value;
     updateUI();
-  }
-  picker.click();
-}
-
-function editEntry(id) {
-  const item = state.expenses.find(e => e.id === id);
-  if (!item) return;
-  document.getElementById('amountInput').value = item.amount;
-  document.getElementById('memoInput').value = item.memo;
-  state.editId = id;
-  const btn = document.getElementById('recordBtn');
-  btn.textContent = "更新";
-  btn.classList.add('active');
-  btn.classList.add('editing');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function deleteEntry(e, id) {
-  e.stopPropagation();
-  if (!confirm("削除しますか？")) return;
-  state.expenses = state.expenses.filter(item => item.id !== id);
-  if(state.editId === id) cancelEdit();
-  save();
-}
-
-function cancelEdit() {
-  state.editId = null;
-  document.getElementById('amountInput').value = "";
-  document.getElementById('memoInput').value = "";
-  const btn = document.getElementById('recordBtn');
-  btn.textContent = "記録";
-  btn.classList.remove('editing');
-  checkInput();
+  };
+  picker.showPicker(); // ブラウザ標準のピッカーを呼び出し
 }
 
 function addEntry(){
@@ -394,14 +367,22 @@ function save(){
 }
 
 function updateUI(){
-  const view = state.currentView;
-  document.getElementById('dateLabel').textContent = `${view.getFullYear()}.${view.getMonth()+1}`;
-  const filtered = state.expenses.filter(e=>{
-    const d = new Date(e.date);
-    return d.getFullYear()===view.getFullYear() && d.getMonth()===view.getMonth();
+  // ラベルを YYYY.M.D 形式に変換
+  const [y, m, d] = state.selectedDate.split('-');
+  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
+
+  // その「月」の合計を出す（あるいは必要なら「その日」の合計に変更も可能）
+  // 今回は一旦「表示されている月」の合計にしています
+  const filteredMonth = state.expenses.filter(e => {
+    const itemDate = e.date.split('-');
+    return itemDate[0] === y && itemDate[1] === m;
   });
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
-  document.getElementById('expenseList').innerHTML = filtered.reverse().map(e=>`
+  
+  document.getElementById('monthlyTotal').textContent = 
+    filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
+
+  // リスト（直近10件程度または月間すべて）
+  document.getElementById('expenseList').innerHTML = filteredMonth.reverse().map(e => `
     <li onclick="editEntry(${e.id})">
       <div class="item-content">
         <div>
@@ -414,6 +395,29 @@ function updateUI(){
   `).join('');
 }
 
+function editEntry(id) {
+  const item = state.expenses.find(e => e.id === id);
+  if (!item) return;
+  document.getElementById('amountInput').value = item.amount;
+  document.getElementById('memoInput').value = item.memo;
+  state.selectedDate = item.date; // 編集時はその項目の日付に合わせる
+  state.editId = id;
+  const btn = document.getElementById('recordBtn');
+  btn.textContent = "更新";
+  btn.classList.add('active');
+  btn.classList.add('editing');
+  updateUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteEntry(e, id) {
+  e.stopPropagation();
+  if (!confirm("削除しますか？")) return;
+  state.expenses = state.expenses.filter(item => item.id !== id);
+  save();
+}
+
+// 投資画面の描画
 function renderStocks(){
   const container = document.getElementById('stockList');
   let total = 0;
