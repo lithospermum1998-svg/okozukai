@@ -15,7 +15,7 @@
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
   --btn-light: #e5e5ea;
-  --btn-active: #636366; /* 黒すぎない濃い灰色 */
+  --btn-active: #636366; 
 }
 
 body {
@@ -143,6 +143,11 @@ body {
   cursor: pointer;
 }
 
+/* 編集モードの強調（青い枠線） */
+.btn-record.editing {
+  box-shadow: 0 0 0 2px #007aff;
+}
+
 .btn-record.active:active {
   transform: scale(0.97);
   opacity: 0.9;
@@ -179,11 +184,26 @@ body {
   border: 1px solid var(--input-border);
   border-radius: 10px;
   margin-bottom: 8px;
+  cursor: pointer;
 }
 
 .amount-text {
   font-weight: 700;
   font-size: 14px;
+}
+
+.delete-btn {
+  color: #ff3b30;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 8px;
+  margin-right: -8px;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.item-content:hover .delete-btn {
+  opacity: 1;
 }
 
 .stock-card {
@@ -273,7 +293,8 @@ let state = {
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   currentView: new Date(),
-  selectedDate: new Date().toISOString().split('T')[0]
+  selectedDate: new Date().toISOString().split('T')[0],
+  editId: null
 };
 
 function checkInput() {
@@ -282,7 +303,7 @@ function checkInput() {
   if (amount && parseInt(amount) > 0) {
     btn.classList.add('active');
   } else {
-    btn.classList.remove('active');
+    if(!state.editId) btn.classList.remove('active');
   }
 }
 
@@ -315,12 +336,54 @@ function showDatePicker(){
   picker.click();
 }
 
+function editEntry(id) {
+  const item = state.expenses.find(e => e.id === id);
+  if (!item) return;
+  document.getElementById('amountInput').value = item.amount;
+  document.getElementById('memoInput').value = item.memo;
+  state.editId = id;
+  const btn = document.getElementById('recordBtn');
+  btn.textContent = "更新";
+  btn.classList.add('active');
+  btn.classList.add('editing');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteEntry(e, id) {
+  e.stopPropagation();
+  if (!confirm("削除しますか？")) return;
+  state.expenses = state.expenses.filter(item => item.id !== id);
+  if(state.editId === id) cancelEdit();
+  save();
+}
+
+function cancelEdit() {
+  state.editId = null;
+  document.getElementById('amountInput').value = "";
+  document.getElementById('memoInput').value = "";
+  const btn = document.getElementById('recordBtn');
+  btn.textContent = "記録";
+  btn.classList.remove('editing');
+  checkInput();
+}
+
 function addEntry(){
   const aIn = document.getElementById('amountInput');
   const mIn = document.getElementById('memoInput');
   const amount = parseInt(aIn.value);
   if(!amount) return;
-  state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
+
+  if (state.editId) {
+    const idx = state.expenses.findIndex(e => e.id === state.editId);
+    state.expenses[idx].amount = amount;
+    state.expenses[idx].memo = mIn.value;
+    state.editId = null;
+    document.getElementById('recordBtn').textContent = "記録";
+    document.getElementById('recordBtn').classList.remove('editing');
+  } else {
+    state.expenses.push({ id: Date.now(), amount, memo: mIn.value, date: state.selectedDate });
+  }
+
   aIn.value = ""; mIn.value = "";
   checkInput();
   save();
@@ -340,12 +403,13 @@ function updateUI(){
   });
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount,0).toLocaleString();
   document.getElementById('expenseList').innerHTML = filtered.reverse().map(e=>`
-    <li>
+    <li onclick="editEntry(${e.id})">
       <div class="item-content">
         <div>
           <div class="amount-text">¥${e.amount.toLocaleString()}</div>
           <div style="font-size:10px;color:var(--text-sub)">${e.date.replaceAll('-','.')} ${e.memo||''}</div>
         </div>
+        <div class="delete-btn" onclick="deleteEntry(event, ${e.id})">×</div>
       </div>
     </li>
   `).join('');
