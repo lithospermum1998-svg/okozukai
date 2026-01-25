@@ -165,11 +165,6 @@ body {
   box-shadow: 0 0 0 2px #007aff;
 }
 
-.btn-record.active:active {
-  transform: scale(0.97);
-  opacity: 0.9;
-}
-
 .island-output {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -216,10 +211,6 @@ body {
   padding: 8px;
   margin-right: -8px;
   opacity: 0.2;
-}
-
-.item-content:hover .delete-btn {
-  opacity: 0.8;
 }
 
 .stock-card {
@@ -292,7 +283,7 @@ body {
       <div class="island-title">TOTAL ASSETS</div>
       <div class="summary">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div id="stockDiff" class="diff">±0 (0.00%)</div>
+        <div id="stockDiff" class="diff" style="color: var(--text-sub); font-size: 14px;">±0 (0.00%)</div>
       </div>
     </div>
     <div class="island-main">
@@ -306,14 +297,22 @@ body {
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", price: 0, holding: 0 },
-    { name: "WCM世界成長株激選", price: 0, holding: 0 },
-    { name: "SMT米国トレンドランキング", price: 0, holding: 0 }
+    { name: "ブラックロック・ゴールド", price: 0, holding: 0, prevValuation: 0 },
+    { name: "WCM世界成長株激選", price: 0, holding: 0, prevValuation: 0 },
+    { name: "SMT米国トレンドランキング", price: 0, holding: 0, prevValuation: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null
 };
+
+// 共通の保存処理
+function saveState() {
+  localStorage.setItem('expenses', JSON.stringify(state.expenses));
+  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  localStorage.setItem('prevStockTotal', state.prevStockTotal);
+  updateUI();
+}
 
 document.getElementById('hiddenPicker').addEventListener('change', (e) => {
   state.selectedDate = e.target.value;
@@ -323,11 +322,7 @@ document.getElementById('hiddenPicker').addEventListener('change', (e) => {
 function checkInput() {
   const amount = document.getElementById('amountInput').value;
   const btn = document.getElementById('recordBtn');
-  if (amount && parseInt(amount) > 0) {
-    btn.classList.add('active');
-  } else {
-    if(!state.editId) btn.classList.remove('active');
-  }
+  btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId);
 }
 
 function switchPage(id){
@@ -340,9 +335,7 @@ function switchPage(id){
 
 function changeMonth(diff){
   const d = new Date(state.selectedDate);
-  const originalDate = d.getDate();
   d.setMonth(d.getMonth() + diff);
-  if (d.getDate() !== originalDate) d.setDate(0);
   state.selectedDate = d.toISOString().split('T')[0];
   updateUI();
 }
@@ -354,9 +347,8 @@ function addEntry(){
   if(!amount) return;
 
   if (state.editId) {
-    const idx = state.expenses.findIndex(e => e.id === state.editId);
-    state.expenses[idx].amount = amount;
-    state.expenses[idx].memo = mIn.value;
+    const item = state.expenses.find(e => e.id === state.editId);
+    if(item) { item.amount = amount; item.memo = mIn.value; }
     state.editId = null;
     document.getElementById('recordBtn').textContent = "記録";
     document.getElementById('recordBtn').classList.remove('editing');
@@ -366,12 +358,15 @@ function addEntry(){
 
   aIn.value = ""; mIn.value = "";
   checkInput();
-  save();
+  saveState();
 }
 
-function save(){
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  updateUI();
+function deleteEntry(e, id) {
+  e.stopPropagation();
+  if (confirm("削除しますか？")) {
+    state.expenses = state.expenses.filter(item => item.id !== id);
+    saveState();
+  }
 }
 
 function updateUI(){
@@ -379,15 +374,10 @@ function updateUI(){
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
   document.getElementById('hiddenPicker').value = state.selectedDate;
 
-  const filteredMonth = state.expenses.filter(e => {
-    const itemDate = e.date.split('-');
-    return itemDate[0] === y && itemDate[1] === m;
-  });
-  
-  document.getElementById('monthlyTotal').textContent = 
-    filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
+  const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
+  document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
 
-  document.getElementById('expenseList').innerHTML = filteredMonth.reverse().map(e => `
+  document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
     <li onclick="editEntry(${e.id})">
       <div class="item-content">
         <div>
@@ -409,47 +399,52 @@ function editEntry(id) {
   state.editId = id;
   const btn = document.getElementById('recordBtn');
   btn.textContent = "更新";
-  btn.classList.add('active');
-  btn.classList.add('editing');
+  btn.classList.add('active', 'editing');
   updateUI();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function deleteEntry(e, id) {
-  e.stopPropagation();
-  if (!confirm("削除しますか？")) return;
-  state.expenses = state.expenses.filter(item => item.id !== id);
-  save();
-}
-
 function renderStocks(){
   const container = document.getElementById('stockList');
-  let total = 0;
-  container.innerHTML = state.stocks.map((s,i)=>{
+  let currentTotal = 0;
+
+  container.innerHTML = state.stocks.map((s, i) => {
     const valuation = Math.floor((s.price * s.holding) / 10000);
-    total += valuation;
+    currentTotal += valuation;
+    const diff = valuation - (s.prevValuation ?? valuation);
+
     return `
       <div class="stock-card">
         <div class="stock-name">${s.name}</div>
-        <div class="amount-text">¥${valuation.toLocaleString()}</div>
-        <div class="input-grid">
+        <div class="amount-text">
+          ¥${valuation.toLocaleString()}
+          <span style="font-size:11px; font-weight:normal; color:var(--text-sub); margin-left:4px;">
+            (${diff >= 0 ? '+' : ''}${diff.toLocaleString()})
+          </span>
+        </div>
+        <div class="input-grid" style="margin-top:8px;">
           <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
           <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
         </div>
       </div>
     `;
   }).join('');
-  document.getElementById('stockTotal').textContent = total.toLocaleString();
-  const diff = total - state.prevStockTotal;
-  const rate = state.prevStockTotal ? (diff / state.prevStockTotal * 100) : 0;
-  document.getElementById('stockDiff').textContent = `${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%)`;
-  state.prevStockTotal = total;
-  localStorage.setItem('prevStockTotal', total);
+
+  document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
+  const totalDiff = currentTotal - state.prevStockTotal;
+  const totalRate = state.prevStockTotal ? (totalDiff / state.prevStockTotal * 100) : 0;
+  document.getElementById('stockDiff').textContent = `${totalDiff >= 0 ? '+' : ''}${totalDiff.toLocaleString()} (${totalRate.toFixed(2)}%)`;
 }
 
-function updateStock(i,f,v){
+function updateStock(i, f, v){
+  // 更新前に現在の評価額を前回値としてセット
+  state.stocks[i].prevValuation = Math.floor((state.stocks[i].price * state.stocks[i].holding) / 10000);
   state.stocks[i][f] = parseFloat(v) || 0;
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  
+  // 今回の更新後の合計を計算し、次回の比較用に保持（手動更新ベース）
+  const newTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
+  
+  saveState();
   renderStocks();
 }
 
