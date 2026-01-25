@@ -283,7 +283,7 @@ body {
       <div class="island-title">TOTAL ASSETS</div>
       <div class="summary">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div id="stockDiff" class="diff" style="color: var(--text-sub); font-size: 14px;">±0 (0.00%)</div>
+        <div id="stockDiff" style="color: var(--text-sub); font-size: 14px;">+0 (0.00%)</div>
       </div>
     </div>
     <div class="island-main">
@@ -306,8 +306,7 @@ let state = {
   editId: null
 };
 
-// 共通の保存処理
-function saveState() {
+function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   localStorage.setItem('prevStockTotal', state.prevStockTotal);
@@ -358,14 +357,14 @@ function addEntry(){
 
   aIn.value = ""; mIn.value = "";
   checkInput();
-  saveState();
+  save();
 }
 
 function deleteEntry(e, id) {
   e.stopPropagation();
   if (confirm("削除しますか？")) {
     state.expenses = state.expenses.filter(item => item.id !== id);
-    saveState();
+    save();
   }
 }
 
@@ -411,7 +410,9 @@ function renderStocks(){
   container.innerHTML = state.stocks.map((s, i) => {
     const valuation = Math.floor((s.price * s.holding) / 10000);
     currentTotal += valuation;
-    const diff = valuation - (s.prevValuation ?? valuation);
+    const prev = s.prevValuation ?? valuation;
+    const diff = valuation - prev;
+    const rate = prev !== 0 ? (diff / prev * 100) : 0;
 
     return `
       <div class="stock-card">
@@ -419,7 +420,7 @@ function renderStocks(){
         <div class="amount-text">
           ¥${valuation.toLocaleString()}
           <span style="font-size:11px; font-weight:normal; color:var(--text-sub); margin-left:4px;">
-            (${diff >= 0 ? '+' : ''}${diff.toLocaleString()})
+            (${diff >= 0 ? '+' : ''}${diff.toLocaleString()} (${rate.toFixed(2)}%))
           </span>
         </div>
         <div class="input-grid" style="margin-top:8px;">
@@ -437,15 +438,16 @@ function renderStocks(){
 }
 
 function updateStock(i, f, v){
-  // 更新前に現在の評価額を前回値としてセット
   state.stocks[i].prevValuation = Math.floor((state.stocks[i].price * state.stocks[i].holding) / 10000);
   state.stocks[i][f] = parseFloat(v) || 0;
   
-  // 今回の更新後の合計を計算し、次回の比較用に保持（手動更新ベース）
-  const newTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
-  
-  saveState();
+  // 保存と再描画
+  localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
+  
+  // 全体の前回値として、現在の合計を保存
+  state.prevStockTotal = document.getElementById('stockTotal').textContent.replace(/,/g, '');
+  localStorage.setItem('prevStockTotal', state.prevStockTotal);
 }
 
 updateUI();
