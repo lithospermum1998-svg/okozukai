@@ -85,7 +85,6 @@ body {
   margin: 4px 0 2px;
 }
 
-/* 日付切り替え部分 */
 .month-switch {
   display: flex;
   align-items: center;
@@ -93,7 +92,6 @@ body {
   gap: 12px;
 }
 
-/* ラベルを相対配置にして、中に隠し入力を置く */
 .date-container {
   position: relative;
   display: inline-block;
@@ -104,10 +102,8 @@ body {
   font-weight: 700;
   padding: 4px 0;
   cursor: pointer;
-  /* 色付けはなし（透明） */
 }
 
-/* 透明な日付ピッカーをラベルの真上に被せる */
 #hiddenPicker {
   position: absolute;
   top: 0;
@@ -265,7 +261,7 @@ body {
 
   <div id="logPage" class="page active">
     <div class="island-main">
-      <div class="island-title">DATE & SUMMARY</div>
+      <div class="island-title">SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
           <button class="month-btn" onclick="changeMonth(-1)">◀</button>
@@ -319,7 +315,6 @@ let state = {
   editId: null
 };
 
-// 初期化時にピッカーに値をセット
 document.getElementById('hiddenPicker').addEventListener('change', (e) => {
   state.selectedDate = e.target.value;
   updateUI();
