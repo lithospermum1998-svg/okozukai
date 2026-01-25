@@ -67,6 +67,16 @@ body {
 .summary { text-align: center; margin-bottom: 14px; }
 .valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
 
+/* 赤枠：1行に並べるための設定 */
+.profit-line {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-sub);
+  margin-top: 2px;
+}
+
 .month-switch {
   display: flex; align-items: center; justify-content: center; gap: 12px;
 }
@@ -81,9 +91,24 @@ body {
 .month-btn { font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-main); padding: 8px; }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+
+/* 青枠：3カラム（1行）にするための設定 */
+.input-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
 .ios-input {
   width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px;
   border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg);
+}
+
+/* 投資ページ用の入力欄微調整 */
+.stock-card .ios-input {
+  padding: 6px 4px;
+  font-size: 11px;
 }
 
 .btn-record {
@@ -109,8 +134,6 @@ body {
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
-
-.diff-sub { font-size: 11px; font-weight: normal; color: var(--text-sub); margin-left: 4px; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -159,8 +182,7 @@ body {
       <div class="island-title">TOTAL ASSETS</div>
       <div class="summary">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div id="totalProfit" style="color: var(--text-sub); font-size: 13px;">Profit: +0 (0.00%)</div>
-        <div id="stockDiff" style="color: var(--text-sub); font-size: 11px; opacity: 0.7;">Prev: +0 (0.00%)</div>
+        <div id="totalSummaryLine"></div>
       </div>
     </div>
     <div class="island-main">
@@ -284,15 +306,17 @@ function renderStocks(){
     return `
       <div class="stock-card">
         <div class="stock-name">${s.name}</div>
-        <div class="amount-text">
-          ¥${valuation.toLocaleString()}
-          <div class="diff-sub">Prev: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(2)}%)</div>
-          <div class="diff-sub" style="color:var(--text-main); opacity:0.8;">Cost: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</div>
+        <div class="amount-text">¥${valuation.toLocaleString()}</div>
+        
+        <div class="profit-line">
+          <span>Profit: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span>
+          <span>Prev: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(2)}%)</span>
         </div>
-        <div class="input-grid" style="margin-top:8px;">
+
+        <div class="input-grid-3">
           <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
           <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
-          <div style="grid-column: span 2;"><span class="stock-label">元本（万円）</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)"></div>
+          <div><span class="stock-label">元本(万)</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)"></div>
         </div>
       </div>
     `;
@@ -300,15 +324,18 @@ function renderStocks(){
 
   document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
   
-  // トータル元本比
+  // 上部サマリーの赤枠部分
   const totalProfit = currentTotal - totalCost;
   const totalProfitRate = totalCost ? (totalProfit / totalCost * 100) : 0;
-  document.getElementById('totalProfit').textContent = `Profit: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate.toFixed(2)}%)`;
-
-  // トータル前回比
   const totalDiff = currentTotal - state.prevStockTotal;
   const totalRate = state.prevStockTotal ? (totalDiff / state.prevStockTotal * 100) : 0;
-  document.getElementById('stockDiff').textContent = `Prev: ${totalDiff >= 0 ? '+' : ''}${totalDiff.toLocaleString()} (${totalRate.toFixed(2)}%)`;
+
+  document.getElementById('totalSummaryLine').innerHTML = `
+    <div class="profit-line">
+      <span>Profit: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate.toFixed(2)}%)</span>
+      <span>Prev: ${totalDiff >= 0 ? '+' : ''}${totalDiff.toLocaleString()} (${totalRate.toFixed(2)}%)</span>
+    </div>
+  `;
 }
 
 function updateStock(i, f, v){
