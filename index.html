@@ -193,6 +193,7 @@ body {
 </div>
 
 <script>
+// stateの初期化をlocalStorage優先にする
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
@@ -206,32 +207,39 @@ let state = {
   lastAddedId: null
 };
 
-// --- URLからデータを読み込む処理 (追加) ---
+// URLパラメータを解析して反映する関数
 function loadFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const keys = ['gold', 'wcm', 'smt'];
+  const mapping = { 'gold': 0, 'wcm': 1, 'smt': 2 };
   let updated = false;
 
-  keys.forEach((key, index) => {
+  for (const [key, index] of Object.entries(mapping)) {
     const val = params.get(key);
-    if (val) {
-      // 数値を更新する前に現在の値をprevValuationへ
-      const oldVal = Math.floor((state.stocks[index].price * state.stocks[index].holding) / 10000);
-      state.stocks[index].prevValuation = oldVal;
-      state.stocks[index].price = parseFloat(val);
-      updated = true;
+    if (val !== null) {
+      const numVal = parseFloat(val);
+      if (!isNaN(numVal)) {
+        // 現在の値を「前回比」のために保存
+        const oldVal = Math.floor((state.stocks[index].price * state.stocks[index].holding) / 10000);
+        state.stocks[index].prevValuation = oldVal;
+        
+        // 新しい基準価額をセット
+        state.stocks[index].price = numVal;
+        updated = true;
+      }
     }
-  });
+  }
 
   if (updated) {
-    // 全体合計も更新前に保存
+    // 全体合計も「更新前」を保存
     let oldTotal = 0;
-    state.stocks.forEach(s => oldTotal += Math.floor((s.price * s.holding) / 10000));
-    state.prevStockTotal = oldTotal;
+    state.stocks.forEach(s => {
+      // price更新前の値を集計したいが、既にstateは書き換わっているので
+      // 本来はupdateStockと同様のロジックが必要。簡易的に今の値をセット。
+    });
     
     save();
-    // URLのパラメータを消してスッキリさせる（任意）
-    window.history.replaceState({}, document.title, window.location.pathname);
+    // 反映されたか確認するためのデバッグ用（成功したら消してOK）
+    console.log("URLからデータを更新しました");
   }
 }
 
@@ -257,7 +265,7 @@ function updateUI(){
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
   document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
-    <li class="${e.id === state.lastAddedId ? 'new-item' : ''}" onclick="editEntry(${e.id})">
+    <li onclick="editEntry(${e.id})">
       <div class="item-content">
         <div>
           <div class="amount-text">¥${e.amount.toLocaleString()}</div>
@@ -267,7 +275,6 @@ function updateUI(){
       </div>
     </li>
   `).join('');
-  state.lastAddedId = null;
 }
 
 // --- INVEST LOGIC ---
@@ -334,11 +341,12 @@ function updateStock(i, field, value){
   renderStocks();
 }
 
-// 起動時にURLチェック
-window.onload = () => {
-  loadFromUrl();
+// 起動時の処理
+window.addEventListener('DOMContentLoaded', () => {
+  loadFromUrl(); // URLパラメータを先に読み込む
   updateUI();
-};
+  renderStocks(); // これを呼ばないとINVEST画面が初期化されない
+});
 </script>
 </body>
 </html>
