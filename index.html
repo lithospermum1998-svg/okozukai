@@ -7,264 +7,236 @@
 
 <style>
 :root {
-  --bg-color: #f2f2f7; 
-  --card-bg: #ffffff;
-  --text-main: #1c1c1e;
-  --text-sub: #8e8e93; 
-  --radius: 20px;
-  --input-bg: #fafafa;
-  --input-border: #e5e5ea;
-  --btn-light: #e5e5ea;
-  --btn-active: #636366; 
+  --bg-color:#f2f2f7;
+  --card-bg:#fff;
+  --text-main:#1c1c1e;
+  --text-sub:#8e8e93;
+  --radius:20px;
+  --input-bg:#fafafa;
+  --input-border:#e5e5ea;
+  --btn-light:#e5e5ea;
+  --btn-active:#636366;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-color);
-  margin: 0;
-  padding: 12px;
+body{
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg-color);
+  margin:0;padding:12px;color:var(--text-main);
 }
 
-.container { max-width: 420px; margin: auto; }
+.container{max-width:420px;margin:auto}
 
-.island-header,
-.island-main {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 12px;
+.island-header,.island-main,.island-output{
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+  margin-bottom:12px;
 }
 
-h1 {
-  font-size: 16px;
-  text-align: center;
-  margin: 0 0 12px;
-  letter-spacing: 2px;
+h1{
+  font-size:16px;
+  text-align:center;
+  margin:0 0 12px;
+  letter-spacing:2px;
 }
 
-.header-tabs {
-  display: flex;
-  background: #e5e5ea;
-  border-radius: 10px;
-  padding: 2px;
+.header-tabs{
+  display:flex;
+  background:#e5e5ea;
+  border-radius:10px;
+  padding:2px;
 }
 
-.header-tabs button {
-  flex: 1;
-  border: none;
-  background: none;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 6px 0;
-  color: var(--text-sub);
+.header-tabs button{
+  flex:1;
+  border:none;
+  background:none;
+  font-weight:700;
+  font-size:13px;
+  padding:6px 0;
+  color:var(--text-sub);
 }
 
-.header-tabs button.active {
-  background: white;
-  border-radius: 8px;
-  color: var(--text-main);
+.header-tabs button.active{
+  background:#fff;
+  border-radius:8px;
+  color:var(--text-main);
 }
 
-.island-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-sub);
-  border-left: 3px solid var(--text-sub);
-  padding-left: 8px;
-  margin-bottom: 8px;
+.island-title{
+  font-size:12px;
+  font-weight:700;
+  color:var(--text-sub);
+  border-left:3px solid var(--text-sub);
+  padding-left:8px;
+  margin-bottom:8px;
 }
 
-.summary {
-  text-align: center;
+.summary{text-align:center}
+.valuation{font-size:26px;font-weight:800;margin:4px 0}
+
+.profit-line{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  font-size:11px;
+  color:var(--text-sub);
 }
 
-.valuation {
-  font-size: 26px;
-  font-weight: 800;
-  margin: 4px 0;
+.stock-card{
+  background:#f9f9fb;
+  border:1px solid var(--input-border);
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
 }
 
-.profit-line {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--text-sub);
+.stock-name{font-weight:700;font-size:13px}
+.stock-value{font-weight:800;font-size:14px}
+
+.input-grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+  margin-top:6px;
 }
 
-.stock-card {
-  background: #f9f9fb;
-  border: 1px solid var(--input-border);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
+.stock-label{font-size:10px;color:var(--text-sub)}
+
+.ios-input{
+  width:100%;
+  padding:6px 4px;
+  font-size:11px;
+  border:1px solid var(--input-border);
+  border-radius:10px;
+  background:var(--input-bg);
 }
 
-.stock-name {
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.stock-value {
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.input-grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.stock-label {
-  font-size: 10px;
-  color: var(--text-sub);
-}
-
-.ios-input {
-  width: 100%;
-  padding: 6px 4px;
-  font-size: 11px;
-  border: 1px solid var(--input-border);
-  border-radius: 10px;
-  background: var(--input-bg);
-}
-
-.page { display: none; }
-.page.active { display: block; }
+.page{display:none}
+.page.active{display:block}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-  <div class="island-header">
-    <h1>MONEY LOG</h1>
-    <div class="header-tabs">
-      <button id="tab-home" class="active" onclick="switchPage('home')">HOME</button>
-      <button id="tab-invest" onclick="switchPage('invest')">INVEST</button>
+<div class="island-header">
+  <h1>MONEY LOG</h1>
+  <div class="header-tabs">
+    <button id="tab-home" class="active" onclick="switchPage('home')">HOME</button>
+    <button id="tab-invest" onclick="switchPage('invest')">INVEST</button>
+  </div>
+</div>
+
+<div id="home" class="page active">
+  <div class="island-main">
+    <div class="island-title">SUMMARY</div>
+    <div class="summary">
+      <div class="valuation">—</div>
+    </div>
+  </div>
+</div>
+
+<div id="invest" class="page">
+  <div class="island-main">
+    <div class="island-title">TOTAL ASSETS</div>
+    <div class="summary">
+      <div class="valuation">¥<span id="stockTotal">0</span></div>
+      <div id="totalProfit"></div>
     </div>
   </div>
 
-  <div id="home" class="page active">
-    <div class="island-main">
-      <div class="island-title">SUMMARY</div>
-      <div class="summary">
-        <div class="valuation">—</div>
-      </div>
-    </div>
+  <div class="island-main">
+    <div class="island-title">MY ASSETS</div>
+    <div id="stockList"></div>
   </div>
-
-  <div id="invest" class="page">
-    <div class="island-main">
-      <div class="island-title">TOTAL ASSETS</div>
-      <div class="summary">
-        <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div id="totalProfit"></div>
-      </div>
-    </div>
-
-    <div class="island-main">
-      <div class="island-title">MY ASSETS</div>
-      <div id="stockList"></div>
-    </div>
-  </div>
+</div>
 
 </div>
 
 <script>
-let state = {
-  stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", price: 32066, holding: 5495, cost: 15000, prevValuation: null },
-    { name: "WCM世界成長株激選", price: 22579, holding: 6624, cost: 15000, prevValuation: null },
-    { name: "SMT米国トレンドランキング", price: 11040, holding: 13636, cost: 15000, prevValuation: null }
+let state={
+  stocks:JSON.parse(localStorage.getItem('stocks'))||[
+    {name:"ブラックロック・ゴールド",price:32066,holding:5495,cost:15000,prevPrice:null,prevHolding:null},
+    {name:"WCM世界成長株激選",price:22579,holding:6624,cost:15000,prevPrice:null,prevHolding:null},
+    {name:"SMT米国トレンドランキング",price:11040,holding:13636,cost:15000,prevPrice:null,prevHolding:null}
   ]
 };
 
-function valuation(s) {
-  return Math.floor((s.price * s.holding) / 10000);
-}
+function val(p,h){return Math.floor((p*h)/10000)}
 
-function switchPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+function switchPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.getElementById('tab-home').classList.toggle('active', id === 'home');
-  document.getElementById('tab-invest').classList.toggle('active', id === 'invest');
-  if (id === 'invest') renderStocks();
+  document.getElementById('tab-home').classList.toggle('active',id==='home');
+  document.getElementById('tab-invest').classList.toggle('active',id==='invest');
+  if(id==='invest')renderStocks();
 }
 
-function renderStocks() {
-  let total = 0;
-  let prevTotal = 0;
+function renderStocks(){
+  let total=0,prevTotal=0;
+  const list=document.getElementById('stockList');
 
-  const list = document.getElementById('stockList');
-  list.innerHTML = state.stocks.map((s, i) => {
-    const val = valuation(s);
-    const prev = s.prevValuation ?? val;
+  list.innerHTML=state.stocks.map((s,i)=>{
+    const cur=val(s.price,s.holding);
+    const prev=(s.prevPrice!=null&&s.prevHolding!=null)
+      ?val(s.prevPrice,s.prevHolding):cur;
 
-    total += val;
-    prevTotal += prev;
+    total+=cur;
+    prevTotal+=prev;
 
-    const diffCost = val - s.cost;
-    const rateCost = s.cost ? diffCost / s.cost * 100 : 0;
-
-    const diffPrev = val - prev;
-    const ratePrev = prev ? diffPrev / prev * 100 : 0;
+    const diffPrev=cur-prev;
+    const ratePrev=prev?diffPrev/prev*100:0;
+    const diffCost=cur-s.cost;
+    const rateCost=s.cost?diffCost/s.cost*100:0;
 
     return `
-      <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="stock-value">¥${val.toLocaleString()}</div>
-        <div class="profit-line">
-          <span>Cost: ${diffCost>=0?'+':''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span>
-          <span>Prev: ${diffPrev>=0?'+':''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(2)}%)</span>
+    <div class="stock-card">
+      <div class="stock-name">${s.name}</div>
+      <div class="stock-value">¥${cur.toLocaleString()}</div>
+      <div class="profit-line">
+        <span>Cost: ${diffCost>=0?'+':''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span>
+        <span>Prev: ${diffPrev>=0?'+':''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(2)}%)</span>
+      </div>
+      <div class="input-grid-3">
+        <div>
+          <span class="stock-label">基準価額</span>
+          <input class="ios-input" type="number" value="${s.price}"
+            onchange="updateStock(${i},'price',this.value)">
         </div>
-        <div class="input-grid-3">
-          <div>
-            <span class="stock-label">基準価額</span>
-            <input class="ios-input" type="number" value="${s.price}"
-              onchange="updateStock(${i}, 'price', this.value)">
-          </div>
-          <div>
-            <span class="stock-label">保有口数</span>
-            <input class="ios-input" type="number" value="${s.holding}"
-              onchange="updateStock(${i}, 'holding', this.value)">
-          </div>
-          <div>
-            <span class="stock-label">元本(万)</span>
-            <input class="ios-input" type="number" value="${s.cost}"
-              onchange="updateStock(${i}, 'cost', this.value)">
-          </div>
+        <div>
+          <span class="stock-label">保有口数</span>
+          <input class="ios-input" type="number" value="${s.holding}"
+            onchange="updateStock(${i},'holding',this.value)">
+        </div>
+        <div>
+          <span class="stock-label">元本(万)</span>
+          <input class="ios-input" type="number" value="${s.cost}"
+            onchange="updateStock(${i},'cost',this.value)">
         </div>
       </div>
-    `;
+    </div>`;
   }).join('');
 
-  document.getElementById('stockTotal').textContent = total.toLocaleString();
+  document.getElementById('stockTotal').textContent=total.toLocaleString();
 
-  const diff = total - prevTotal;
-  const rate = prevTotal ? diff / prevTotal * 100 : 0;
+  const d=total-prevTotal;
+  const r=prevTotal?d/prevTotal*100:0;
 
-  document.getElementById('totalProfit').innerHTML = `
-    <div class="profit-line">
-      <span>Prev: ${diff>=0?'+':''}${diff.toLocaleString()} (${rate.toFixed(2)}%)</span>
-    </div>
-  `;
+  document.getElementById('totalProfit').innerHTML=
+    `<div class="profit-line">
+      <span>Prev: ${d>=0?'+':''}${d.toLocaleString()} (${r.toFixed(2)}%)</span>
+    </div>`;
 
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  localStorage.setItem('stocks',JSON.stringify(state.stocks));
 }
 
-function updateStock(i, field, value) {
-  const s = state.stocks[i];
-
-  // ★変更前の評価額を保存（これがPrev）
-  s.prevValuation = valuation(s);
-
-  s[field] = Number(value) || 0;
-
+function updateStock(i,f,v){
+  const s=state.stocks[i];
+  s.prevPrice=s.price;
+  s.prevHolding=s.holding;
+  s[f]=Number(v)||0;
   renderStocks();
 }
 </script>
