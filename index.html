@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MONEY LOG</title>
 
 <style>
@@ -20,7 +22,7 @@
 }
 
 @keyframes popIn {
-  0% { transform: scale(0.9); opacity: 0; }
+  0 { transform: scale(0.9); opacity: 0; }
   70% { transform: scale(1.03); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
@@ -193,7 +195,6 @@ body {
 </div>
 
 <script>
-// stateの初期化をlocalStorage優先にする
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
@@ -203,43 +204,37 @@ let state = {
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
-  editId: null,
-  lastAddedId: null
+  editId: null
 };
 
-// URLパラメータを解析して反映する関数
 function loadFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const mapping = { 'gold': 0, 'wcm': 1, 'smt': 2 };
   let updated = false;
 
+  // 現在の合計値を計算しておく（全体の前回比用）
+  let currentTotalBeforeUpdate = 0;
+  state.stocks.forEach(s => currentTotalBeforeUpdate += Math.floor((s.price * s.holding) / 10000));
+
   for (const [key, index] of Object.entries(mapping)) {
-    const val = params.get(key);
-    if (val !== null) {
-      const numVal = parseFloat(val);
-      if (!isNaN(numVal)) {
-        // 現在の値を「前回比」のために保存
-        const oldVal = Math.floor((state.stocks[index].price * state.stocks[index].holding) / 10000);
-        state.stocks[index].prevValuation = oldVal;
-        
-        // 新しい基準価額をセット
-        state.stocks[index].price = numVal;
+    const newVal = parseFloat(params.get(key));
+    if (!isNaN(newVal)) {
+      // 【重要】新しい値が今の保存値と違う場合のみ更新
+      if (state.stocks[index].price !== newVal) {
+        // 更新前の単体評価額を保存
+        state.stocks[index].prevValuation = Math.floor((state.stocks[index].price * state.stocks[index].holding) / 10000);
+        state.stocks[index].price = newVal;
         updated = true;
       }
     }
   }
 
   if (updated) {
-    // 全体合計も「更新前」を保存
-    let oldTotal = 0;
-    state.stocks.forEach(s => {
-      // price更新前の値を集計したいが、既にstateは書き換わっているので
-      // 本来はupdateStockと同様のロジックが必要。簡易的に今の値をセット。
-    });
-    
+    // どこかの値が変わったなら、全体の合計も「更新前の値」として保存
+    state.prevStockTotal = currentTotalBeforeUpdate;
     save();
-    // 反映されたか確認するためのデバッグ用（成功したら消してOK）
-    console.log("URLからデータを更新しました");
+    // URLをクリアしてリロード時の重複を防ぐ
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
 }
 
@@ -331,21 +326,22 @@ function updateStock(i, field, value){
   let oldTotal = 0;
   state.stocks.forEach(s => oldTotal += Math.floor((s.price * s.holding) / 10000));
   
-  state.stocks[i][field] = parseFloat(value) || 0;
-  
-  if(field !== 'cost') {
-    state.stocks[i].prevValuation = oldValuation;
-    state.prevStockTotal = oldTotal;
+  const newVal = parseFloat(value) || 0;
+  if(state.stocks[i][field] !== newVal) {
+    state.stocks[i][field] = newVal;
+    if(field !== 'cost') {
+      state.stocks[i].prevValuation = oldValuation;
+      state.prevStockTotal = oldTotal;
+    }
+    save();
   }
-  save();
   renderStocks();
 }
 
-// 起動時の処理
 window.addEventListener('DOMContentLoaded', () => {
-  loadFromUrl(); // URLパラメータを先に読み込む
+  loadFromUrl();
   updateUI();
-  renderStocks(); // これを呼ばないとINVEST画面が初期化されない
+  renderStocks();
 });
 </script>
 </body>
