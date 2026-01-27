@@ -21,7 +21,8 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-color);
-  margin: 0; padding: 12px;
+  margin: 0;
+  padding: 12px;
 }
 
 .container { max-width: 420px; margin: auto; }
@@ -109,7 +110,6 @@ h1 {
 .stock-value {
   font-weight: 800;
   font-size: 14px;
-  margin-bottom: 4px;
 }
 
 .input-grid-3 {
@@ -181,11 +181,10 @@ let state = {
     { name: "ブラックロック・ゴールド", price: 32066, holding: 5495, cost: 15000, prevValuation: null },
     { name: "WCM世界成長株激選", price: 22579, holding: 6624, cost: 15000, prevValuation: null },
     { name: "SMT米国トレンドランキング", price: 11040, holding: 13636, cost: 15000, prevValuation: null }
-  ],
-  prevStockTotal: Number(localStorage.getItem('prevStockTotal')) || null
+  ]
 };
 
-function calcValuation(s) {
+function valuation(s) {
   return Math.floor((s.price * s.holding) / 10000);
 }
 
@@ -194,30 +193,26 @@ function switchPage(id) {
   document.getElementById(id).classList.add('active');
   document.getElementById('tab-home').classList.toggle('active', id === 'home');
   document.getElementById('tab-invest').classList.toggle('active', id === 'invest');
-
-  if (id === 'invest') {
-    state.prevStockTotal = state.stocks.reduce((sum, s) => sum + calcValuation(s), 0);
-    state.stocks.forEach(s => s.prevValuation = calcValuation(s));
-    localStorage.setItem('prevStockTotal', state.prevStockTotal);
-    renderStocks();
-  }
+  if (id === 'invest') renderStocks();
 }
 
 function renderStocks() {
-  const list = document.getElementById('stockList');
   let total = 0;
-  let costSum = 0;
+  let prevTotal = 0;
 
+  const list = document.getElementById('stockList');
   list.innerHTML = state.stocks.map((s, i) => {
-    const val = calcValuation(s);
+    const val = valuation(s);
+    const prev = s.prevValuation ?? val;
+
     total += val;
-    costSum += s.cost;
+    prevTotal += prev;
 
     const diffCost = val - s.cost;
     const rateCost = s.cost ? diffCost / s.cost * 100 : 0;
 
-    const diffPrev = s.prevValuation != null ? val - s.prevValuation : 0;
-    const ratePrev = s.prevValuation ? diffPrev / s.prevValuation * 100 : 0;
+    const diffPrev = val - prev;
+    const ratePrev = prev ? diffPrev / prev * 100 : 0;
 
     return `
       <div class="stock-card">
@@ -230,15 +225,18 @@ function renderStocks() {
         <div class="input-grid-3">
           <div>
             <span class="stock-label">基準価額</span>
-            <input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)">
+            <input class="ios-input" type="number" value="${s.price}"
+              onchange="updateStock(${i}, 'price', this.value)">
           </div>
           <div>
             <span class="stock-label">保有口数</span>
-            <input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)">
+            <input class="ios-input" type="number" value="${s.holding}"
+              onchange="updateStock(${i}, 'holding', this.value)">
           </div>
           <div>
             <span class="stock-label">元本(万)</span>
-            <input class="ios-input" type="number" value="${s.cost}" onchange="updateStock(${i},'cost',this.value)">
+            <input class="ios-input" type="number" value="${s.cost}"
+              onchange="updateStock(${i}, 'cost', this.value)">
           </div>
         </div>
       </div>
@@ -247,9 +245,8 @@ function renderStocks() {
 
   document.getElementById('stockTotal').textContent = total.toLocaleString();
 
-  const prev = state.prevStockTotal ?? total;
-  const diff = total - prev;
-  const rate = prev ? diff / prev * 100 : 0;
+  const diff = total - prevTotal;
+  const rate = prevTotal ? diff / prevTotal * 100 : 0;
 
   document.getElementById('totalProfit').innerHTML = `
     <div class="profit-line">
@@ -261,7 +258,13 @@ function renderStocks() {
 }
 
 function updateStock(i, field, value) {
-  state.stocks[i][field] = Number(value) || 0;
+  const s = state.stocks[i];
+
+  // ★変更前の評価額を保存（これがPrev）
+  s.prevValuation = valuation(s);
+
+  s[field] = Number(value) || 0;
+
   renderStocks();
 }
 </script>
