@@ -14,11 +14,11 @@
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
-  --btn-light: #e5e5ea;
+  --btn-light: #e5e5ea; /* グレーボタン用 */
   --btn-active: #636366; 
   --accent: #007aff;
-  --up-color: #34c759;
-  --down-color: #ff3b30;
+  --up-color: #8e8e93;   /* 緑からグレーに変更 */
+  --down-color: #aeaeb2; /* 赤から薄いグレーに変更 */
 }
 
 @keyframes popIn {
@@ -119,7 +119,6 @@ body {
   font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none;
 }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
-.btn-record.active:active { transform: scale(0.96); }
 
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
@@ -136,7 +135,12 @@ body {
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 
-.btn-small { font-size: 10px; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--input-border); background: #fff; cursor: pointer; font-weight: bold; }
+/* INVEST用グレーボタン */
+.btn-small-grey {
+  font-size: 10px; padding: 4px 10px; border-radius: 12px; 
+  border: none; background: var(--btn-light); 
+  color: var(--btn-active); font-weight: bold; cursor: pointer;
+}
 
 .page { display: none; }
 .page.active { display: block; }
@@ -185,8 +189,8 @@ body {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <div class="island-title" style="margin-bottom:0;">TOTAL ASSETS</div>
         <div style="display:flex; gap:6px;">
-          <button id="syncBtn" class="btn-small" onclick="syncPrices()">価格同期</button>
-          <button class="btn-small" onclick="snapshotBaseline()" style="background:var(--text-main); color:#fff; border:none;">基準固定</button>
+          <button id="syncBtn" class="btn-small-grey" onclick="syncPrices()">価格同期</button>
+          <button class="btn-small-grey" onclick="snapshotBaseline()">基準固定</button>
         </div>
       </div>
       <div class="summary">
@@ -203,7 +207,6 @@ body {
 </div>
 
 <script>
-// --- ヘルパー：日本時間の日付取得 ---
 const getJSTDate = () => {
   return new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Tokyo' }).format(new Date()).replace(/\//g, '-');
 };
@@ -283,10 +286,8 @@ function updateUI(){
   const [y, m, d] = state.selectedDate.split('-');
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
   document.getElementById('hiddenPicker').value = state.selectedDate;
-  
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
-  
   document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
     <li class="${e.id === state.lastAddedId ? 'new-item' : ''}" onclick="editEntry(${e.id})">
       <div class="item-content">
@@ -312,7 +313,7 @@ function editEntry(id) {
   updateUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// --- INVEST LOGIC (強化版) ---
+// --- INVEST LOGIC ---
 async function syncPrices() {
   const btn = document.getElementById('syncBtn');
   btn.textContent = "同期中..."; btn.disabled = true;
@@ -334,7 +335,7 @@ async function syncPrices() {
 }
 
 function snapshotBaseline() {
-  if (!confirm("現在の評価額を『基準（前日比0円地点）』として固定しますか？")) return;
+  if (!confirm("現在の評価額を『基準（0円地点）』として固定しますか？")) return;
   let currentTotal = 0;
   state.stocks.forEach((s, i) => {
     const val = Math.floor((s.price * s.holding) / 10000);
@@ -398,7 +399,6 @@ function updateStock(i, f, v){
   save(); renderStocks();
 }
 
-// 初期化
 updateUI();
 </script>
 </body>
