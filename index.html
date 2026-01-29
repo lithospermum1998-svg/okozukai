@@ -14,11 +14,11 @@
   --radius: 20px;
   --input-bg: #fafafa;
   --input-border: #e5e5ea;
-  --btn-light: #e5e5ea; /* グレーボタン用 */
+  --btn-light: #e5e5ea; 
   --btn-active: #636366; 
   --accent: #007aff;
-  --up-color: #8e8e93;   /* 緑からグレーに変更 */
-  --down-color: #aeaeb2; /* 赤から薄いグレーに変更 */
+  --up-color: #8e8e93;   
+  --down-color: #aeaeb2; 
 }
 
 @keyframes popIn {
@@ -135,7 +135,6 @@ body {
 .stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 
-/* INVEST用グレーボタン */
 .btn-small-grey {
   font-size: 10px; padding: 4px 10px; border-radius: 12px; 
   border: none; background: var(--btn-light); 
@@ -208,7 +207,9 @@ body {
 
 <script>
 const getJSTDate = () => {
-  return new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Tokyo' }).format(new Date()).replace(/\//g, '-');
+  const d = new Date();
+  const jst = new Date(d.getTime() + (9 * 60 * 60 * 1000));
+  return jst.toISOString().split('T')[0];
 };
 
 let state = {
@@ -313,29 +314,56 @@ function editEntry(id) {
   updateUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// --- INVEST LOGIC ---
+// --- INVEST LOGIC (MODIFIED SYNC) ---
 async function syncPrices() {
   const btn = document.getElementById('syncBtn');
   btn.textContent = "同期中..."; btn.disabled = true;
+  
   for (let i = 0; i < state.stocks.length; i++) {
     const stock = state.stocks[i];
     try {
-      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://finance.yahoo.co.jp/quote/' + stock.ticker)}`);
+      const url = `https://finance.yahoo.co.jp/quote/${stock.ticker}`;
+      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
       const data = await res.json();
       const doc = new DOMParser().parseFromString(data.contents, 'text/html');
-      const priceElem = doc.querySelector('._3S3U_u9m');
-      if (priceElem) {
-        state.stocks[i].price = parseFloat(priceElem.textContent.replace(/,/g, ''));
+      
+      // Yahooファイナンスの価格表示は頻繁にクラス名が変わるため、複数の候補で探す
+      const selectors = [
+        '._3S3U_u9m', 
+        'span[class*="StyledNumber"]', 
+        '.q_price', 
+        'header h1 + div span'
+      ];
+      
+      let priceElem = null;
+      for (const sel of selectors) {
+        const found = doc.querySelector(sel);
+        if (found && found.textContent) {
+          priceElem = found;
+          break;
+        }
       }
-    } catch (e) { console.error(stock.name + "同期失敗"); }
+
+      if (priceElem) {
+        // 数字、ドット、マイナス以外をすべて削除
+        const priceText = priceElem.textContent.replace(/[^-0-9.]/g, '');
+        const priceNum = parseFloat(priceText);
+        if (!isNaN(priceNum) && priceNum > 0) {
+          state.stocks[i].price = priceNum;
+        }
+      }
+    } catch (e) { 
+      console.error(stock.name + " 同期エラー", e); 
+    }
   }
-  state.lastSyncTime = new Intl.DateTimeFormat('ja-JP', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' }).format(new Date());
+  
+  state.lastSyncTime = new Date().toLocaleTimeString('ja-JP', {hour: '2-digit', minute:'2-digit'});
   save(); renderStocks();
   btn.textContent = "価格同期"; btn.disabled = false;
 }
 
 function snapshotBaseline() {
-  if (!confirm("現在の評価額を『基準（0円地点）』として固定しますか？")) return;
+  if (!confirm("現在の評価額を基準として保存しますか？")) return;
   let currentTotal = 0;
   state.stocks.forEach((s, i) => {
     const val = Math.floor((s.price * s.holding) / 10000);
@@ -379,7 +407,7 @@ function renderStocks(){
   }).join('');
 
   document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
-  document.getElementById('lastUpdateLabel').textContent = `最終同期(JST): ${state.lastSyncTime}`;
+  document.getElementById('lastUpdateLabel').textContent = `最終同期: ${state.lastSyncTime}`;
   
   const totalCostDiff = currentTotal - totalCostSum;
   const totalBaseDiff = currentTotal - state.totalBaseline;
