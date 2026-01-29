@@ -5,32 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG</title>
 <style>
-/* ...（スタイルは以前と同じなので省略可ですが、一応完成版として統合）... */
-:root { --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea; --btn-light: #e5e5ea; --btn-active: #636366; --accent: #007aff; --up-color: #8e8e93; --down-color: #aeaeb2; }
-body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
+:root {
+  --bg-color: #f2f2f7; 
+  --card-bg: #ffffff;
+  --text-main: #1c1c1e;
+  --text-sub: #8e8e93; 
+  --radius: 20px;
+  --input-bg: #f2f2f7;
+  --input-border: #e5e5ea;
+  --btn-light: #e5e5ea; 
+  --btn-active: #636366; 
+  --accent: #007aff;
+  --up-color: #ff3b30;   /* 下落を目立たせる */
+  --down-color: #8e8e93; 
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  background: var(--bg-color);
+  margin: 0; padding: 12px; color: var(--text-main);
+  -webkit-tap-highlight-color: transparent;
+}
+
 .container { max-width: 420px; margin: 0 auto; }
-.island-header, .island-main, .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; }
-.header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
-.header-tabs button { flex: 1; padding: 8px; border: none; background: transparent; font-weight: bold; color: var(--text-sub); }
-.header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); }
-h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 12px; }
-.valuation { font-size: 26px; font-weight: 800; text-align: center; margin: 8px 0; }
-.profit-line { display: flex; gap: 10px; font-size: 11px; color: var(--text-sub); justify-content: center; }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--input-border); }
-.stock-name { font-weight: bold; font-size: 13px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-bottom: 4px; }
-.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px; border-radius: 10px; border: 1px solid var(--input-border); font-size: 12px; }
-.btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #fff; font-weight: bold; }
-.btn-record.active { background: var(--btn-active); cursor: pointer; }
-.btn-small-grey { font-size: 10px; padding: 4px 8px; border-radius: 10px; border: none; background: var(--btn-light); color: var(--btn-active); font-weight: bold; }
-.page { display: none; } .page.active { display: block; }
+
+/* Island UI Components */
+.island {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+}
+
+.header-tabs {
+  display: flex; background: #e5e5ea; border-radius: 12px; padding: 2px;
+  margin-top: 10px;
+}
+.header-tabs button {
+  flex: 1; padding: 8px 0; border: none; background: transparent;
+  font-weight: bold; font-size: 13px; color: var(--text-sub);
+}
+.header-tabs button.active {
+  background: var(--card-bg); border-radius: 10px; color: var(--text-main);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.valuation { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; letter-spacing: -1px; }
+.island-title { font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Input Styles */
+.ios-input {
+  width: 100%; box-sizing: border-box; padding: 10px; font-size: 14px;
+  border: 1px solid var(--input-border); border-radius: 12px; background: var(--input-bg);
+  outline: none; -webkit-appearance: none;
+}
+
+.btn-record {
+  width: 100%; padding: 14px; border-radius: 14px; border: none;
+  background: var(--btn-active); color: #ffffff;
+  font-weight: 700; font-size: 15px; cursor: pointer;
+}
+
+/* Stock Cards */
+.stock-card {
+  background: #fafafa; padding: 14px; border-radius: 16px; margin-bottom: 10px;
+  border: 1px solid #efeff4;
+}
+.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.stock-link { font-size: 13px; font-weight: 700; color: var(--accent); text-decoration: none; }
+.stock-val { font-size: 18px; font-weight: 800; }
+
+.input-grid-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;
+}
+.label-small { font-size: 9px; color: var(--text-sub); display: block; margin-bottom: 4px; padding-left: 2px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.profit-pill {
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="island-header">
-    <h1>MONEY LOG</h1>
+  <div class="island">
+    <h1 style="font-size:16px; text-align:center; margin:0;">MONEY LOG</h1>
     <div class="header-tabs">
       <button id="tab-log" class="active" onclick="switchPage('logPage')">HOME</button>
       <button id="tab-stock" onclick="switchPage('stockPage')">INVEST</button>
@@ -38,46 +101,45 @@ h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 12px;
   </div>
 
   <div id="logPage" class="page active">
-    <div class="island-main">
-      <div id="dateLabel" style="text-align:center; font-weight:bold;"></div>
+    <div class="island">
+      <div class="island-title">Monthly Spending</div>
       <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額">
         <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
       </div>
-      <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
+      <button class="btn-record" onclick="addEntry()">記録する</button>
     </div>
-    <div class="island-output"><ul id="expenseList" style="list-style:none; padding:0;"></ul></div>
+    <div class="island">
+      <div class="island-title">Recent Activity</div>
+      <div id="expenseList"></div>
+    </div>
   </div>
 
   <div id="stockPage" class="page">
-    <div class="island-main">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; font-weight:bold; color:var(--text-sub);">TOTAL ASSETS</span>
-        <div style="display:flex; gap:5px;">
-          <button id="syncBtn" class="btn-small-grey" onclick="syncPrices()">価格同期</button>
-          <button class="btn-small-grey" onclick="snapshotBaseline()">基準固定</button>
-        </div>
+    <div class="island">
+      <div style="display:flex; justify-content:space-between;">
+        <div class="island-title">Total Assets</div>
+        <button onclick="snapshotBaseline()" style="font-size:10px; border:none; background:none; color:var(--accent); cursor:pointer;">[ 基準値を固定 ]</button>
       </div>
       <div class="valuation">¥<span id="stockTotal">0</span></div>
-      <div id="totalSummaryLine"></div>
-      <div id="lastUpdateLabel" style="font-size:9px; color:var(--text-sub); text-align:center; margin-top:4px;"></div>
+      <div id="totalSummaryLine" style="text-align:center; font-size:12px;"></div>
     </div>
+
     <div id="stockList"></div>
   </div>
 </div>
 
 <script>
-// --- 基本データ ---
+// --- Data State ---
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", ticker: "48311032", price: 0, holding: 0, cost: 0, baselineValuation: 0 },
-    { name: "WCM世界成長株激選", ticker: "6831121A", price: 0, holding: 0, cost: 0, baselineValuation: 0 },
-    { name: "SMT米国トレンドランキング", ticker: "6431225C", price: 0, holding: 0, cost: 0, baselineValuation: 0 }
+    { name: "BlackRock Gold", ticker: "48311032", price: 0, holding: 0, cost: 0, baseline: 0 },
+    { name: "WCM Global", ticker: "6831121A", price: 0, holding: 0, cost: 0, baseline: 0 },
+    { name: "SMT US Trend", ticker: "6431225C", price: 0, holding: 0, cost: 0, baseline: 0 }
   ],
   totalBaseline: parseInt(localStorage.getItem('totalBaseline')) || 0,
-  lastSyncTime: localStorage.getItem('lastSyncTime') || "未同期",
   selectedDate: new Date().toISOString().split('T')[0]
 };
 
@@ -85,130 +147,98 @@ function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   localStorage.setItem('totalBaseline', state.totalBaseline);
-  localStorage.setItem('lastSyncTime', state.lastSyncTime);
   render();
 }
 
-// --- 同期ロジック (強化版) ---
-async function syncPrices() {
-  const btn = document.getElementById('syncBtn');
-  const originalText = btn.textContent;
-  btn.textContent = "同期中..."; btn.disabled = true;
-
-  for (let i = 0; i < state.stocks.length; i++) {
-    const s = state.stocks[i];
-    try {
-      const targetUrl = `https://finance.yahoo.co.jp/quote/${s.ticker}`;
-      // allorigins がダメな時のために別のプロキシを使用
-      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&_=${Date.now()}`);
-      const data = await res.json();
-      const doc = new DOMParser().parseFromString(data.contents, 'text/html');
-
-      // 投資信託の価格はこれらで見つかることが多い
-      const priceSelectors = [
-        '[itemprop="price"]',
-        '._3S3U_u9m', 
-        '.q_price',
-        'span[class*="StyledNumber"]'
-      ];
-
-      let foundPrice = null;
-      for (let sel of priceSelectors) {
-        const el = doc.querySelector(sel);
-        if (el && el.textContent) {
-          const val = parseFloat(el.textContent.replace(/[^0-9.]/g, ''));
-          if (!isNaN(val) && val > 0) {
-            foundPrice = val;
-            break;
-          }
-        }
-      }
-      if (foundPrice) state.stocks[i].price = foundPrice;
-
-    } catch (e) { console.error(s.name + " 同期失敗"); }
-  }
-
-  state.lastSyncTime = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
-  save();
-  btn.textContent = originalText; btn.disabled = false;
-}
-
-// --- UI描画 ---
-function render() {
-  // HOMEの描画
-  const [y, m, d] = state.selectedDate.split('-');
-  document.getElementById('dateLabel').textContent = `${y}.${m}.${d}`;
-  const filtered = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount, 0).toLocaleString();
-  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => `
-    <li style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">
-      <span>${e.memo || '無題'}</span>
-      <span style="font-weight:bold;">¥${e.amount.toLocaleString()}</span>
-    </li>
-  `).join('');
-
-  // INVESTの描画
-  let total = 0, costSum = 0;
-  document.getElementById('stockList').innerHTML = state.stocks.map((s, i) => {
-    const val = Math.floor((s.price * s.holding) / 10000);
-    total += val; costSum += (s.cost || 0);
-    const diffBase = val - (s.baselineValuation || val);
-    
-    return `
-      <div class="stock-card">
-        <div class="stock-name" onclick="window.open('https://finance.yahoo.co.jp/quote/${s.ticker}')">${s.name} ↗</div>
-        <div style="font-size:16px; font-weight:800;">¥${val.toLocaleString()}</div>
-        <div class="profit-line" style="justify-content:flex-start; gap:12px;">
-          <span>Cost比: ${val - s.cost >= 0 ? '+' : ''}${(val - s.cost).toLocaleString()}</span>
-          <span style="color:${diffBase>=0?'var(--up-color)':'var(--down-color)'}; font-weight:bold;">
-            Base比: ${diffBase >= 0 ? '+' : ''}${diffBase.toLocaleString()}
-          </span>
-        </div>
-        <div class="input-grid-3">
-          <div><span style="font-size:9px;">単価</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
-          <div><span style="font-size:9px;">口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
-          <div><span style="font-size:9px;">元本(万)</span><input class="ios-input" type="number" value="${s.cost}" onchange="updateStock(${i},'cost',this.value)"></div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  document.getElementById('stockTotal').textContent = total.toLocaleString();
-  document.getElementById('lastUpdateLabel').textContent = `最終同期: ${state.lastSyncTime}`;
-  const baseDiff = total - state.totalBaseline;
-  document.getElementById('totalSummaryLine').innerHTML = `
-    <div class="profit-line">
-      <span>基準比: </span>
-      <span style="font-weight:bold; color:${baseDiff>=0?'var(--up-color)':'var(--down-color)'}">
-        ${baseDiff >= 0 ? '+' : ''}${baseDiff.toLocaleString()}
-      </span>
-    </div>
-  `;
-}
-
-function updateStock(i, f, v) { state.stocks[i][f] = parseFloat(v) || 0; save(); }
-function switchPage(p) { 
+// --- Page Switcher ---
+function switchPage(p) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.getElementById(p).classList.add('active');
+  document.getElementById('tab-log').classList.toggle('active', p==='logPage');
+  document.getElementById('tab-stock').classList.toggle('active', p==='stockPage');
   render();
 }
-function checkInput() { document.getElementById('recordBtn').classList.add('active'); }
+
+// --- Log Logic ---
 function addEntry() {
   const a = document.getElementById('amountInput'), m = document.getElementById('memoInput');
   if(!a.value) return;
   state.expenses.push({ id: Date.now(), amount: parseInt(a.value), memo: m.value, date: state.selectedDate });
   a.value = ''; m.value = ''; save();
 }
-function snapshotBaseline() { if(confirm("現在を0地点にしますか？")) { 
+
+// --- Invest Logic ---
+function updateStock(i, field, val) {
+  state.stocks[i][field] = parseFloat(val) || 0;
+  save();
+}
+
+function snapshotBaseline() {
+  if(!confirm("現在の合計評価額を比較基準(0円地点)にしますか？")) return;
   let currentTotal = 0;
   state.stocks.forEach((s, i) => {
     const val = Math.floor((s.price * s.holding) / 10000);
-    state.stocks[i].baselineValuation = val;
+    state.stocks[i].baseline = val;
     currentTotal += val;
   });
   state.totalBaseline = currentTotal;
-  save(); 
-}}
+  save();
+}
+
+// --- Rendering ---
+function render() {
+  // Expense Rendering
+  const filtered = state.expenses.filter(e => e.date.startsWith(state.selectedDate.substring(0,7)));
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e)=>s+e.amount, 0).toLocaleString();
+  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => `
+    <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f2f2f7;">
+      <div style="font-size:14px;">${e.memo || '無題'}</div>
+      <div style="font-weight:bold;">¥${e.amount.toLocaleString()}</div>
+    </div>
+  `).join('');
+
+  // Stock Rendering
+  let totalValuation = 0;
+  let totalCost = 0;
+  
+  document.getElementById('stockList').innerHTML = state.stocks.map((s, i) => {
+    const val = Math.floor((s.price * s.holding) / 10000); // 単位: 万円
+    totalValuation += val;
+    totalCost += s.cost;
+    const diffBase = val - (s.baseline || val);
+
+    return `
+      <div class="stock-card">
+        <div class="stock-header">
+          <a class="stock-link" href="https://www.google.com/finance/quote/${s.ticker}:IT_JP" target="_blank">${s.name} ↗</a>
+          <div class="stock-val">¥${val.toLocaleString()}<span style="font-size:10px; color:var(--text-sub); margin-left:2px;">万</span></div>
+        </div>
+        
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span style="font-size:11px; color:var(--text-sub);">Cost: ¥${(val - s.cost).toLocaleString()}万</span>
+          <span class="profit-pill" style="background:${diffBase >= 0 ? '#e1f5fe' : '#ffebee'}; color:${diffBase >= 0 ? '#0288d1' : '#d32f2f'};">
+            Base: ${diffBase >= 0 ? '+' : ''}${diffBase.toLocaleString()}万
+          </span>
+        </div>
+
+        <div class="input-grid-3">
+          <div><span class="label-small">基準価額(円)</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
+          <div><span class="label-small">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
+          <div><span class="label-small">投資元本(万)</span><input class="ios-input" type="number" value="${s.cost}" onchange="updateStock(${i},'cost',this.value)"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('stockTotal').textContent = totalValuation.toLocaleString();
+  const totalBaseDiff = totalValuation - state.totalBaseline;
+  document.getElementById('totalSummaryLine').innerHTML = `
+    <span style="color:var(--text-sub)">前回基準比: </span>
+    <span style="font-weight:bold; color:${totalBaseDiff >= 0 ? '#34c759' : '#ff3b30'}">
+      ${totalBaseDiff >= 0 ? '+' : ''}${totalBaseDiff.toLocaleString()}万円
+    </span>
+  `;
+}
 
 render();
 </script>
