@@ -17,6 +17,8 @@
   --btn-light: #e5e5ea;
   --btn-active: #636366; 
   --accent: #007aff;
+  --pos-color: #34c759; /* プラスの色 */
+  --neg-color: #ff3b30; /* マイナスの色 */
 }
 
 @keyframes popIn {
@@ -24,6 +26,8 @@
   70% { transform: scale(1.03); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
 
 .new-item { animation: popIn 0.3s ease-out; }
 
@@ -61,26 +65,17 @@ body {
 .island-main {
   background: var(--card-bg); border-radius: var(--radius);
   padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 12px;
+  margin-bottom: 12px; position: relative;
 }
 
 .summary { text-align: center; margin-bottom: 14px; }
 .valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
 
-/* 赤枠：左寄せ設定 */
 .profit-line {
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  font-size: 11px;
-  color: var(--text-sub);
-  margin-top: 2px;
+  display: flex; justify-content: flex-start; gap: 10px;
+  font-size: 11px; color: var(--text-sub); margin-top: 2px;
 }
-
-/* サマリー（中央寄せ） */
-.summary .profit-line {
-  justify-content: center;
-}
+.summary .profit-line { justify-content: center; }
 
 .month-switch {
   display: flex; align-items: center; justify-content: center; gap: 12px;
@@ -96,13 +91,8 @@ body {
 .month-btn { font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-main); padding: 8px; }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-
-/* 青枠：3カラム1行化 */
 .input-grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 6px;
-  margin-top: 8px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px;
 }
 
 .ios-input {
@@ -110,10 +100,7 @@ body {
   border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg);
 }
 
-.stock-card .ios-input {
-  padding: 6px 4px;
-  font-size: 11px;
-}
+.stock-card .ios-input { padding: 6px 4px; font-size: 11px; }
 
 .btn-record {
   width: 100%; padding: 12px; border-radius: 12px; border: none;
@@ -122,6 +109,17 @@ body {
 }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
+
+/* Stock Specific */
+.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
+.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.stock-name { font-weight: bold; font-size: 13px; flex: 1; }
+.stock-code { font-size: 9px; color: var(--text-sub); background: #e5e5ea; padding: 2px 4px; border-radius: 4px; margin-left: 4px; font-family: monospace; }
+.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
+
+.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; }
+.diff-plus { color: var(--pos-color); }
+.diff-minus { color: var(--neg-color); }
 
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
@@ -134,9 +132,16 @@ body {
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
 
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
-.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
+/* Update Button */
+.btn-update {
+  position: absolute; top: 16px; right: 20px;
+  background: var(--accent); color: white; border: none; padding: 4px 10px;
+  border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,122,255,0.3);
+}
+.btn-update:active { transform: scale(0.95); }
+.btn-update.loading { background: #aeaeb2; pointer-events: none; }
+.btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -183,6 +188,7 @@ body {
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title">TOTAL ASSETS</div>
+      <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
       <div class="summary">
         <div class="valuation">¥<span id="stockTotal">0</span></div>
         <div id="totalSummaryLine"></div>
@@ -196,12 +202,17 @@ body {
 </div>
 
 <script>
+// ▼▼▼ ここにGASのURLを貼り付けてください ▼▼▼
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbys5eTp_h0f7Lhu4rxC8COm7k7uQ-lqdSf2Yu01N-kk4y0HlCVmNrmt0Xlftp1n1oha/exec"; 
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
+  // code: Yahoo!ファイナンスのファンドコードを設定してください
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", price: 0, holding: 0, cost: 0, prevValuation: 0 },
-    { name: "WCM世界成長株激選", price: 0, holding: 0, cost: 0, prevValuation: 0 },
-    { name: "SMT米国トレンドランキング", price: 0, holding: 0, cost: 0, prevValuation: 0 }
+    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
+    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
+    { name: "SMT米国トレンド", code: "29312177", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
@@ -297,6 +308,49 @@ function editEntry(id) {
 }
 
 // --- INVEST LOGIC ---
+
+// 自動取得機能（GAS経由）
+async function fetchAllPrices() {
+  if (GAS_API_URL.includes("ここにGAS")) {
+    alert("GASのURLが設定されていません。コードを修正してください。");
+    return;
+  }
+  
+  const btn = document.getElementById('updateBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = "<span>↻</span>";
+
+  for (let i = 0; i < state.stocks.length; i++) {
+    const s = state.stocks[i];
+    if (!s.code) continue;
+
+    try {
+      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+      const data = await res.json();
+      
+      if (data.price) {
+        // 現在価格と前日比を保存
+        state.stocks[i].price = data.price;
+        state.stocks[i].dailyDiff = data.diff; 
+        
+        // 評価額の更新
+        state.stocks[i].prevValuation = Math.floor((data.price * s.holding) / 10000);
+      }
+    } catch (e) {
+      console.error("Fetch Error:", e);
+    }
+  }
+
+  // 最後に合計金額も再計算して保存
+  state.prevStockTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
+  
+  save(); // localStorageへ保存
+  renderStocks(); // 画面更新
+  
+  btn.classList.remove('loading');
+  btn.textContent = "更新";
+}
+
 function renderStocks(){
   const container = document.getElementById('stockList');
   let currentTotal = 0, totalCostSum = 0;
@@ -311,22 +365,28 @@ function renderStocks(){
     const diffCost = valuation - costValue;
     const rateCost = costValue !== 0 ? (diffCost / costValue * 100) : 0;
     
-    // Prev (前回との差)
-    const diffPrev = valuation - (s.prevValuation ?? valuation);
-    const ratePrev = (s.prevValuation ?? valuation) !== 0 ? (diffPrev / (s.prevValuation ?? valuation) * 100) : 0;
+    // 日次変動（取得したdailyDiffを表示）
+    const diffClass = s.dailyDiff > 0 ? 'diff-plus' : (s.dailyDiff < 0 ? 'diff-minus' : '');
+    const diffSign = s.dailyDiff > 0 ? '+' : '';
+    const diffDisplay = s.dailyDiff ? `<span class="diff-tag ${diffClass}">(${diffSign}${s.dailyDiff})</span>` : '';
 
     return `
       <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
+        <div class="stock-header">
+          <div class="stock-name">${s.name}</div>
+          <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" placeholder="Code" value="${s.code||''}" onchange="updateStock(${i},'code',this.value)">
+        </div>
         <div style="font-weight: 700; font-size: 14px;">¥${valuation.toLocaleString()}</div>
         
         <div class="profit-line">
-          <span>Cost: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span>
-          <span>Prev: ${diffPrev >= 0 ? '+' : ''}${diffPrev.toLocaleString()} (${ratePrev.toFixed(2)}%)</span>
+          <span>Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span>
         </div>
 
         <div class="input-grid-3">
-          <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
+          <div>
+            <span class="stock-label">基準価額 ${diffDisplay}</span>
+            <input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)">
+          </div>
           <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
           <div><span class="stock-label">元本(万)</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)"></div>
         </div>
@@ -338,21 +398,27 @@ function renderStocks(){
   
   const totalCostDiff = currentTotal - totalCostSum;
   const totalCostRate = totalCostSum ? (totalCostDiff / totalCostSum * 100) : 0;
+  
+  // Totalの前回比は「手動で開いたとき」との差分として残すか、日次変動の合計にするか選べますが、
+  // ここでは元々のロジック（prevStockTotalとの差）を表示します
   const totalPrevDiff = currentTotal - state.prevStockTotal;
-  const totalPrevRate = state.prevStockTotal ? (totalPrevDiff / state.prevStockTotal * 100) : 0;
-
+  
   document.getElementById('totalSummaryLine').innerHTML = `
     <div class="profit-line">
-      <span>Cost: ${totalCostDiff >= 0 ? '+' : ''}${totalCostDiff.toLocaleString()} (${totalCostRate.toFixed(2)}%)</span>
-      <span>Prev: ${totalPrevDiff >= 0 ? '+' : ''}${totalPrevDiff.toLocaleString()} (${totalPrevRate.toFixed(2)}%)</span>
+      <span>Total Return: ${totalCostDiff >= 0 ? '+' : ''}${totalCostDiff.toLocaleString()} (${totalCostRate.toFixed(2)}%)</span>
     </div>
   `;
 }
 
 function updateStock(i, f, v){
-  if(f !== 'cost') state.stocks[i].prevValuation = Math.floor((state.stocks[i].price * state.stocks[i].holding) / 10000);
-  state.stocks[i][f] = parseFloat(v) || 0;
-  state.prevStockTotal = document.getElementById('stockTotal').textContent.replace(/,/g, '');
+  if(f === 'code') {
+    state.stocks[i][f] = v;
+  } else {
+    state.stocks[i][f] = parseFloat(v) || 0;
+    if(f !== 'cost') state.stocks[i].prevValuation = Math.floor((state.stocks[i].price * state.stocks[i].holding) / 10000);
+  }
+  
+  state.prevStockTotal = parseInt(document.getElementById('stockTotal').textContent.replace(/,/g, '')) || 0;
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   localStorage.setItem('prevStockTotal', state.prevStockTotal);
   renderStocks();
