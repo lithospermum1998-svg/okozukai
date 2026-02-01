@@ -4,44 +4,43 @@
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG</title>
 <style>
-:root { --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; --radius: 20px; --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30; }
-body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
-.container { max-width: 420px; margin: 0 auto; }
-.island { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
-.header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; margin-top: 10px; }
-.header-tabs button { flex: 1; padding: 8px; border: none; background: transparent; font-weight: bold; color: var(--text-sub); cursor: pointer; }
-.header-tabs button.active { background: white; border-radius: 8px; color: black; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.valuation { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; }
-.btn-update { position: absolute; top: 16px; right: 16px; background: var(--accent); color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+:root { --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --sub: #8e8e93; --accent: #007aff; }
+body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 12px; color: var(--text); }
+.island { background: var(--card); border-radius: 20px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
+.tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; margin: 10px 0; }
+.tabs button { flex: 1; padding: 8px; border: none; background: transparent; font-weight: bold; color: var(--sub); }
+.tabs button.active { background: white; border-radius: 8px; color: black; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.val { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; }
+.btn-up { position: absolute; top: 16px; right: 16px; background: var(--accent); color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #e5e5ea; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #e5e5ea; border-radius: 10px; font-size: 13px; margin-top: 4px; }
-#debug { font-size: 10px; background: #222; color: #0f0; padding: 10px; border-radius: 10px; margin-top: 10px; display: none; white-space: pre-wrap; }
-.page { display: none; } .page.active { display: block; }
+#console { font-size: 10px; background: #000; color: #0f0; padding: 10px; border-radius: 10px; margin-top: 10px; display: none; white-space: pre-wrap; }
+.page { display: none; } .active { display: block; }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="island" style="text-align:center">
     <h1 style="font-size:16px; margin:0">MONEY LOG</h1>
-    <div class="header-tabs">
-      <button id="t-home" class="active" onclick="tab('home')">HOME</button>
-      <button id="t-inv" onclick="tab('inv')">INVEST</button>
+    <div class="tabs">
+      <button id="t-h" class="active" onclick="tab('h')">HOME</button>
+      <button id="t-i" onclick="tab('i')">INVEST</button>
     </div>
   </div>
 
-  <div id="p-home" class="page active">
+  <div id="p-h" class="page active">
     <div class="island">
-      <div class="valuation">¥<span id="h-total">0</span></div>
-      <input type="number" id="a-in" class="ios-input" placeholder="金額">
-      <button onclick="add()" style="width:100%; margin-top:10px; padding:12px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold">記録</button>
+      <div class="val">¥<span id="h-total">0</span></div>
+      <input type="number" id="a-in" class="ios-input" placeholder="金額入力">
+      <button onclick="add()" style="width:100%; margin-top:10px; padding:12px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold">記録する</button>
     </div>
   </div>
 
-  <div id="p-inv" class="page">
+  <div id="p-i" class="page">
     <div class="island">
-      <button class="btn-update" onclick="update()">更新</button>
-      <div class="valuation">¥<span id="s-total">0</span></div>
-      <div id="debug"></div>
+      <button class="btn-up" onclick="update()">更新</button>
+      <div class="val">¥<span id="s-total">0</span></div>
+      <div id="console"></div>
     </div>
     <div id="s-list"></div>
   </div>
@@ -49,60 +48,57 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 
 <script>
 // ▼▼▼ ここにGASのURL（最後が /exec ）を貼り付け ▼▼▼
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxebO64rjN2ceXArl5Kwqg6hPSudNHGi7P101nW0uc5c8Bcv1vgYO-XduZb2kq0tCdg/exec"; 
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzsw4Nx9IOYETA50lpVJoO3NIP2MgyG3pRQ9YhuHQgc8bdLOPdUyS9Ua_ly8rjKcNyz/exec"; 
 // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-let db = {
-  exp: JSON.parse(localStorage.getItem('exp')) || [],
-  stk: JSON.parse(localStorage.getItem('stk')) || [
+let db = JSON.parse(localStorage.getItem('money_log')) || {
+  exp: [],
+  stk: [
     { name: "ブラックロック・ゴールド", code: "9A313187", price: 32347, holding: 5495, cost: 15000, diff: "0" },
     { name: "WCM世界成長株激選", code: "0331318A", price: 22094, holding: 6624, cost: 15000, diff: "0" },
     { name: "SMT米国トレンド", code: "29312177", price: 10645, holding: 13636, cost: 15000, diff: "0" }
   ]
 };
 
-function save() { localStorage.setItem('exp', JSON.stringify(db.exp)); localStorage.setItem('stk', JSON.stringify(db.stk)); }
+function save() { localStorage.setItem('money_log', JSON.stringify(db)); }
 
 function tab(t) {
-  document.getElementById('p-home').classList.toggle('active', t=='home');
-  document.getElementById('p-inv').classList.toggle('active', t=='inv');
-  document.getElementById('t-home').classList.toggle('active', t=='home');
-  document.getElementById('t-inv').classList.toggle('active', t=='inv');
+  document.getElementById('p-h').classList.toggle('active', t=='h');
+  document.getElementById('p-i').classList.toggle('active', t=='i');
+  document.getElementById('t-h').classList.toggle('active', t=='h');
+  document.getElementById('t-i').classList.toggle('active', t=='i');
   render();
 }
 
 async function update() {
-  const log = document.getElementById('debug');
+  const log = document.getElementById('console');
   log.style.display = 'block'; log.innerHTML = "通信開始...\n";
   for (let i=0; i<db.stk.length; i++) {
-    const s = db.stk[i];
-    log.innerHTML += `${s.name}取得中...\n`;
+    log.innerHTML += `${db.stk[i].name}を取得中...\n`;
     try {
-      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+      const res = await fetch(`${GAS_API_URL}?code=${db.stk[i].code}`);
       const data = await res.json();
       if (data.status == "Success") {
         db.stk[i].price = data.price;
         db.stk[i].diff = data.diff;
-        log.innerHTML += ` OK: ${data.price}円\n`;
+        log.innerHTML += `成功: ${data.price}円 (${data.diff})\n`;
       } else {
-        log.innerHTML += ` エラー: ${data.error}\n`;
+        log.innerHTML += `エラー: ${data.error}\n`;
       }
-    } catch (e) { log.innerHTML += ` 致命的エラー: ${e}\n`; }
+    } catch (e) { log.innerHTML += `失敗: ${e}\n`; }
   }
   save(); render();
 }
 
 function render() {
-  let hTotal = db.exp.reduce((s,e)=>s+e.a, 0);
-  document.getElementById('h-total').textContent = hTotal.toLocaleString();
-
+  document.getElementById('h-total').textContent = db.exp.reduce((s,e)=>s+e.a, 0).toLocaleString();
   let sTotal = 0;
   document.getElementById('s-list').innerHTML = db.stk.map((s,i)=> {
     const val = Math.floor(s.price * s.holding / 10000);
     sTotal += val;
     return `<div class="island">
-      <div style="display:flex; justify-content:space-between"><strong>${s.name}</strong><small>${s.code}</small></div>
-      <div style="font-size:20px; font-weight:bold; margin:8px 0">¥${val.toLocaleString()} (万)</div>
+      <strong>${s.name}</strong><br>
+      <div style="font-size:20px; font-weight:bold; margin:5px 0">¥${val.toLocaleString()} (万)</div>
       <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px">
         <small>価額<br><input class="ios-input" type="number" value="${s.price}" onchange="db.stk[${i}].price=this.value;save();render()"></small>
         <small>保有口<br><input class="ios-input" type="number" value="${s.holding}" onchange="db.stk[${i}].holding=this.value;save();render()"></small>
