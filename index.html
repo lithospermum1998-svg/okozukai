@@ -17,8 +17,8 @@
   --btn-light: #e5e5ea;
   --btn-active: #636366; 
   --accent: #007aff;
-  --pos-color: #34c759; /* プラスの色 */
-  --neg-color: #ff3b30; /* マイナスの色 */
+  --pos-color: #34c759;
+  --neg-color: #ff3b30;
 }
 
 @keyframes popIn {
@@ -110,7 +110,6 @@ body {
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
 
-/* Stock Specific */
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 .stock-name { font-weight: bold; font-size: 13px; flex: 1; }
@@ -132,7 +131,6 @@ body {
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
 
-/* Update Button */
 .btn-update {
   position: absolute; top: 16px; right: 20px;
   background: var(--accent); color: white; border: none; padding: 4px 10px;
@@ -208,7 +206,6 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbys5eTp_h0f7Lhu4rxC
 
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-  // code: Yahoo!ファイナンスのファンドコードを設定してください
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
     { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
     { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
@@ -309,7 +306,6 @@ function editEntry(id) {
 
 // --- INVEST LOGIC ---
 
-// 自動取得機能（GAS経由）
 async function fetchAllPrices() {
   if (GAS_API_URL.includes("ここにGAS")) {
     alert("GASのURLが設定されていません。コードを修正してください。");
@@ -320,6 +316,8 @@ async function fetchAllPrices() {
   btn.classList.add('loading');
   btn.innerHTML = "<span>↻</span>";
 
+  let hasChanged = false;
+
   for (let i = 0; i < state.stocks.length; i++) {
     const s = state.stocks[i];
     if (!s.code) continue;
@@ -328,24 +326,24 @@ async function fetchAllPrices() {
       const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
       const data = await res.json();
       
-      if (data.price) {
-        // 現在価格と前日比を保存
+      // 価格が取得でき、かつ現在の価格と異なる場合のみデータを更新
+      if (data.price && data.price !== s.price) {
         state.stocks[i].price = data.price;
         state.stocks[i].dailyDiff = data.diff; 
-        
-        // 評価額の更新
         state.stocks[i].prevValuation = Math.floor((data.price * s.holding) / 10000);
+        hasChanged = true;
       }
     } catch (e) {
       console.error("Fetch Error:", e);
     }
   }
 
-  // 最後に合計金額も再計算して保存
-  state.prevStockTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
-  
-  save(); // localStorageへ保存
-  renderStocks(); // 画面更新
+  // 変更があった場合のみ合計計算と保存、再描画を行う
+  if (hasChanged) {
+    state.prevStockTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
+    save(); 
+    renderStocks();
+  }
   
   btn.classList.remove('loading');
   btn.textContent = "更新";
@@ -361,11 +359,9 @@ function renderStocks(){
     const costValue = s.cost || 0;
     totalCostSum += costValue;
     
-    // Cost (元本との差)
     const diffCost = valuation - costValue;
     const rateCost = costValue !== 0 ? (diffCost / costValue * 100) : 0;
     
-    // 日次変動（取得したdailyDiffを表示）
     const diffClass = s.dailyDiff > 0 ? 'diff-plus' : (s.dailyDiff < 0 ? 'diff-minus' : '');
     const diffSign = s.dailyDiff > 0 ? '+' : '';
     const diffDisplay = s.dailyDiff ? `<span class="diff-tag ${diffClass}">(${diffSign}${s.dailyDiff})</span>` : '';
@@ -398,10 +394,6 @@ function renderStocks(){
   
   const totalCostDiff = currentTotal - totalCostSum;
   const totalCostRate = totalCostSum ? (totalCostDiff / totalCostSum * 100) : 0;
-  
-  // Totalの前回比は「手動で開いたとき」との差分として残すか、日次変動の合計にするか選べますが、
-  // ここでは元々のロジック（prevStockTotalとの差）を表示します
-  const totalPrevDiff = currentTotal - state.prevStockTotal;
   
   document.getElementById('totalSummaryLine').innerHTML = `
     <div class="profit-line">
