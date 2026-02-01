@@ -1,320 +1,127 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG</title>
-
 <style>
-:root {
-  --bg-color: #f2f2f7; 
-  --card-bg: #ffffff;
-  --text-main: #1c1c1e;
-  --text-sub: #8e8e93; 
-  --radius: 20px;
-  --input-bg: #fafafa;
-  --input-border: #e5e5ea;
-  --btn-light: #e5e5ea;
-  --btn-active: #636366; 
-  --accent: #007aff;
-  --pos-color: #34c759;
-  --neg-color: #ff3b30;
-}
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  background: var(--bg-color);
-  margin: 0; padding: 12px; color: var(--text-main);
-}
-
+:root { --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; --radius: 20px; --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30; }
+body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
 .container { max-width: 420px; margin: 0 auto; }
-
-.island-header {
-  background: var(--card-bg); border-radius: var(--radius);
-  padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 12px;
-}
-.island-header h1 {
-  font-size: 16px; margin: 0 0 12px; text-align: center;
-  letter-spacing: 2px; font-weight: 800;
-}
-
-.header-tabs {
-  display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px;
-}
-.header-tabs button {
-  flex: 1; padding: 6px 0; border: none; background: transparent;
-  font-weight: bold; font-size: 13px; color: var(--text-sub);
-}
-.header-tabs button.active {
-  background: var(--card-bg); border-radius: 8px; color: var(--text-main);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.island-main {
-  background: var(--card-bg); border-radius: var(--radius);
-  padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 12px; position: relative;
-}
-
-.summary { text-align: center; margin-bottom: 14px; }
-.valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
-
-.profit-line {
-  display: flex; justify-content: flex-start; gap: 10px;
-  font-size: 11px; color: var(--text-sub); margin-top: 2px;
-}
-.summary .profit-line { justify-content: center; }
-
-.month-switch {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-}
-
-#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; }
-
-.month-btn { font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-main); padding: 8px; }
-
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
-
-.ios-input {
-  width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px;
-  border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg);
-}
-
-.btn-record {
-  width: 100%; padding: 12px; border-radius: 12px; border: none;
-  background: var(--btn-light); color: #aeaeb2;
-  font-weight: 700; font-size: 15px;
-}
-.btn-record.active { background: var(--btn-active); color: #ffffff; cursor: pointer; }
-
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
-.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-.stock-name { font-weight: bold; font-size: 13px; flex: 1; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
-
-.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; }
-.diff-plus { color: var(--pos-color); }
-.diff-minus { color: var(--neg-color); }
-
-.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
-
-#expenseList { list-style: none; padding: 0; margin: 0; }
-.item-content {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px;
-}
-
-.btn-update {
-  position: absolute; top: 16px; right: 20px;
-  background: var(--accent); color: white; border: none; padding: 4px 10px;
-  border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer;
-}
-.btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
-
-.page { display: none; }
-.page.active { display: block; }
-
-/* ログ表示用 */
-#debugConsole {
-  font-size: 10px; background: #000; color: #0f0; padding: 8px; 
-  border-radius: 10px; margin-top: 10px; display: none; overflow-x: auto;
-}
+.island { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
+.header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; margin-top: 10px; }
+.header-tabs button { flex: 1; padding: 8px; border: none; background: transparent; font-weight: bold; color: var(--text-sub); cursor: pointer; }
+.header-tabs button.active { background: white; border-radius: 8px; color: black; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.valuation { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; }
+.btn-update { position: absolute; top: 16px; right: 16px; background: var(--accent); color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+.stock-card { background: #f9f9fb; padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #e5e5ea; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #e5e5ea; border-radius: 10px; font-size: 13px; margin-top: 4px; }
+#debug { font-size: 10px; background: #222; color: #0f0; padding: 10px; border-radius: 10px; margin-top: 10px; display: none; white-space: pre-wrap; }
+.page { display: none; } .page.active { display: block; }
 </style>
 </head>
-
 <body>
-
 <div class="container">
-  <div class="island-header">
-    <h1>MONEY LOG</h1>
+  <div class="island" style="text-align:center">
+    <h1 style="font-size:16px; margin:0">MONEY LOG</h1>
     <div class="header-tabs">
-      <button id="tab-log" class="active" onclick="switchPage('logPage')">HOME</button>
-      <button id="tab-stock" onclick="switchPage('stockPage')">INVEST</button>
+      <button id="t-home" class="active" onclick="tab('home')">HOME</button>
+      <button id="t-inv" onclick="tab('inv')">INVEST</button>
     </div>
   </div>
 
-  <div id="logPage" class="page active">
-    <div class="island-main">
-      <div class="island-title">SUMMARY</div>
-      <div class="summary">
-        <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="dateLabel"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶</button>
-        </div>
-        <div class="valuation">¥<span id="monthlyTotal">0</span></div>
-      </div>
-      <div class="input-grid">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
-        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
-      </div>
-      <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
-    </div>
-    <div class="island-output">
-      <div class="island-title">RECENT</div>
-      <ul id="expenseList"></ul>
+  <div id="p-home" class="page active">
+    <div class="island">
+      <div class="valuation">¥<span id="h-total">0</span></div>
+      <input type="number" id="a-in" class="ios-input" placeholder="金額">
+      <button onclick="add()" style="width:100%; margin-top:10px; padding:12px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold">記録</button>
     </div>
   </div>
 
-  <div id="stockPage" class="page">
-    <div class="island-main">
-      <div class="island-title">TOTAL ASSETS</div>
-      <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
-      <div class="summary">
-        <div class="valuation">¥<span id="stockTotal">0</span></div>
-        <div id="totalSummaryLine"></div>
-      </div>
-      <div id="debugConsole"></div>
+  <div id="p-inv" class="page">
+    <div class="island">
+      <button class="btn-update" onclick="update()">更新</button>
+      <div class="valuation">¥<span id="s-total">0</span></div>
+      <div id="debug"></div>
     </div>
-    <div class="island-main">
-      <div class="island-title">MY ASSETS</div>
-      <div id="stockList"></div>
-    </div>
+    <div id="s-list"></div>
   </div>
 </div>
 
 <script>
-// ▼▼▼ ここにGASのデプロイURL（最後が /exec ）を貼り付け ▼▼▼
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2S4ZMZL5pMhzHIeVRkB6wYx6nrroue_Fk8kZqMtGKHpaOszFrXzYPnnqs8EaiPbLS/exec"; 
+// ▼▼▼ ここにGASのURL（最後が /exec ）を貼り付け ▼▼▼
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxebO64rjN2ceXArl5Kwqg6hPSudNHGi7P101nW0uc5c8Bcv1vgYO-XduZb2kq0tCdg/exec"; 
 // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-let state = {
-  expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-  stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, dailyDiff: "0" },
-    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, dailyDiff: "0" },
-    { name: "SMT米国トレンド", code: "29312177", price: 0, holding: 0, cost: 0, dailyDiff: "0" }
-  ],
-  selectedDate: new Date().toISOString().split('T')[0]
+let db = {
+  exp: JSON.parse(localStorage.getItem('exp')) || [],
+  stk: JSON.parse(localStorage.getItem('stk')) || [
+    { name: "ブラックロック・ゴールド", code: "9A313187", price: 32347, holding: 5495, cost: 15000, diff: "0" },
+    { name: "WCM世界成長株激選", code: "0331318A", price: 22094, holding: 6624, cost: 15000, diff: "0" },
+    { name: "SMT米国トレンド", code: "29312177", price: 10645, holding: 13636, cost: 15000, diff: "0" }
+  ]
 };
 
-function logDebug(msg) {
-  const consoleDiv = document.getElementById('debugConsole');
-  consoleDiv.style.display = 'block';
-  consoleDiv.innerHTML += `> ${msg}<br>`;
+function save() { localStorage.setItem('exp', JSON.stringify(db.exp)); localStorage.setItem('stk', JSON.stringify(db.stk)); }
+
+function tab(t) {
+  document.getElementById('p-home').classList.toggle('active', t=='home');
+  document.getElementById('p-inv').classList.toggle('active', t=='inv');
+  document.getElementById('t-home').classList.toggle('active', t=='home');
+  document.getElementById('t-inv').classList.toggle('active', t=='inv');
+  render();
 }
 
-async function fetchAllPrices() {
-  if (!GAS_API_URL) {
-    alert("URLが未設定です。154行目に貼り付けてください。");
-    return;
-  }
-  
-  const btn = document.getElementById('updateBtn');
-  const consoleDiv = document.getElementById('debugConsole');
-  consoleDiv.innerHTML = ""; // ログリセット
-  btn.classList.add('loading');
-  btn.innerHTML = "<span>↻</span>";
-
-  logDebug("通信開始...");
-
-  for (let i = 0; i < state.stocks.length; i++) {
-    const s = state.stocks[i];
-    if (!s.code) continue;
-    
-    logDebug(`${s.name}(${s.code}) を取得中...`);
-    
+async function update() {
+  const log = document.getElementById('debug');
+  log.style.display = 'block'; log.innerHTML = "通信開始...\n";
+  for (let i=0; i<db.stk.length; i++) {
+    const s = db.stk[i];
+    log.innerHTML += `${s.name}取得中...\n`;
     try {
-      const fetchUrl = `${GAS_API_URL}?code=${s.code}`;
-      const res = await fetch(fetchUrl);
-      
-      if (!res.ok) throw new Error(`HTTPエラー: ${res.status}`);
-      
+      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
       const data = await res.json();
-      logDebug(`受信データ: ${JSON.stringify(data)}`);
-
-      if (data.error) {
-        logDebug(`エラー発生: ${data.error}`);
-      } else if (data.price) {
-        state.stocks[i].price = data.price;
-        state.stocks[i].dailyDiff = data.diff;
+      if (data.status == "Success") {
+        db.stk[i].price = data.price;
+        db.stk[i].diff = data.diff;
+        log.innerHTML += ` OK: ${data.price}円\n`;
+      } else {
+        log.innerHTML += ` エラー: ${data.error}\n`;
       }
-    } catch (e) {
-      logDebug(`失敗: ${e.message}`);
-      alert("通信に失敗しました。URLを確認してください。");
-    }
+    } catch (e) { log.innerHTML += ` 致命的エラー: ${e}\n`; }
   }
-
-  save(); 
-  renderStocks();
-  btn.classList.remove('loading');
-  btn.textContent = "更新";
+  save(); render();
 }
 
-function save() {
-  localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
-}
+function render() {
+  let hTotal = db.exp.reduce((s,e)=>s+e.a, 0);
+  document.getElementById('h-total').textContent = hTotal.toLocaleString();
 
-function switchPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('tab-log').classList.toggle('active', id==='logPage');
-  document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
-  if(id === 'stockPage') renderStocks();
-  if(id === 'logPage') updateUI();
-}
-
-// HOME LOGIC (省略せず統合)
-function changeMonth(diff){
-  const d = new Date(state.selectedDate);
-  d.setMonth(d.getMonth() + diff);
-  state.selectedDate = d.toISOString().split('T')[0];
-  updateUI();
-}
-function checkInput() {
-  const amount = document.getElementById('amountInput').value;
-  document.getElementById('recordBtn').classList.toggle('active', !!(amount && parseInt(amount) > 0));
-}
-function addEntry(){
-  const aIn = document.getElementById('amountInput'), mIn = document.getElementById('memoInput');
-  if(!aIn.value) return;
-  state.expenses.push({ id: Date.now(), amount: parseInt(aIn.value), memo: mIn.value, date: state.selectedDate });
-  aIn.value = ""; mIn.value = ""; checkInput(); save(); updateUI();
-}
-function updateUI(){
-  const [y, m, d] = state.selectedDate.split('-');
-  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}`;
-  const filtered = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
-  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e) => s + e.amount, 0).toLocaleString();
-  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => `
-    <li><div class="item-content"><div><strong>¥${e.amount.toLocaleString()}</strong><br><small>${e.memo||''}</small></div></div></li>
-  `).join('');
-}
-
-// INVEST LOGIC
-function renderStocks(){
-  const container = document.getElementById('stockList');
-  let currentTotal = 0;
-  container.innerHTML = state.stocks.map((s, i) => {
-    const valuation = Math.floor((s.price * s.holding) / 10000);
-    currentTotal += valuation;
-    return `
-      <div class="stock-card">
-        <div class="stock-header">
-          <div class="stock-name">${s.name}</div>
-          <input type="text" class="ios-input" style="width:80px" value="${s.code}" onchange="updateStock(${i},'code',this.value)">
-        </div>
-        <div style="font-weight: 800; font-size: 18px; margin: 5px 0;">¥${valuation.toLocaleString()} (万)</div>
-        <div class="input-grid-3">
-          <div><span class="stock-label">価額(${s.dailyDiff})</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
-          <div><span class="stock-label">保有(口)</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
-          <div><span class="stock-label">元本(万)</span><input class="ios-input" type="number" value="${s.cost}" onchange="updateStock(${i},'cost',this.value)"></div>
-        </div>
-      </div>`;
+  let sTotal = 0;
+  document.getElementById('s-list').innerHTML = db.stk.map((s,i)=> {
+    const val = Math.floor(s.price * s.holding / 10000);
+    sTotal += val;
+    return `<div class="island">
+      <div style="display:flex; justify-content:space-between"><strong>${s.name}</strong><small>${s.code}</small></div>
+      <div style="font-size:20px; font-weight:bold; margin:8px 0">¥${val.toLocaleString()} (万)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px">
+        <small>価額<br><input class="ios-input" type="number" value="${s.price}" onchange="db.stk[${i}].price=this.value;save();render()"></small>
+        <small>保有口<br><input class="ios-input" type="number" value="${s.holding}" onchange="db.stk[${i}].holding=this.value;save();render()"></small>
+        <small>元本(万)<br><input class="ios-input" type="number" value="${s.cost}" onchange="db.stk[${i}].cost=this.value;save();render()"></small>
+      </div>
+    </div>`;
   }).join('');
-  document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
+  document.getElementById('s-total').textContent = sTotal.toLocaleString();
 }
-function updateStock(i, f, v){
-  state.stocks[i][f] = (f==='code') ? v : parseFloat(v) || 0;
-  save(); renderStocks();
+
+function add() {
+  const a = document.getElementById('a-in').value;
+  if(!a) return;
+  db.exp.push({a: parseInt(a)});
+  document.getElementById('a-in').value = "";
+  save(); render();
 }
-updateUI();
+
+render();
 </script>
 </body>
 </html>
