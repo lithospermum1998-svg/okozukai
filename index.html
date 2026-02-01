@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG</title>
 <style>
+/* あなたのオリジナルデザインを完全維持 */
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
@@ -91,14 +92,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 </div>
 
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxz7Lx1Mjjk4WTsF_Mnnd-rMF_jwsD-IIWseNbmz9e-eR5NFWtSoJED_YyuAq9WQ5_t/exec"; 
+// ▼▼▼ ここにGASのURLを貼り付けてください ▼▼▼
+const GAS_API_URL = ""; 
 
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
-    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 },
-    { name: "SMT米国トレンド", code: "29312177", price: 0, holding: 0, cost: 0, prevValuation: 0, dailyDiff: 0 }
+    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, dailyDiff: 0 },
+    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, dailyDiff: 0 },
+    { name: "SMT米国トレンド", code: "29312177", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
@@ -177,7 +179,6 @@ async function fetchAllPrices() {
       }
     } catch (e) { console.error(e); }
   }
-  state.prevStockTotal = state.stocks.reduce((acc, s) => acc + Math.floor((s.price * s.holding) / 10000), 0);
   save(); renderStocks();
   btn.classList.remove('loading'); btn.textContent = "更新";
 }
@@ -186,6 +187,7 @@ function renderStocks(){
   const container = document.getElementById('stockList');
   let currentTotal = 0, totalCostSum = 0;
   container.innerHTML = state.stocks.map((s, i) => {
+    // 【修正】評価額の計算を (基準価額 * 保有口数 / 10000) に固定
     const valuation = Math.floor((s.price * s.holding) / 10000);
     currentTotal += valuation; totalCostSum += s.cost || 0;
     const diffCost = valuation - (s.cost || 0);
@@ -208,6 +210,8 @@ function renderStocks(){
   document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
   const totalCostDiff = currentTotal - totalCostSum;
   document.getElementById('totalSummaryLine').innerHTML = `<div class="profit-line"><span>Total Return: ${totalCostDiff >= 0 ? '+' : ''}${totalCostDiff.toLocaleString()} (${totalCostSum ? (totalCostDiff / totalCostSum * 100).toFixed(2) : 0}%)</span></div>`;
+  // 現在の合計値を次回の比較用に保存
+  state.prevStockTotal = currentTotal;
 }
 
 function updateStock(i, f, v){
