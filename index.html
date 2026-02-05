@@ -94,14 +94,17 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, dailyDiff: 0 },
-    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, dailyDiff: 0 },
-    { name: "SMT米国トレンド", code: "29312177", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
+    { name: "楽天・プラス・SOXレバ", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null, lastAddedId: null
 };
+
+// 強制的に1銘柄構成にリセットするチェック（既存の複数銘柄データを上書き）
+if (state.stocks.length !== 1 || state.stocks[0].code !== "9I315241") {
+  state.stocks = [{ name: "楽天・プラス・SOXレバ", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
+}
 
 function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
