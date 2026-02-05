@@ -8,8 +8,9 @@
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
-  --btn-light: #e5e5ea; --btn-active: #636366; --accent: #007aff;
-  --pos-color: #34c759; --neg-color: #ff3b30;
+  --btn-light: #e5e5ea; --btn-active: #636366; --accent: #636366; /* アクセントもモノトーンに */
+  --pos-color: var(--text-main); /* プラスも通常色 */
+  --neg-color: var(--text-main); /* マイナスも通常色 */
 }
 @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 70% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -41,18 +42,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
 .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 .stock-name { font-weight: bold; font-size: 13px; flex: 1; }
-.stock-code { font-size: 9px; color: var(--text-sub); background: #e5e5ea; padding: 2px 4px; border-radius: 4px; margin-left: 4px; font-family: monospace; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
 .diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; }
-.diff-plus { color: var(--pos-color); }
-.diff-minus { color: var(--neg-color); }
+/* カラーを無効化 */
+.diff-plus, .diff-minus { color: var(--text-main); }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
 .item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
-.btn-update { position: absolute; top: 16px; right: 20px; background: var(--accent); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,122,255,0.3); }
+.btn-update { position: absolute; top: 16px; right: 20px; background: var(--btn-active); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 .btn-update:active { transform: scale(0.95); }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 .page { display: none; } .page.active { display: block; }
@@ -94,16 +94,16 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "楽天・プラス・SOXレバ", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
+    { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
   ],
   prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null, lastAddedId: null
 };
 
-// 強制的に1銘柄構成にリセットするチェック（既存の複数銘柄データを上書き）
-if (state.stocks.length !== 1 || state.stocks[0].code !== "9I315241") {
-  state.stocks = [{ name: "楽天・プラス・SOXレバ", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
+// 1銘柄・名前リセット
+if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
+  state.stocks = [{ name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
 }
 
 function save() {
