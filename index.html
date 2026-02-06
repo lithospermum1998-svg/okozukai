@@ -13,34 +13,46 @@
 @keyframes spin { 100% { transform: rotate(360deg); } }
 body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 .container { max-width: 420px; margin: 0 auto; }
+
+/* HEADER */
 .island-header { background: var(--card-bg); border-radius: var(--radius); padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; }
 .island-header h1 { font-size: 16px; margin: 0 0 12px; text-align: center; letter-spacing: 2px; font-weight: 800; }
 .header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
 .header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.island-main { background: var(--card-bg); border-radius: var(--radius); padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
-.valuation { font-size: 26px; font-weight: 800; margin: 2px 0; text-align: center; }
-.profit-line { display: flex; justify-content: flex-start; gap: 8px; font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
-.month-switch { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
-#dateLabel { font-size: 16px; font-weight: 700; }
-.month-btn { font-size: 14px; background: none; border: none; color: var(--text-main); padding: 4px 8px; }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
-.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 4px; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 4px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); height: 32px; }
-.btn-record { width: 100%; padding: 10px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 14px; pointer-events: none; }
+
+/* COMMON ISLAND */
+.island-main { background: var(--card-bg); border-radius: var(--radius); padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
+.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; margin-bottom: 8px; }
+
+/* HOME SPECIFIC */
+.home-valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; text-align: center; }
+.month-switch { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+#dateLabel { font-size: 17px; font-weight: 700; }
+.month-btn { font-size: 14px; background: none; border: none; color: var(--text-main); padding: 8px; }
+.home-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+.ios-input-home { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); }
+.btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; pointer-events: none; }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; }
-.stock-card { background: #f9f9fb; padding: 10px; border-radius: 12px; border: 1px solid var(--input-border); }
-.stock-name { font-weight: bold; font-size: 12px; color: var(--text-main); line-height: 1.2; margin-bottom: 4px; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
-.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.island-title { font-size: 11px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
+
+/* RECENT LIST (日付を復活) */
+.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.item-content { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 6px; }
-.amount-text { font-weight: 700; font-size: 14px; }
-.delete-btn { color: var(--btn-active); font-size: 16px; font-weight: bold; opacity: 0.2; }
+.item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; }
+.item-info { display: flex; flex-direction: column; }
+.item-date { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; }
+
+/* INVEST SPECIFIC */
+.island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.stock-card { background: #f9f9fb; padding: 10px; border-radius: 12px; border: 1px solid var(--input-border); }
+.stock-name { font-weight: bold; font-size: 11px; color: var(--text-main); line-height: 1.2; margin-bottom: 4px; }
+.invest-valuation { font-weight: 800; font-size: 24px; margin: 4px 0; }
+.profit-line { display: flex; gap: 8px; font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 4px; }
+.ios-input-invest { width: 100%; box-sizing: border-box; padding: 4px 8px; font-size: 12px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); height: 32px; }
+.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 .btn-update { background: var(--btn-active); color: white; border: none; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; }
-.btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
+
 .page { display: none; } .page.active { display: block; }
 </style>
 </head>
@@ -56,18 +68,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 
   <div id="logPage" class="page active">
     <div class="island-main">
-      <div class="island-title" style="margin-bottom:8px">SUMMARY</div>
-      <div class="summary">
-        <div class="month-switch">
-          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
-          <div id="dateLabel"></div>
-          <button class="month-btn" onclick="changeMonth(1)">▶</button>
-        </div>
-        <div class="valuation">¥<span id="monthlyTotal">0</span></div>
+      <div class="island-title">SUMMARY</div>
+      <div class="month-switch">
+        <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+        <div id="dateLabel"></div>
+        <button class="month-btn" onclick="changeMonth(1)">▶</button>
       </div>
-      <div class="input-grid">
-        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
-        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
+      <div class="home-valuation">¥<span id="monthlyTotal">0</span></div>
+      <div class="home-input-grid">
+        <input type="number" id="amountInput" class="ios-input-home" placeholder="金額" oninput="checkInput()">
+        <input type="text" id="memoInput" class="ios-input-home" placeholder="メモ">
       </div>
       <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
     </div>
@@ -94,7 +104,6 @@ let state = {
   selectedDate: new Date().toISOString().split('T')[0]
 };
 
-// 名称アップデート用
 state.stock.name = "楽天・プラス・ＳＯＸインデックス・ファンド";
 
 function save() {
@@ -121,21 +130,30 @@ function checkInput() {
 }
 function addEntry(){
   const a = document.getElementById('amountInput'), m = document.getElementById('memoInput');
+  // 日付も含めて保存
   state.expenses.push({ id: Date.now(), amount: parseInt(a.value), memo: m.value, date: state.selectedDate });
   a.value = ""; m.value = ""; checkInput(); save();
 }
 function deleteEntry(id) { if(confirm("削除しますか？")) { state.expenses = state.expenses.filter(e => e.id !== id); save(); } }
 
 function updateUI(){
-  const [y, m] = state.selectedDate.split('-');
+  const [y, m, d] = state.selectedDate.split('-');
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}`;
   const filtered = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e) => s + e.amount, 0).toLocaleString();
-  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => `
-    <li><div class="item-content"><div><div class="amount-text">¥${e.amount.toLocaleString()}</div>
-    <div style="font-size:10px;color:var(--text-sub)">${e.memo||''}</div></div>
-    <div class="delete-btn" onclick="deleteEntry(${e.id})">×</div></div></li>
-  `).join('');
+  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => {
+    const displayDate = e.date.replaceAll('-', '.'); // yyyy.mm.dd 形式
+    return `
+      <li><div class="item-content">
+        <div class="item-info">
+          <div class="item-date">${displayDate}</div>
+          <div style="font-weight:700;font-size:14px">¥${e.amount.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--text-sub)">${e.memo||''}</div>
+        </div>
+        <div style="color:var(--btn-active);font-size:18px;opacity:0.2;font-weight:bold;padding:8px" onclick="deleteEntry(${e.id})">×</div>
+      </div></li>
+    `;
+  }).join('');
 }
 
 async function fetchPrice() {
@@ -160,17 +178,17 @@ function renderStock(){
   document.getElementById('stockDisplay').innerHTML = `
     <div class="stock-card">
       <div class="stock-name">${s.name}</div>
-      <div style="font-weight: 800; font-size: 24px; margin: 4px 0;">¥${valuation.toLocaleString()}</div>
+      <div class="invest-valuation">¥${valuation.toLocaleString()}</div>
       <div class="profit-line">
         <span>Return: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${rate}%)</span>
       </div>
       <div class="input-grid-3">
         <div><span class="stock-label">基準価額 (${s.diff >= 0 ? '+' : ''}${s.diff})</span>
-          <input class="ios-input" type="number" value="${s.price}" onchange="updateVal('price',this.value)"></div>
+          <input class="ios-input-invest" type="number" value="${s.price}" onchange="updateVal('price',this.value)"></div>
         <div><span class="stock-label">保有口数</span>
-          <input class="ios-input" type="number" value="${s.holding}" onchange="updateVal('holding',this.value)"></div>
+          <input class="ios-input-invest" type="number" value="${s.holding}" onchange="updateVal('holding',this.value)"></div>
         <div><span class="stock-label">元本</span>
-          <input class="ios-input" type="number" value="${s.cost}" onchange="updateVal('cost',this.value)"></div>
+          <input class="ios-input-invest" type="number" value="${s.cost}" onchange="updateVal('cost',this.value)"></div>
       </div>
     </div>`;
 }
