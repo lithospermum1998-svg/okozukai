@@ -40,18 +40,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
-.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; padding-right: 50px; }
+.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 .stock-name { font-weight: bold; font-size: 13px; flex: 1; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
 .diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; color: var(--text-main); }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
+.island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
 .item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
-/* 更新ボタンをカード右上に移植 */
-.btn-update { position: absolute; top: 12px; right: 12px; background: var(--btn-active); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 10; }
+/* 更新ボタンをご指定の場所（ASSETSの右）へ移動 */
+.btn-update { background: var(--btn-active); color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 .btn-update:active { transform: scale(0.95); }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 .page { display: none; } .page.active { display: block; }
@@ -80,7 +81,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
   </div>
   <div id="stockPage" class="page">
     <div class="island-main">
-      <div class="island-title">ASSETS</div>
+      <div class="island-title-container">
+        <div class="island-title">ASSETS</div>
+        <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
+      </div>
       <div id="stockList"></div>
     </div>
   </div>
@@ -178,7 +182,6 @@ function renderStocks(){
   
   container.innerHTML = `
     <div class="stock-card">
-      <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
       <div class="stock-header">
         <div class="stock-name">${s.name}</div>
         <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(0,'code',this.value)">
