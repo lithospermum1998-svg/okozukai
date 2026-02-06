@@ -8,9 +8,9 @@
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
-  --btn-light: #e5e5ea; --btn-active: #636366; --accent: #636366; /* アクセントもモノトーンに */
-  --pos-color: var(--text-main); /* プラスも通常色 */
-  --neg-color: var(--text-main); /* マイナスも通常色 */
+  --btn-light: #e5e5ea; --btn-active: #636366; --accent: #636366;
+  --pos-color: var(--text-main);
+  --neg-color: var(--text-main);
 }
 @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 70% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -39,20 +39,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none; }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--input-border); }
-.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
+.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; padding-right: 50px; }
 .stock-name { font-weight: bold; font-size: 13px; flex: 1; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
-.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; }
-/* カラーを無効化 */
-.diff-plus, .diff-minus { color: var(--text-main); }
+.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; color: var(--text-main); }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
 .item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
-.btn-update { position: absolute; top: 16px; right: 20px; background: var(--btn-active); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+/* 更新ボタンをカード右上に移植 */
+.btn-update { position: absolute; top: 12px; right: 12px; background: var(--btn-active); color: white; border: none; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 10; }
 .btn-update:active { transform: scale(0.95); }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 .page { display: none; } .page.active { display: block; }
@@ -81,11 +80,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
   </div>
   <div id="stockPage" class="page">
     <div class="island-main">
-      <div class="island-title">TOTAL ASSETS</div>
-      <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
-      <div class="summary"><div class="valuation">¥<span id="stockTotal">0</span></div><div id="totalSummaryLine"></div></div>
+      <div class="island-title">ASSETS</div>
+      <div id="stockList"></div>
     </div>
-    <div class="island-main"><div class="island-title">MY ASSETS</div><div id="stockList"></div></div>
   </div>
 </div>
 <script>
@@ -96,12 +93,10 @@ let state = {
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
     { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
   ],
-  prevStockTotal: parseInt(localStorage.getItem('prevStockTotal')) || 0,
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null, lastAddedId: null
 };
 
-// 1銘柄・名前リセット
 if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
   state.stocks = [{ name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
 }
@@ -109,7 +104,6 @@ if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
 function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
-  localStorage.setItem('prevStockTotal', state.prevStockTotal);
   updateUI();
 }
 
@@ -121,8 +115,6 @@ function switchPage(id){
   if(id === 'stockPage') renderStocks();
 }
 
-// HOME
-document.getElementById('hiddenPicker').addEventListener('change', (e) => { state.selectedDate = e.target.value; updateUI(); });
 function changeMonth(diff){ const d = new Date(state.selectedDate); d.setMonth(d.getMonth() + diff); state.selectedDate = d.toISOString().split('T')[0]; updateUI(); }
 function checkInput() { const amount = document.getElementById('amountInput').value; const btn = document.getElementById('recordBtn'); btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId); }
 function addEntry(){
@@ -143,7 +135,6 @@ function deleteEntry(e, id) { e.stopPropagation(); if (confirm("削除します�
 function updateUI(){
   const [y, m, d] = state.selectedDate.split('-');
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
-  document.getElementById('hiddenPicker').value = state.selectedDate;
   const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
   document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
   document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
@@ -160,52 +151,48 @@ function editEntry(id) {
   const btn = document.getElementById('recordBtn'); btn.textContent = "更新"; btn.classList.add('active'); updateUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// INVEST
 async function fetchAllPrices() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading'); btn.innerHTML = "<span>↻</span>";
-  for (let i = 0; i < state.stocks.length; i++) {
-    const s = state.stocks[i]; if (!s.code) continue;
-    try {
-      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-      const data = await res.json();
-      if (data.status === "Success") {
-        state.stocks[i].price = data.price;
-        state.stocks[i].dailyDiff = data.diff;
-      }
-    } catch (e) { console.error(e); }
-  }
+  const s = state.stocks[0];
+  try {
+    const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+    const data = await res.json();
+    if (data.status === "Success") {
+      state.stocks[0].price = data.price;
+      state.stocks[0].dailyDiff = data.diff;
+    }
+  } catch (e) { console.error(e); }
   save(); renderStocks();
   btn.classList.remove('loading'); btn.textContent = "更新";
 }
+
 function renderStocks(){
   const container = document.getElementById('stockList');
-  let currentTotal = 0, totalCostSum = 0;
-  container.innerHTML = state.stocks.map((s, i) => {
-    const valuation = Math.floor((s.price * s.holding) / 10000);
-    currentTotal += valuation; totalCostSum += s.cost || 0;
-    const diffCost = valuation - (s.cost || 0);
-    const rateCost = s.cost ? (diffCost / s.cost * 100) : 0;
-    const diffClass = s.dailyDiff > 0 ? 'diff-plus' : (s.dailyDiff < 0 ? 'diff-minus' : '');
-    const diffSign = s.dailyDiff > 0 ? '+' : '';
-    const diffDisplay = s.dailyDiff ? `<span class="diff-tag ${diffClass}">(${diffSign}${s.dailyDiff})</span>` : '';
-    return `
-      <div class="stock-card">
-        <div class="stock-header"><div class="stock-name">${s.name}</div><input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(${i},'code',this.value)"></div>
-        <div style="font-weight: 700; font-size: 14px;">¥${valuation.toLocaleString()}</div>
-        <div class="profit-line"><span>Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
-        <div class="input-grid-3">
-          <div><span class="stock-label">基準価額 ${diffDisplay}</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(${i},'price',this.value)"></div>
-          <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(${i},'holding',this.value)"></div>
-          <div><span class="stock-label">元本</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(${i},'cost',this.value)"></div>
-        </div>
-      </div>`;
-  }).join('');
-  document.getElementById('stockTotal').textContent = currentTotal.toLocaleString();
-  const totalCostDiff = currentTotal - totalCostSum;
-  document.getElementById('totalSummaryLine').innerHTML = `<div class="profit-line"><span>Total Return: ${totalCostDiff >= 0 ? '+' : ''}${totalCostDiff.toLocaleString()} (${totalCostSum ? (totalCostDiff / totalCostSum * 100).toFixed(2) : 0}%)</span></div>`;
-  state.prevStockTotal = currentTotal;
+  const s = state.stocks[0];
+  const valuation = Math.floor((s.price * s.holding) / 10000);
+  const diffCost = valuation - (s.cost || 0);
+  const rateCost = s.cost ? (diffCost / s.cost * 100) : 0;
+  const diffSign = s.dailyDiff > 0 ? '+' : '';
+  const diffDisplay = s.dailyDiff ? `<span class="diff-tag">(${diffSign}${s.dailyDiff})</span>` : '';
+  
+  container.innerHTML = `
+    <div class="stock-card">
+      <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
+      <div class="stock-header">
+        <div class="stock-name">${s.name}</div>
+        <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(0,'code',this.value)">
+      </div>
+      <div style="font-weight: 800; font-size: 24px; margin: 8px 0;">¥${valuation.toLocaleString()}</div>
+      <div class="profit-line"><span>Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
+      <div class="input-grid-3">
+        <div><span class="stock-label">基準価額 ${diffDisplay}</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(0,'price',this.value)"></div>
+        <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(0,'holding',this.value)"></div>
+        <div><span class="stock-label">元本</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(0,'cost',this.value)"></div>
+      </div>
+    </div>`;
 }
+
 function updateStock(i, f, v){
   if(f === 'code') { state.stocks[i][f] = v; } else { state.stocks[i][f] = parseFloat(v) || 0; }
   save(); renderStocks();
