@@ -8,13 +8,9 @@
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
-  --btn-light: #e5e5ea; --btn-active: #636366; --accent: #636366;
-  --pos-color: var(--text-main);
-  --neg-color: var(--text-main);
+  --btn-light: #e5e5ea; --btn-active: #636366;
 }
-@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 70% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-.new-item { animation: popIn 0.3s ease-out; }
 body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 .container { max-width: 420px; margin: 0 auto; }
 .island-header { background: var(--card-bg); border-radius: var(--radius); padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; }
@@ -25,35 +21,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .island-main { background: var(--card-bg); border-radius: var(--radius); padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
 .summary { text-align: center; margin-bottom: 14px; }
 .valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
-.profit-line { display: flex; justify-content: flex-start; gap: 10px; font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-.summary .profit-line { justify-content: center; }
+.profit-line { display: flex; justify-content: center; gap: 10px; font-size: 11px; color: var(--text-sub); margin-top: 2px; }
 .month-switch { display: flex; align-items: center; justify-content: center; gap: 12px; }
-.date-container { position: relative; display: inline-block; }
-#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; cursor: pointer; }
-#hiddenPicker { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; }
-.month-btn { font-size: 14px; background: none; border: none; cursor: pointer; color: var(--text-main); padding: 8px; }
+#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; }
+.month-btn { font-size: 14px; background: none; border: none; color: var(--text-main); padding: 8px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); }
-.stock-card .ios-input { padding: 6px 4px; font-size: 11px; }
-.btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none; }
-.btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
-.btn-record.active:active { transform: scale(0.96); }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
-.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-.stock-name { font-weight: bold; font-size: 13px; flex: 1; }
-.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
-.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; color: var(--text-main); }
+.btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; pointer-events: none; }
+.btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; }
+.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); }
+.stock-name { font-weight: bold; font-size: 13px; }
+.stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
+.item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; }
 .amount-text { font-weight: 700; font-size: 14px; }
-.delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
-/* 更新ボタンをご指定の場所（ASSETSの右）へ移動 */
-.btn-update { background: var(--btn-active); color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-.btn-update:active { transform: scale(0.95); }
+.delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; opacity: 0.2; }
+.btn-update { background: var(--btn-active); color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 .page { display: none; } .page.active { display: block; }
 </style>
@@ -67,47 +54,50 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
       <button id="tab-stock" onclick="switchPage('stockPage')">INVEST</button>
     </div>
   </div>
+
   <div id="logPage" class="page active">
     <div class="island-main">
       <div class="island-title">SUMMARY</div>
       <div class="summary">
-        <div class="month-switch"><button class="month-btn" onclick="changeMonth(-1)">◀</button><div class="date-container"><div id="dateLabel"></div><input type="date" id="hiddenPicker"></div><button class="month-btn" onclick="changeMonth(1)">▶</button></div>
+        <div class="month-switch">
+          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+          <div id="dateLabel"></div>
+          <button class="month-btn" onclick="changeMonth(1)">▶</button>
+        </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
-      <div class="input-grid"><input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()"><input type="text" id="memoInput" class="ios-input" placeholder="メモ"></div>
+      <div class="input-grid">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
+        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
+      </div>
       <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
     </div>
     <div class="island-output"><div class="island-title">RECENT</div><ul id="expenseList"></ul></div>
   </div>
+
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title-container">
         <div class="island-title">ASSETS</div>
-        <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()">更新</button>
+        <button id="updateBtn" class="btn-update" onclick="fetchPrice()"><span>更新</span></button>
       </div>
-      <div id="stockList"></div>
+      <div id="stockDisplay"></div>
     </div>
   </div>
 </div>
+
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-3T6vJDFgpT6KNSHxgMLoxTVW4NLrNkGXAhf1I68USEkfrSe2/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-3T6vJDFgpT6KNSHxgMLoxTVW4NLrNkGXAhf1I68USEkfrSe2/exec"; 
 
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-  stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
-  ],
-  selectedDate: new Date().toISOString().split('T')[0],
-  editId: null, lastAddedId: null
+  stock: JSON.parse(localStorage.getItem('stock_sox')) || { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, diff: 0 },
+  selectedDate: new Date().toISOString().split('T')[0]
 };
-
-if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
-  state.stocks = [{ name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
-}
 
 function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
+  localStorage.setItem('stock_sox', JSON.stringify(state.stock));
   updateUI();
 }
 
@@ -116,90 +106,79 @@ function switchPage(id){
   document.getElementById(id).classList.add('active');
   document.getElementById('tab-log').classList.toggle('active', id==='logPage');
   document.getElementById('tab-stock').classList.toggle('active', id==='stockPage');
-  if(id === 'stockPage') renderStocks();
+  if(id === 'stockPage') renderStock();
 }
 
-function changeMonth(diff){ const d = new Date(state.selectedDate); d.setMonth(d.getMonth() + diff); state.selectedDate = d.toISOString().split('T')[0]; updateUI(); }
-function checkInput() { const amount = document.getElementById('amountInput').value; const btn = document.getElementById('recordBtn'); btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId); }
+// HOME LOGIC
+function changeMonth(n){ 
+  const d = new Date(state.selectedDate); 
+  d.setMonth(d.getMonth() + n); 
+  state.selectedDate = d.toISOString().split('T')[0]; 
+  updateUI(); 
+}
+function checkInput() { 
+  const val = document.getElementById('amountInput').value;
+  document.getElementById('recordBtn').classList.toggle('active', !!(val && val > 0)); 
+}
 function addEntry(){
-  const aIn = document.getElementById('amountInput'), mIn = document.getElementById('memoInput');
-  const amount = parseInt(aIn.value); if(!amount) return;
-  if (state.editId) {
-    const item = state.expenses.find(e => e.id === state.editId);
-    if(item) { item.amount = amount; item.memo = mIn.value; }
-    state.editId = null; document.getElementById('recordBtn').textContent = "記録";
-  } else {
-    const newId = Date.now();
-    state.expenses.push({ id: newId, amount, memo: mIn.value, date: state.selectedDate });
-    state.lastAddedId = newId;
-  }
-  aIn.value = ""; mIn.value = ""; checkInput(); save();
+  const a = document.getElementById('amountInput'), m = document.getElementById('memoInput');
+  state.expenses.push({ id: Date.now(), amount: parseInt(a.value), memo: m.value, date: state.selectedDate });
+  a.value = ""; m.value = ""; checkInput(); save();
 }
-function deleteEntry(e, id) { e.stopPropagation(); if (confirm("削除しますか？")) { state.expenses = state.expenses.filter(item => item.id !== id); save(); } }
+function deleteEntry(id) { if(confirm("削除しますか？")) { state.expenses = state.expenses.filter(e => e.id !== id); save(); } }
+
 function updateUI(){
-  const [y, m, d] = state.selectedDate.split('-');
-  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
-  const filteredMonth = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
-  document.getElementById('monthlyTotal').textContent = filteredMonth.reduce((s,e) => s + e.amount, 0).toLocaleString();
-  document.getElementById('expenseList').innerHTML = filteredMonth.slice().reverse().map(e => `
-    <li class="${e.id === state.lastAddedId ? 'new-item' : ''}" onclick="editEntry(${e.id})">
-      <div class="item-content"><div><div class="amount-text">¥${e.amount.toLocaleString()}</div><div style="font-size:10px;color:var(--text-sub)">${e.date.replaceAll('-','.')} ${e.memo||''}</div></div><div class="delete-btn" onclick="deleteEntry(event, ${e.id})">×</div></div>
-    </li>
+  const [y, m] = state.selectedDate.split('-');
+  document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}`;
+  const filtered = state.expenses.filter(e => e.date.startsWith(`${y}-${m}`));
+  document.getElementById('monthlyTotal').textContent = filtered.reduce((s,e) => s + e.amount, 0).toLocaleString();
+  document.getElementById('expenseList').innerHTML = filtered.slice().reverse().map(e => `
+    <li><div class="item-content"><div><div class="amount-text">¥${e.amount.toLocaleString()}</div>
+    <div style="font-size:10px;color:var(--text-sub)">${e.memo||''}</div></div>
+    <div class="delete-btn" onclick="deleteEntry(${e.id})">×</div></div></li>
   `).join('');
-  state.lastAddedId = null;
-}
-function editEntry(id) {
-  const item = state.expenses.find(e => e.id === id); if (!item) return;
-  document.getElementById('amountInput').value = item.amount; document.getElementById('memoInput').value = item.memo;
-  state.selectedDate = item.date; state.editId = id;
-  const btn = document.getElementById('recordBtn'); btn.textContent = "更新"; btn.classList.add('active'); updateUI(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-async function fetchAllPrices() {
+// INVEST LOGIC
+async function fetchPrice() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading'); btn.innerHTML = "<span>↻</span>";
-  const s = state.stocks[0];
   try {
-    const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+    const res = await fetch(`${GAS_URL}?code=${state.stock.code}`);
     const data = await res.json();
-    if (data.status === "Success") {
-      state.stocks[0].price = data.price;
-      state.stocks[0].dailyDiff = data.diff;
+    if (data.status === "Success") { 
+      state.stock.price = data.price; 
+      state.stock.diff = data.diff; 
+      save(); renderStock();
     }
   } catch (e) { console.error(e); }
-  save(); renderStocks();
-  btn.classList.remove('loading'); btn.textContent = "更新";
+  btn.classList.remove('loading'); btn.innerHTML = "<span>更新</span>";
 }
 
-function renderStocks(){
-  const container = document.getElementById('stockList');
-  const s = state.stocks[0];
+function renderStock(){
+  const s = state.stock;
   const valuation = Math.floor((s.price * s.holding) / 10000);
-  const diffCost = valuation - (s.cost || 0);
-  const rateCost = s.cost ? (diffCost / s.cost * 100) : 0;
-  const diffSign = s.dailyDiff > 0 ? '+' : '';
-  const diffDisplay = s.dailyDiff ? `<span class="diff-tag">(${diffSign}${s.dailyDiff})</span>` : '';
-  
-  container.innerHTML = `
+  const profit = valuation - s.cost;
+  const rate = s.cost ? (profit / s.cost * 100).toFixed(2) : 0;
+  document.getElementById('stockDisplay').innerHTML = `
     <div class="stock-card">
-      <div class="stock-header">
-        <div class="stock-name">${s.name}</div>
-        <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(0,'code',this.value)">
-      </div>
+      <div class="stock-name">${s.name}</div>
       <div style="font-weight: 800; font-size: 24px; margin: 8px 0;">¥${valuation.toLocaleString()}</div>
-      <div class="profit-line"><span>Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
+      <div class="profit-line" style="justify-content: flex-start;">
+        <span>Return: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${rate}%)</span>
+      </div>
       <div class="input-grid-3">
-        <div><span class="stock-label">基準価額 ${diffDisplay}</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(0,'price',this.value)"></div>
-        <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(0,'holding',this.value)"></div>
-        <div><span class="stock-label">元本</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(0,'cost',this.value)"></div>
+        <div><span class="stock-label">基準価額 (${s.diff >= 0 ? '+' : ''}${s.diff})</span>
+          <input class="ios-input" type="number" value="${s.price}" onchange="updateVal('price',this.value)"></div>
+        <div><span class="stock-label">保有口数</span>
+          <input class="ios-input" type="number" value="${s.holding}" onchange="updateVal('holding',this.value)"></div>
+        <div><span class="stock-label">元本</span>
+          <input class="ios-input" type="number" value="${s.cost}" onchange="updateVal('cost',this.value)"></div>
       </div>
     </div>`;
 }
+function updateVal(f, v){ state.stock[f] = parseFloat(v) || 0; save(); renderStock(); }
 
-function updateStock(i, f, v){
-  if(f === 'code') { state.stocks[i][f] = v; } else { state.stocks[i][f] = parseFloat(v) || 0; }
-  save(); renderStocks();
-}
 updateUI();
 </script>
 </body>
