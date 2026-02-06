@@ -18,29 +18,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .header-tabs { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; }
 .header-tabs button { flex: 1; padding: 6px 0; border: none; background: transparent; font-weight: bold; font-size: 13px; color: var(--text-sub); }
 .header-tabs button.active { background: var(--card-bg); border-radius: 8px; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.island-main { background: var(--card-bg); border-radius: var(--radius); padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
-.summary { text-align: center; margin-bottom: 14px; }
-.valuation { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
-.profit-line { display: flex; justify-content: center; gap: 10px; font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-.month-switch { display: flex; align-items: center; justify-content: center; gap: 12px; }
-#dateLabel { font-size: 17px; font-weight: 700; padding: 4px 0; }
-.month-btn { font-size: 14px; background: none; border: none; color: var(--text-main); padding: 8px; }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); }
-.btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; pointer-events: none; }
+.island-main { background: var(--card-bg); border-radius: var(--radius); padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
+.valuation { font-size: 26px; font-weight: 800; margin: 2px 0; text-align: center; }
+.profit-line { display: flex; justify-content: flex-start; gap: 8px; font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+.month-switch { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+#dateLabel { font-size: 16px; font-weight: 700; }
+.month-btn { font-size: 14px; background: none; border: none; color: var(--text-main); padding: 4px 8px; }
+.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+.input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 4px; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 4px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); height: 32px; }
+.btn-record { width: 100%; padding: 10px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 14px; pointer-events: none; }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); }
-.stock-name { font-weight: bold; font-size: 13px; }
+.stock-card { background: #f9f9fb; padding: 10px; border-radius: 12px; border: 1px solid var(--input-border); }
+.stock-name { font-weight: bold; font-size: 12px; color: var(--text-main); line-height: 1.2; margin-bottom: 4px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; }
-.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
+.island-output { background: var(--card-bg); border-radius: var(--radius); padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.island-title { font-size: 11px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
 #expenseList { list-style: none; padding: 0; margin: 0; }
-.item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; }
+.item-content { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 6px; }
 .amount-text { font-weight: 700; font-size: 14px; }
-.delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; opacity: 0.2; }
-.btn-update { background: var(--btn-active); color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+.delete-btn { color: var(--btn-active); font-size: 16px; font-weight: bold; opacity: 0.2; }
+.btn-update { background: var(--btn-active); color: white; border: none; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
 .page { display: none; } .page.active { display: block; }
 </style>
@@ -57,7 +56,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 
   <div id="logPage" class="page active">
     <div class="island-main">
-      <div class="island-title">SUMMARY</div>
+      <div class="island-title" style="margin-bottom:8px">SUMMARY</div>
       <div class="summary">
         <div class="month-switch">
           <button class="month-btn" onclick="changeMonth(-1)">◀</button>
@@ -91,9 +90,12 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-3T6v
 
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
-  stock: JSON.parse(localStorage.getItem('stock_sox')) || { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, diff: 0 },
+  stock: JSON.parse(localStorage.getItem('stock_sox')) || { name: "楽天・プラス・ＳＯＸインデックス・ファンド", code: "9I315241", price: 0, holding: 0, cost: 0, diff: 0 },
   selectedDate: new Date().toISOString().split('T')[0]
 };
+
+// 名称アップデート用
+state.stock.name = "楽天・プラス・ＳＯＸインデックス・ファンド";
 
 function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
@@ -109,12 +111,9 @@ function switchPage(id){
   if(id === 'stockPage') renderStock();
 }
 
-// HOME LOGIC
 function changeMonth(n){ 
-  const d = new Date(state.selectedDate); 
-  d.setMonth(d.getMonth() + n); 
-  state.selectedDate = d.toISOString().split('T')[0]; 
-  updateUI(); 
+  const d = new Date(state.selectedDate); d.setMonth(d.getMonth() + n); 
+  state.selectedDate = d.toISOString().split('T')[0]; updateUI(); 
 }
 function checkInput() { 
   const val = document.getElementById('amountInput').value;
@@ -139,7 +138,6 @@ function updateUI(){
   `).join('');
 }
 
-// INVEST LOGIC
 async function fetchPrice() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading'); btn.innerHTML = "<span>↻</span>";
@@ -147,8 +145,7 @@ async function fetchPrice() {
     const res = await fetch(`${GAS_URL}?code=${state.stock.code}`);
     const data = await res.json();
     if (data.status === "Success") { 
-      state.stock.price = data.price; 
-      state.stock.diff = data.diff; 
+      state.stock.price = data.price; state.stock.diff = data.diff; 
       save(); renderStock();
     }
   } catch (e) { console.error(e); }
@@ -163,8 +160,8 @@ function renderStock(){
   document.getElementById('stockDisplay').innerHTML = `
     <div class="stock-card">
       <div class="stock-name">${s.name}</div>
-      <div style="font-weight: 800; font-size: 24px; margin: 8px 0;">¥${valuation.toLocaleString()}</div>
-      <div class="profit-line" style="justify-content: flex-start;">
+      <div style="font-weight: 800; font-size: 24px; margin: 4px 0;">¥${valuation.toLocaleString()}</div>
+      <div class="profit-line">
         <span>Return: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${rate}%)</span>
       </div>
       <div class="input-grid-3">
