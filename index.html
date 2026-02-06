@@ -9,8 +9,6 @@
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
   --btn-light: #e5e5ea; --btn-active: #636366; --accent: #636366;
-  --pos-color: var(--text-main);
-  --neg-color: var(--text-main);
 }
 @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 70% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -35,7 +33,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
 .input-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); }
-.stock-card .ios-input { padding: 6px 4px; font-size: 11px; }
 .btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none; }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
@@ -43,7 +40,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
 .stock-name { font-weight: bold; font-size: 13px; flex: 1; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
-.diff-tag { font-size: 10px; margin-left: 4px; font-weight: bold; color: var(--text-main); }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .island-title { font-size: 12px; font-weight: 700; color: var(--text-sub); border-left: 3px solid var(--text-sub); padding-left: 8px; }
@@ -51,7 +47,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .item-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f9f9fb; border: 1px solid var(--input-border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
 .amount-text { font-weight: 700; font-size: 14px; }
 .delete-btn { color: var(--btn-active); font-size: 18px; font-weight: bold; padding: 8px; margin-right: -8px; opacity: 0.2; }
-/* 更新ボタンをご指定の場所（ASSETSの右）へ移動 */
 .btn-update { background: var(--btn-active); color: white; border: none; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 .btn-update:active { transform: scale(0.95); }
 .btn-update.loading span { display: inline-block; animation: spin 1s linear infinite; }
@@ -71,7 +66,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
     <div class="island-main">
       <div class="island-title">SUMMARY</div>
       <div class="summary">
-        <div class="month-switch"><button class="month-btn" onclick="changeMonth(-1)">◀</button><div class="date-container"><div id="dateLabel"></div><input type="date" id="hiddenPicker"></div><button class="month-btn" onclick="changeMonth(1)">▶</button></div>
+        <div class="month-switch">
+          <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+          <div class="date-container">
+            <label id="dateLabel" for="hiddenPicker"></label>
+            <input type="date" id="hiddenPicker" onchange="state.selectedDate = this.value; updateUI();">
+          </div>
+          <button class="month-btn" onclick="changeMonth(1)">▶</button>
+        </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
       <div class="input-grid"><input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()"><input type="text" id="memoInput" class="ios-input" placeholder="メモ"></div>
@@ -136,6 +138,7 @@ function addEntry(){
   aIn.value = ""; mIn.value = ""; checkInput(); save();
 }
 function deleteEntry(e, id) { e.stopPropagation(); if (confirm("削除しますか？")) { state.expenses = state.expenses.filter(item => item.id !== id); save(); } }
+
 function updateUI(){
   const [y, m, d] = state.selectedDate.split('-');
   document.getElementById('dateLabel').textContent = `${y}.${parseInt(m)}.${parseInt(d)}`;
@@ -148,6 +151,7 @@ function updateUI(){
   `).join('');
   state.lastAddedId = null;
 }
+
 function editEntry(id) {
   const item = state.expenses.find(e => e.id === id); if (!item) return;
   document.getElementById('amountInput').value = item.amount; document.getElementById('memoInput').value = item.memo;
@@ -175,10 +179,15 @@ function renderStocks(){
   const container = document.getElementById('stockList');
   const s = state.stocks[0];
   const valuation = Math.floor((s.price * s.holding) / 10000);
+  
+  // 前値比計算
+  const dayDiffMoney = Math.floor((s.dailyDiff * s.holding) / 10000);
+  const prevPrice = s.price - s.dailyDiff;
+  const dayDiffPercent = prevPrice > 0 ? (s.dailyDiff / prevPrice * 100).toFixed(2) : 0;
+  const sign = s.dailyDiff > 0 ? '+' : '';
+
   const diffCost = valuation - (s.cost || 0);
   const rateCost = s.cost ? (diffCost / s.cost * 100) : 0;
-  const diffSign = s.dailyDiff > 0 ? '+' : '';
-  const diffDisplay = s.dailyDiff ? `<span class="diff-tag">(${diffSign}${s.dailyDiff})</span>` : '';
   
   container.innerHTML = `
     <div class="stock-card">
@@ -186,10 +195,15 @@ function renderStocks(){
         <div class="stock-name">${s.name}</div>
         <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(0,'code',this.value)">
       </div>
-      <div style="font-weight: 800; font-size: 24px; margin: 8px 0;">¥${valuation.toLocaleString()}</div>
-      <div class="profit-line"><span>Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
+      <div style="display: flex; align-items: baseline; margin: 8px 0; gap: 8px;">
+        <div style="font-weight: 800; font-size: 24px;">¥${valuation.toLocaleString()}</div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">
+          ${sign}${dayDiffMoney.toLocaleString()} (${sign}${dayDiffPercent}%)
+        </div>
+      </div>
+      <div class="profit-line"><span>Total Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
       <div class="input-grid-3">
-        <div><span class="stock-label">基準価額 ${diffDisplay}</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(0,'price',this.value)"></div>
+        <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(0,'price',this.value)"></div>
         <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(0,'holding',this.value)"></div>
         <div><span class="stock-label">元本</span><input class="ios-input" type="number" value="${s.cost || 0}" onchange="updateStock(0,'cost',this.value)"></div>
       </div>
