@@ -37,8 +37,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
 .stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
-.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-.stock-name { font-weight: bold; font-size: 13px; flex: 1; }
+.stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.stock-name { font-weight: bold; font-size: 13px; }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -62,6 +62,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
       <button id="tab-stock" onclick="switchPage('stockPage')">INVEST</button>
     </div>
   </div>
+
   <div id="logPage" class="page active">
     <div class="island-main">
       <div class="island-title">SUMMARY</div>
@@ -76,11 +77,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
         </div>
         <div class="valuation">¥<span id="monthlyTotal">0</span></div>
       </div>
-      <div class="input-grid"><input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()"><input type="text" id="memoInput" class="ios-input" placeholder="メモ"></div>
+      <div class="input-grid">
+        <input type="number" id="amountInput" class="ios-input" placeholder="金額" oninput="checkInput()">
+        <input type="text" id="memoInput" class="ios-input" placeholder="メモ">
+      </div>
       <button id="recordBtn" class="btn-record" onclick="addEntry()">記録</button>
     </div>
     <div class="island-output"><div class="island-title">RECENT</div><ul id="expenseList"></ul></div>
   </div>
+
   <div id="stockPage" class="page">
     <div class="island-main">
       <div class="island-title-container">
@@ -91,6 +96,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
     </div>
   </div>
 </div>
+
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-3T6vJDFgpT6KNSHxgMLoxTVW4NLrNkGXAhf1I68USEkfrSe2/exec"; 
 
@@ -103,6 +109,7 @@ let state = {
   editId: null, lastAddedId: null
 };
 
+// 銘柄固定（コード変更不可・内部保持のみ）
 if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
   state.stocks = [{ name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
 }
@@ -121,8 +128,19 @@ function switchPage(id){
   if(id === 'stockPage') renderStocks();
 }
 
-function changeMonth(diff){ const d = new Date(state.selectedDate); d.setMonth(d.getMonth() + diff); state.selectedDate = d.toISOString().split('T')[0]; updateUI(); }
-function checkInput() { const amount = document.getElementById('amountInput').value; const btn = document.getElementById('recordBtn'); btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId); }
+function changeMonth(diff){ 
+  const d = new Date(state.selectedDate); 
+  d.setMonth(d.getMonth() + diff); 
+  state.selectedDate = d.toISOString().split('T')[0]; 
+  updateUI(); 
+}
+
+function checkInput() { 
+  const amount = document.getElementById('amountInput').value; 
+  const btn = document.getElementById('recordBtn'); 
+  btn.classList.toggle('active', !!(amount && parseInt(amount) > 0) || !!state.editId); 
+}
+
 function addEntry(){
   const aIn = document.getElementById('amountInput'), mIn = document.getElementById('memoInput');
   const amount = parseInt(aIn.value); if(!amount) return;
@@ -137,6 +155,7 @@ function addEntry(){
   }
   aIn.value = ""; mIn.value = ""; checkInput(); save();
 }
+
 function deleteEntry(e, id) { e.stopPropagation(); if (confirm("削除しますか？")) { state.expenses = state.expenses.filter(item => item.id !== id); save(); } }
 
 function updateUI(){
@@ -193,7 +212,6 @@ function renderStocks(){
     <div class="stock-card">
       <div class="stock-header">
         <div class="stock-name">${s.name}</div>
-        <input type="text" class="ios-input" style="width:70px; padding:2px; font-size:10px; text-align:center;" value="${s.code||''}" onchange="updateStock(0,'code',this.value)">
       </div>
       <div style="display: flex; align-items: baseline; margin: 8px 0; gap: 8px;">
         <div style="font-weight: 800; font-size: 24px;">¥${valuation.toLocaleString()}</div>
@@ -211,9 +229,10 @@ function renderStocks(){
 }
 
 function updateStock(i, f, v){
-  if(f === 'code') { state.stocks[i][f] = v; } else { state.stocks[i][f] = parseFloat(v) || 0; }
+  state.stocks[i][f] = parseFloat(v) || 0;
   save(); renderStocks();
 }
+
 updateUI();
 </script>
 </body>
