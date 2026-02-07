@@ -36,9 +36,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 .btn-record { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--btn-light); color: #aeaeb2; font-weight: 700; font-size: 15px; transition: all 0.2s ease; pointer-events: none; }
 .btn-record.active { background: var(--btn-active); color: #ffffff; pointer-events: auto; cursor: pointer; }
 .btn-record.active:active { transform: scale(0.96); }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
-.stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.stock-name { font-weight: bold; font-size: 13px; }
+.stock-card { background: #f9f9fb; padding: 14px; border-radius: 12px; border: 1px solid var(--input-border); position: relative; }
+.stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.stock-name { font-weight: 800; font-size: 14px; color: var(--text-main); }
 .stock-label { font-size: 10px; color: var(--text-sub); margin-bottom: 2px; display: block; white-space: nowrap; }
 .island-output { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .island-title-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -103,16 +103,15 @@ const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwMwfuiLqIisUltjPA-
 let state = {
   expenses: JSON.parse(localStorage.getItem('expenses')) || [],
   stocks: JSON.parse(localStorage.getItem('stocks')) || [
-    { name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
+    { name: "楽天・プラス・ＳＯＸインデックス・ファンド", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }
   ],
   selectedDate: new Date().toISOString().split('T')[0],
   editId: null, lastAddedId: null
 };
 
-// 銘柄固定（コード変更不可・内部保持のみ）
-if (state.stocks.length !== 1 || state.stocks[0].name !== "楽天SOX") {
-  state.stocks = [{ name: "楽天SOX", code: "9I315241", price: 0, holding: 0, cost: 0, dailyDiff: 0 }];
-}
+// 銘柄名・コードを最新に固定
+state.stocks[0].name = "楽天・プラス・ＳＯＸインデックス・ファンド";
+state.stocks[0].code = "9I315241";
 
 function save() {
   localStorage.setItem('expenses', JSON.stringify(state.expenses));
@@ -199,7 +198,6 @@ function renderStocks(){
   const s = state.stocks[0];
   const valuation = Math.floor((s.price * s.holding) / 10000);
   
-  // 前値比計算
   const dayDiffMoney = Math.floor((s.dailyDiff * s.holding) / 10000);
   const prevPrice = s.price - s.dailyDiff;
   const dayDiffPercent = prevPrice > 0 ? (s.dailyDiff / prevPrice * 100).toFixed(2) : 0;
@@ -213,13 +211,13 @@ function renderStocks(){
       <div class="stock-header">
         <div class="stock-name">${s.name}</div>
       </div>
-      <div style="display: flex; align-items: baseline; margin: 8px 0; gap: 8px;">
-        <div style="font-weight: 800; font-size: 24px;">¥${valuation.toLocaleString()}</div>
-        <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">
+      <div style="display: flex; align-items: baseline; margin: 10px 0; gap: 10px;">
+        <div style="font-weight: 800; font-size: 28px;">¥${valuation.toLocaleString()}</div>
+        <div style="font-size: 14px; font-weight: 600; color: var(--text-main);">
           ${sign}${dayDiffMoney.toLocaleString()} (${sign}${dayDiffPercent}%)
         </div>
       </div>
-      <div class="profit-line"><span>Total Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
+      <div class="profit-line" style="font-size: 12px;"><span>Total Return: ${diffCost >= 0 ? '+' : ''}${diffCost.toLocaleString()} (${rateCost.toFixed(2)}%)</span></div>
       <div class="input-grid-3">
         <div><span class="stock-label">基準価額</span><input class="ios-input" type="number" value="${s.price}" onchange="updateStock(0,'price',this.value)"></div>
         <div><span class="stock-label">保有口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="updateStock(0,'holding',this.value)"></div>
