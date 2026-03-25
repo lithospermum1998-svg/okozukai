@@ -66,7 +66,7 @@ if (!hasPayPay) {
   // PayPayが含まれていない古いデータだった場合、または新規の場合
   savedData = [
     { name: "楽天・プラス・SOX", code: "9A311243", price: 19594, holding: 61841, cost: 121180, isStock: false },
-    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true }
+    { name: "PayPay", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true }
   ];
   localStorage.setItem('stocks', JSON.stringify(savedData));
 }
