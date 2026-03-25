@@ -80,19 +80,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-se
 </div>
 
 <script>
-// ⚠️ ここをご自身のGASのURLに書き換えてください
+// ⚠️ あなたの最新のGAS URLを埋め込み済みです
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec"; 
 
-// 🎯 最新の資産データをプリセット済み
+// 🎯 古いlocalStorageを無視して、SOXとPayPayのプリセットデータを強制表示させる設定
 let state = {
-  stocks: JSON.parse(localStorage.getItem('stocks')) || [
+  stocks: [
     { name: "楽天・プラス・SOX", code: "9A311243", price: 19594, holding: 61841, cost: 121180, dailyDiff: -367, isStock: false },
-    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, dailyDiff: 0, isStock: true },
-    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, dailyDiff: 0, isStock: false },
-    { name: "WCM世界成長株激選", code: "0331318A", price: 0, holding: 0, cost: 0, dailyDiff: 0, isStock: false }
+    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, dailyDiff: 0, isStock: true }, // 元本0円の「タダ株」モード
+    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, dailyDiff: 0, isStock: false }
   ]
 };
 
+// データの保存（render stocksも呼ぶ）
 function save() {
   localStorage.setItem('stocks', JSON.stringify(state.stocks));
   renderStocks();
@@ -120,7 +120,7 @@ async function fetchAllPrices() {
     } catch (e) { console.error(e); }
   }
   btn.classList.remove('loading');
-  save();
+  save(); // ここで正しいデータ（SOX+PayPay）でlocalStorageを上書き保存する
 }
 
 function renderStocks(){
@@ -165,7 +165,7 @@ function updateStock(i, f, v){
   save();
 }
 
-// 初期実行
+// 初期実行：まずはプリセットデータを表示
 renderStocks();
 </script>
 </body>
