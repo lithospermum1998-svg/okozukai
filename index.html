@@ -1,170 +1,111 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3 - 1000万への道</title>
-<style>
-:root {
-  --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
-  --radius: 20px; --input-bg: #fafafa; --input-border: #e5e5ea;
-  --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30; --paypay-red: #ff0033;
-}
-body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); -webkit-tap-highlight-color: transparent; }
-.container { max-width: 420px; margin: 0 auto; }
-.island { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
-h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 15px; font-weight: 800; }
-
-/* 進捗バー：黒背景で引き締める */
-.progress-box { background: #1c1c1e; color: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; opacity: 0.8; }
-.progress-track { background: #3a3a3c; border-radius: 10px; height: 12px; overflow: hidden; }
-.progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 2s ease-in-out; }
-
-.valuation { font-size: 28px; font-weight: 800; text-align: center; margin: 10px 0; }
-.stock-card { background: #f9f9fb; padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--input-border); }
-.stock-card.is-stock { border-left: 5px solid var(--paypay-red); } /* PayPayは赤ライン */
-.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 5px; }
-
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 8px; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 12px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); text-align: center; }
-
-.btn-update { position: absolute; top: 16px; right: 16px; background: var(--accent); color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.loading span { display: inline-block; animation: spin 1s linear infinite; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MONEY LOG v2.5</title>
+    <style>
+        :root { --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --sub: #8e8e93; --accent: #34c759; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .header { margin-bottom: 24px; }
+        .title { font-size: 13px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .goal-card { background: #000; color: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .goal-label { font-size: 12px; opacity: 0.7; }
+        .goal-value { font-size: 28px; font-weight: 700; margin: 4px 0; }
+        .progress-container { background: #333; height: 8px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
+        .progress-bar { background: var(--accent); height: 100%; transition: width 1s ease-out; }
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .stock-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .stock-name { font-weight: 700; font-size: 16px; }
+        .stock-price { font-size: 18px; font-weight: 700; text-align: right; }
+        .stock-diff { font-size: 12px; font-weight: 600; }
+        .stock-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: var(--sub); border-top: 1px solid #f2f2f7; padding-top: 12px; }
+        .refresh-btn { background: #fff; color: #007aff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 600; font-size: 16px; margin-top: 10px; }
+        .positive { color: #ff3b30; } .negative { color: #007aff; }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div class="island">
-    <h1>MONEY LOG v2.3</h1>
-    <div class="progress-box">
-      <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progressPercent">0%</span></div>
-      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-    </div>
-    <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> 更新</button>
-    <div class="valuation">¥<span id="stockTotal">0</span></div>
-    <div id="totalReturn" style="text-align:center; font-size:12px; color:var(--text-sub);"></div>
-  </div>
-  <div id="stockList"></div>
+
+<div class="header">
+    <div class="title">Total Assets</div>
 </div>
 
+<div class="goal-card">
+    <div class="goal-label">1,000万円プロジェクト進捗</div>
+    <div id="total-assets" class="goal-value">¥0</div>
+    <div class="progress-container"><div id="progress-bar" class="progress-bar" style="width: 0%"></div></div>
+    <div id="progress-text" class="goal-label">達成率: 0%</div>
+</div>
+
+<div id="stock-list"></div>
+
+<button class="refresh-btn" onclick="updateAll()">↻ データを更新</button>
+
 <script>
-// 🎯 あなたの最新のGAS URLを設定済み
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxEEIfVUWiVFTRKDNTyc7wM0xriebW_3Wma-YFNtQ-0GodtK2HVS3I5RayFUHcE9UBPRA/exec";
+    // あなた専用の設定
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx2H3UughEohIlPKRa1aC7jI27GhHa5xEdD3Nf4ZCIklKm9sTJUEPC4yu87OaIzP5Hp/exec";
+    const GOAL_AMOUNT = 10000000;
 
+    // 証券画面(画像15)の数字を反映済み
+    let stocks = [
+        { code: "2931123A", name: "楽天・プラス・SOX", quantity: 13000, cost: 25000 },
+        { code: "PAYP", name: "PayPay株", quantity: 1.861, cost: 4749 }
+    ];
 
-/**
- * 🛠️ データの復旧・初期化ロジック
- * 古い記憶(localStorage)にPayPay(PYPL)がいなければ、強制的に追加します
- */
-let savedData = JSON.parse(localStorage.getItem('stocks')) || [];
+    function render() {
+        const list = document.getElementById('stock-list');
+        list.innerHTML = '';
+        let total = 0;
 
-// 銘柄リストにPYPLが含まれているかチェック
-const hasPayPay = savedData.some(s => s.code === 'PYPL');
+        stocks.forEach((s, i) => {
+            const value = (s.price || 0) * s.quantity;
+            const profit = value - s.cost;
+            const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : 0;
+            total += value;
 
-if (!hasPayPay) {
-  // PayPayが含まれていない古いデータだった場合、または新規の場合
-  savedData = [
-    { name: "楽天・プラス・SOX", code: "9A311243", price: 19594, holding: 61841, cost: 121180, isStock: false },
-    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true }
-  ];
-  localStorage.setItem('stocks', JSON.stringify(savedData));
-}
+            list.innerHTML += `
+                <div class="card">
+                    <div class="stock-top">
+                        <div><div class="stock-name">${s.name}</div><div style="font-size:10px; color:#8e8e93;">${s.code}</div></div>
+                        <div>
+                            <div class="stock-price">¥${Math.floor(s.price || 0).toLocaleString()}</div>
+                            <div class="stock-diff ${s.diff >= 0 ? 'positive' : 'negative'}">${s.diff >= 0 ? '+' : ''}${s.diff}%</div>
+                        </div>
+                    </div>
+                    <div class="stock-details">
+                        <div>保有数: ${s.quantity}</div>
+                        <div>評価額: ¥${Math.floor(total).toLocaleString()}</div>
+                        <div>損益: <span class="${profit >= 0 ? 'positive' : 'negative'}">¥${Math.floor(profit).toLocaleString()} (${profitRate}%)</span></div>
+                    </div>
+                </div>`;
+        });
 
-let state = {
-  stocks: savedData
-};
-
-/**
- * 🌐 最新価格の取得
- */
-async function fetchAllPrices() {
-  const btn = document.getElementById('updateBtn');
-  btn.classList.add('loading');
-  
-  for (let s of state.stocks) {
-    if (!s.code) continue;
-    try {
-      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-      const data = await res.json();
-      if (data.status === "Success" && data.price > 0) {
-        s.price = data.price;
-        s.diff = data.diff;
-      }
-    } catch (e) {
-      console.error(`${s.name}の取得に失敗:`, e);
+        document.getElementById('total-assets').innerText = `¥${Math.floor(total).toLocaleString()}`;
+        const percent = Math.min((total / GOAL_AMOUNT) * 100, 100);
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-text').innerText = `達成率: ${percent.toFixed(2)}%`;
     }
-  }
-  
-  btn.classList.remove('loading');
-  saveAndRender();
-}
 
-/**
- * 💾 データの保存と再描画
- */
-function saveAndRender() {
-  localStorage.setItem('stocks', JSON.stringify(state.stocks));
-  render();
-}
+    async function updateAll() {
+        const btn = document.querySelector('.refresh-btn');
+        btn.innerText = "更新中...";
+        
+        for (let s of stocks) {
+            try {
+                const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+                const data = await res.json();
+                if (data.status === "Success") {
+                    s.price = data.price;
+                    s.diff = data.diff;
+                }
+            } catch (e) { console.error(e); }
+        }
+        
+        btn.innerText = "↻ データを更新";
+        render();
+    }
 
-/**
- * 🎨 画面の描画
- */
-function render() {
-  const container = document.getElementById('stockList');
-  let total = 0, costTotal = 0;
-  
-  container.innerHTML = state.stocks.map((s, i) => {
-    // 個別株(isStock: true)は [株価×数量]、投信は [基準価額×数量/10000]
-    const val = s.isStock ? Math.floor(s.price * s.holding) : Math.floor((s.price * s.holding) / 10000);
-    total += val;
-    costTotal += (s.cost || 0);
-    
-    const profit = val - (s.cost || 0);
-    const profitRate = s.cost ? (profit / s.cost * 100).toFixed(1) : "0.0";
-    const diffSign = parseFloat(s.diff) > 0 ? '+' : '';
-    const diffClass = parseFloat(s.diff) > 0 ? 'diff-plus' : (parseFloat(s.diff) < 0 ? 'diff-minus' : '');
-
-    return `
-      <div class="stock-card ${s.isStock ? 'is-stock' : ''}">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div class="stock-name">${s.name}</div>
-          <div style="font-size:9px; color:var(--text-sub)">${s.code}</div>
-        </div>
-        <div style="font-weight:800; font-size:22px; margin: 8px 0;">¥${val.toLocaleString()}</div>
-        <div style="font-size:11px; font-weight:bold; color:${profit>=0?'var(--pos-color)':'var(--neg-color)'}">
-          利益: ${profit>=0?'+':''}${profit.toLocaleString()}円 (${profitRate}%)
-        </div>
-        <div class="input-grid">
-          <div>
-            <span style="font-size:9px;">現在値 ${s.diff ? `<span style="font-size:8px;" class="${diffClass}">(${diffSign}${s.diff}%)</span>` : ''}</span>
-            <input class="ios-input" type="number" value="${s.price}" onchange="update(${i},'price',this.value)">
-          </div>
-          <div><span style="font-size:9px;">数量/口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="update(${i},'holding',this.value)"></div>
-          <div><span style="font-size:9px;">元本(円)</span><input class="ios-input" type="number" value="${s.cost}" onchange="update(${i},'cost',this.value)"></div>
-        </div>
-      </div>`;
-  }).join('');
-
-  // 進捗率とトータルの更新
-  document.getElementById('stockTotal').textContent = total.toLocaleString();
-  const prog = Math.min((total / 10000000) * 100, 100);
-  document.getElementById('progressPercent').textContent = prog.toFixed(2) + "%";
-  document.getElementById('progressBar').style.width = prog + "%";
-  
-  const totalProfit = total - costTotal;
-  document.getElementById('totalReturn').textContent = `Total Return: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()}円`;
-}
-
-function update(i, f, v) {
-  state.stocks[i][f] = parseFloat(v) || 0;
-  saveAndRender();
-}
-
-// 最初の描画
-render();
+    render();
 </script>
 </body>
 </html>
