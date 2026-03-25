@@ -8,12 +8,16 @@
         :root { --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --sub: #8e8e93; --accent: #34c759; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         
-        /* 画像14の黒い目標カードを再現 */
+        /* 上部のラベル */
+        .total-label { font-size: 13px; font-weight: 600; color: var(--sub); margin-bottom: 8px; text-transform: uppercase; }
+
+        /* 画像14の黒い目標カード */
         .goal-card { background: #1c1c1e; color: #fff; padding: 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .goal-label { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+        .goal-header { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
         .goal-value { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
         .progress-container { background: #3a3a3c; height: 8px; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
         .progress-bar { background: var(--accent); height: 100%; transition: width 1s ease; }
+        .progress-rate { font-size: 12px; text-align: right; opacity: 0.8; }
         
         /* 銘柄カードのデザイン */
         .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -24,7 +28,7 @@
         .diff { font-size: 12px; font-weight: 600; }
         
         .details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: var(--sub); border-top: 1px solid #f2f2f7; padding-top: 12px; }
-        .profit { font-weight: 600; }
+        .profit-row { grid-column: span 2; font-weight: 600; padding-top: 4px; }
         .up { color: #ff3b30; } .down { color: #007aff; }
 
         .refresh-btn { background: #fff; color: #007aff; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 600; font-size: 16px; margin-top: 10px; cursor: pointer; }
@@ -32,11 +36,13 @@
 </head>
 <body>
 
+<div class="total-label">Total Assets</div>
+
 <div class="goal-card">
-    <div class="goal-label">1,000万円プロジェクト進捗</div>
+    <div class="goal-header">1,000万円プロジェクト進捗</div>
     <div id="total-assets" class="goal-value">¥0</div>
     <div class="progress-container"><div id="progress-bar" class="progress-bar" style="width: 0%"></div></div>
-    <div id="progress-text" class="goal-label" style="text-align: right;">0%</div>
+    <div id="progress-text" class="progress-rate">0.00%</div>
 </div>
 
 <div id="list"></div>
@@ -44,12 +50,12 @@
 <button class="refresh-btn" onclick="update()">↻ データを更新</button>
 
 <script>
+    // あなたのGAS URLと証券口座(画像15)の数値を反映済み
     const API = "https://script.google.com/macros/s/AKfycbx2H3UughEohIlPKRa1aC7jI27GhHa5xEdD3Nf4ZCIklKm9sTJUEPC4yu87OaIzP5Hp/exec";
     
-    // 証券画面(画像15)のリアルな数字に修正済み
     let stocks = [
         { id: "2931123A", name: "楽天・プラス・SOX", qty: 13000, cost: 25000 },
-        { id: "PAYP", name: "PayPay株", qty: 1.86131, cost: 4749 } // PAYPに修正済み！
+        { id: "PAYP", name: "PayPay株", qty: 1.86131, cost: 4749 } // PAYPに修正済み
     ];
 
     function render() {
@@ -75,7 +81,7 @@
                     <div class="details">
                         <div>数量: ${s.qty.toLocaleString()}</div>
                         <div>評価額: ¥${Math.floor(currentVal).toLocaleString()}</div>
-                        <div class="profit ${profit >= 0 ? 'up' : 'down'}" style="grid-column: span 2;">損益: ¥${Math.floor(profit).toLocaleString()} (${rate}%)</div>
+                        <div class="profit-row">損益: <span class="${profit >= 0 ? 'up' : 'down'}">¥${Math.floor(profit).toLocaleString()} (${rate}%)</span></div>
                     </div>
                 </div>`;
         });
