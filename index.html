@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.0 - 1000万への道</title>
+<title>MONEY LOG - 精鋭部隊</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
@@ -15,7 +15,6 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .island { background: var(--card-bg); border-radius: var(--radius); padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; position: relative; }
 h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 15px; font-weight: 800; }
 
-/* 進捗バー：一目で進捗がわかるように */
 .progress-box { background: #1c1c1e; color: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
 .progress-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; opacity: 0.8; }
 .progress-track { background: #3a3a3c; border-radius: 10px; height: 12px; overflow: hidden; }
@@ -35,7 +34,7 @@ h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 15px;
 <body>
 <div class="container">
   <div class="island">
-    <h1>MONEY LOG v2.0</h1>
+    <h1>MONEY LOG v2.1</h1>
     <div class="progress-box">
       <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progressPercent">0%</span></div>
       <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
@@ -50,12 +49,11 @@ h1 { font-size: 16px; text-align: center; letter-spacing: 2px; margin: 0 0 15px;
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec"; 
 
-// 🎯 古い記憶を消し飛ばすため、直接定義
+// 🎯 ゴールドを削除した精鋭2銘柄
 let state = {
   stocks: [
     { name: "楽天・プラス・SOX", code: "9A311243", price: 19594, holding: 61841, cost: 121180, isStock: false },
-    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true },
-    { name: "ブラックロック・ゴールド", code: "9A313187", price: 0, holding: 0, cost: 0, isStock: false }
+    { name: "PayPay (PYPL) 🚀", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true }
   ]
 };
 
@@ -83,9 +81,12 @@ function render() {
     const profit = val - s.cost;
     return `
       <div class="stock-card ${s.isStock ? 'is-stock' : ''}">
-        <div class="stock-name">${s.name} <small style="color:var(--text-sub)">${s.code}</small></div>
-        <div style="font-weight:800; font-size:18px;">¥${val.toLocaleString()}</div>
-        <div style="font-size:11px; color:${profit>=0?'var(--pos-color)':'var(--neg-color)'}">利益: ${profit>=0?'+':''}${profit.toLocaleString()}</div>
+        <div class="stock-header" style="display:flex; justify-content:space-between;">
+          <div class="stock-name">${s.name}</div>
+          <div style="font-size:9px; color:var(--text-sub)">${s.code}</div>
+        </div>
+        <div style="font-weight:800; font-size:20px; margin: 5px 0;">¥${val.toLocaleString()}</div>
+        <div style="font-size:11px; font-weight:bold; color:${profit>=0?'var(--pos-color)':'var(--neg-color)'}">利益: ${profit>=0?'+':''}${profit.toLocaleString()}</div>
         <div class="input-grid">
           <div><span style="font-size:9px;">現在値</span><input class="ios-input" type="number" value="${s.price}" onchange="update(${i},'price',this.value)"></div>
           <div><span style="font-size:9px;">数量/口数</span><input class="ios-input" type="number" value="${s.holding}" onchange="update(${i},'holding',this.value)"></div>
