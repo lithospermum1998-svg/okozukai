@@ -3,108 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MONEY LOG v2.5</title>
+    <title>MONEY LOG v2.3</title>
     <style>
         :root { --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --sub: #8e8e93; --accent: #34c759; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .header { margin-bottom: 24px; }
-        .title { font-size: 13px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
-        .goal-card { background: #000; color: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .goal-label { font-size: 12px; opacity: 0.7; }
-        .goal-value { font-size: 28px; font-weight: 700; margin: 4px 0; }
-        .progress-container { background: #333; height: 8px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
-        .progress-bar { background: var(--accent); height: 100%; transition: width 1s ease-out; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        
+        /* 画像14の黒い目標カードを再現 */
+        .goal-card { background: #1c1c1e; color: #fff; padding: 20px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .goal-label { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+        .goal-value { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+        .progress-container { background: #3a3a3c; height: 8px; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+        .progress-bar { background: var(--accent); height: 100%; transition: width 1s ease; }
+        
+        /* 銘柄カードのデザイン */
         .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .stock-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .stock-name { font-weight: 700; font-size: 16px; }
-        .stock-price { font-size: 18px; font-weight: 700; text-align: right; }
-        .stock-diff { font-size: 12px; font-weight: 600; }
-        .stock-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: var(--sub); border-top: 1px solid #f2f2f7; padding-top: 12px; }
-        .refresh-btn { background: #fff; color: #007aff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 600; font-size: 16px; margin-top: 10px; }
-        .positive { color: #ff3b30; } .negative { color: #007aff; }
+        .price-box { text-align: right; }
+        .current-price { font-size: 18px; font-weight: 700; }
+        .diff { font-size: 12px; font-weight: 600; }
+        
+        .details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: var(--sub); border-top: 1px solid #f2f2f7; padding-top: 12px; }
+        .profit { font-weight: 600; }
+        .up { color: #ff3b30; } .down { color: #007aff; }
+
+        .refresh-btn { background: #fff; color: #007aff; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 600; font-size: 16px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="header">
-    <div class="title">Total Assets</div>
-</div>
 
 <div class="goal-card">
     <div class="goal-label">1,000万円プロジェクト進捗</div>
     <div id="total-assets" class="goal-value">¥0</div>
     <div class="progress-container"><div id="progress-bar" class="progress-bar" style="width: 0%"></div></div>
-    <div id="progress-text" class="goal-label">達成率: 0%</div>
+    <div id="progress-text" class="goal-label" style="text-align: right;">0%</div>
 </div>
 
-<div id="stock-list"></div>
+<div id="list"></div>
 
-<button class="refresh-btn" onclick="updateAll()">↻ データを更新</button>
+<button class="refresh-btn" onclick="update()">↻ データを更新</button>
 
 <script>
-    // あなた専用の設定
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbx2H3UughEohIlPKRa1aC7jI27GhHa5xEdD3Nf4ZCIklKm9sTJUEPC4yu87OaIzP5Hp/exec";
-    const GOAL_AMOUNT = 10000000;
-
-    // 証券画面(画像15)の数字を反映済み
+    const API = "https://script.google.com/macros/s/AKfycbx2H3UughEohIlPKRa1aC7jI27GhHa5xEdD3Nf4ZCIklKm9sTJUEPC4yu87OaIzP5Hp/exec";
+    
+    // 証券画面(画像15)のリアルな数字に修正済み
     let stocks = [
-        { code: "2931123A", name: "楽天・プラス・SOX", quantity: 13000, cost: 25000 },
-        { code: "PAYP", name: "PayPay株", quantity: 1.861, cost: 4749 }
+        { id: "2931123A", name: "楽天・プラス・SOX", qty: 13000, cost: 25000 },
+        { id: "PAYP", name: "PayPay株", qty: 1.86131, cost: 4749 } // PAYPに修正済み！
     ];
 
     function render() {
-        const list = document.getElementById('stock-list');
-        list.innerHTML = '';
+        const container = document.getElementById('list');
+        container.innerHTML = '';
         let total = 0;
 
-        stocks.forEach((s, i) => {
-            const value = (s.price || 0) * s.quantity;
-            const profit = value - s.cost;
-            const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : 0;
-            total += value;
+        stocks.forEach(s => {
+            const currentVal = (s.price || 0) * s.qty;
+            const profit = currentVal - s.cost;
+            const rate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : 0;
+            total += currentVal;
 
-            list.innerHTML += `
+            container.innerHTML += `
                 <div class="card">
-                    <div class="stock-top">
-                        <div><div class="stock-name">${s.name}</div><div style="font-size:10px; color:#8e8e93;">${s.code}</div></div>
-                        <div>
-                            <div class="stock-price">¥${Math.floor(s.price || 0).toLocaleString()}</div>
-                            <div class="stock-diff ${s.diff >= 0 ? 'positive' : 'negative'}">${s.diff >= 0 ? '+' : ''}${s.diff}%</div>
+                    <div class="stock-header">
+                        <div class="stock-name">${s.name}</div>
+                        <div class="price-box">
+                            <div class="current-price">¥${Math.floor(s.price || 0).toLocaleString()}</div>
+                            <div class="diff ${s.diff >= 0 ? 'up' : 'down'}">${s.diff >= 0 ? '+' : ''}${s.diff}%</div>
                         </div>
                     </div>
-                    <div class="stock-details">
-                        <div>保有数: ${s.quantity}</div>
-                        <div>評価額: ¥${Math.floor(total).toLocaleString()}</div>
-                        <div>損益: <span class="${profit >= 0 ? 'positive' : 'negative'}">¥${Math.floor(profit).toLocaleString()} (${profitRate}%)</span></div>
+                    <div class="details">
+                        <div>数量: ${s.qty.toLocaleString()}</div>
+                        <div>評価額: ¥${Math.floor(currentVal).toLocaleString()}</div>
+                        <div class="profit ${profit >= 0 ? 'up' : 'down'}" style="grid-column: span 2;">損益: ¥${Math.floor(profit).toLocaleString()} (${rate}%)</div>
                     </div>
                 </div>`;
         });
 
         document.getElementById('total-assets').innerText = `¥${Math.floor(total).toLocaleString()}`;
-        const percent = Math.min((total / GOAL_AMOUNT) * 100, 100);
-        document.getElementById('progress-bar').style.width = percent + '%';
-        document.getElementById('progress-text').innerText = `達成率: ${percent.toFixed(2)}%`;
+        const p = Math.min((total / 10000000) * 100, 100);
+        document.getElementById('progress-bar').style.width = p + '%';
+        document.getElementById('progress-text').innerText = p.toFixed(2) + '%';
     }
 
-    async function updateAll() {
+    async function update() {
         const btn = document.querySelector('.refresh-btn');
         btn.innerText = "更新中...";
-        
         for (let s of stocks) {
             try {
-                const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-                const data = await res.json();
-                if (data.status === "Success") {
-                    s.price = data.price;
-                    s.diff = data.diff;
-                }
+                const r = await fetch(`${API}?code=${s.id}`);
+                const d = await r.json();
+                if (d.status === "Success") { s.price = d.price; s.diff = d.diff; }
             } catch (e) { console.error(e); }
         }
-        
         btn.innerText = "↻ データを更新";
         render();
     }
-
     render();
 </script>
 </body>
