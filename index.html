@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3</title>
+<title>MONEY LOG v2.3 - Victory</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
@@ -13,7 +13,7 @@
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 目標の島：チャコールグレー */
+/* 上の島：墨色グレー */
 .progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.6; }
 .progress-track { background: #48484a; border-radius: 6px; height: 8px; overflow: hidden; }
@@ -23,7 +23,6 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .total-val { font-size: 28px; font-weight: 800; display: block; }
 .sub-stats { font-size: 13px; font-weight: bold; margin-top: 4px; }
 
-/* 手取り表示エリア */
 .payout-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
 .payout-label { font-size: 10px; opacity: 0.6; }
 .payout-val { font-size: 16px; font-weight: 700; color: #ffd60a; }
@@ -31,7 +30,6 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 /* 銘柄カード */
 .stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; letter-spacing: -0.5px; }
-
 .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
 .main-price { font-size: 24px; font-weight: 800; }
 .day-diff { font-size: 12px; font-weight: bold; }
@@ -43,14 +41,11 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 9px; color: var(--text-sub); text-align: left; padding-left: 2px; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 5px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 9px; background: var(--input-bg); text-align: left; font-weight: 400; color: #3a3a3c; height: 28px; }
 
-/* updateボタン：最下部 */
+/* updateボタン */
 .btn-wrapper { margin-top: 20px; padding: 0 4px; }
 .btn-update { 
-  background: #636366; color: white; border: none; 
-  padding: 14px; border-radius: 14px; width: 100%;
-  font-size: 15px; font-weight: 700; cursor: pointer; 
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  text-transform: lowercase;
+  background: #636366; color: white; border: none; padding: 14px; border-radius: 14px; width: 100%;
+  font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: lowercase;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
@@ -61,32 +56,27 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
   <div class="progress-box">
     <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progressPercent">0%</span></div>
     <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-    
     <div class="price-display">
       <span id="totalAssetsDisplay" class="total-val">¥0</span>
       <div id="totalDayDiff" class="sub-stats"></div>
-      
       <div class="payout-box">
         <div class="payout-label">全売却時の推定手取り額 (20.315%税込)</div>
         <div id="estimatedPayout" class="payout-val">¥0</div>
       </div>
     </div>
   </div>
-
   <div id="stockList"></div>
-
-  <div class="btn-wrapper">
-    <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> update</button>
-  </div>
+  <div class="btn-wrapper"><button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> update</button></div>
 </div>
 
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec";
-const STORAGE_KEY = "money_log_v3_clean_payp_fixed";
+// ⚠️ 5枚目の画像を出した「/exec」までのURLをここに貼り付けてください
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyIJFxRBnian3cvZiFWqlCvXMCIYAKakl4-7TXPlBuGIhgcoAeUSQ80UJ2ppDJBZstzkg/exec"; 
+const STORAGE_KEY = "money_log_v2.3_final_victory_clean";
 
 let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 59845, cost: 121180, isStock: false },
-  { name: "PayPay", code: "PAYP", price: 3830, holding: 1.86131, cost: 4749, isStock: true }
+  { name: "PayPay", code: "PAYP", price: 31, holding: 1.86131, cost: 4749, isStock: true }
 ];
 
 async function fetchAllPrices() {
@@ -94,42 +84,46 @@ async function fetchAllPrices() {
   btn.classList.add('loading');
   btn.innerHTML = '<span>↻</span> updating...';
   
+  let usdjpy = 150;
+  try {
+    const resEx = await fetch(`${GAS_API_URL}?code=USDJPY`);
+    const dataEx = await resEx.json();
+    if(dataEx.status === "Success") usdjpy = dataEx.price;
+  } catch(e) {}
+
   for (let s of savedData) {
     try {
-      // 市場を特定して取得しやすくするためコードを調整
-      const fetchCode = s.code === "PAYP" ? "NASDAQ:PAYP" : s.code;
-      const res = await fetch(`${GAS_API_URL}?code=${fetchCode}`);
+      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
       const data = await res.json();
-      
-      if (data.status === "Success" && data.price > 0) { 
+      if (data.status === "Success") {
         s.price = data.price;
         s.diff = data.diff;
       }
     } catch (e) { console.error(e); }
   }
-  
   btn.classList.remove('loading');
   btn.innerHTML = '<span>↻</span> update';
-  saveAndRender();
+  saveAndRender(usdjpy);
 }
 
-function saveAndRender() {
+function saveAndRender(rate = 150) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
-  render();
+  render(rate);
 }
 
-function render() {
+function render(rate = 150) {
   const container = document.getElementById('stockList');
   let totalAssets = 0, totalDayDiffVal = 0, totalPayout = 0;
   
   container.innerHTML = savedData.map((s, i) => {
-    const val = s.isStock ? Math.floor(s.price * s.holding) : Math.floor((s.price * s.holding) / 10000);
+    // PayPay(PAYP)ならドル価格に最新レートをかけて円にする
+    const currentPriceYen = s.code === "PAYP" ? s.price * rate : s.price;
+    const val = s.isStock ? Math.floor(currentPriceYen * s.holding) : Math.floor((currentPriceYen * s.holding) / 10000);
+    
     totalAssets += val;
     const profit = val - s.cost;
     const dayDiffVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
     totalDayDiffVal += dayDiffVal;
-
-    // 税引き後手取りの計算
     const tax = profit > 0 ? profit * 0.20315 : 0;
     totalPayout += (val - tax);
 
@@ -142,24 +136,11 @@ function render() {
             ${dayDiffVal >= 0 ? '+' : ''}${dayDiffVal.toLocaleString()} (${s.diff || 0}%)
           </span>
         </div>
-        <div class="return-row">
-          Total Return: <span style="color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-            ${profit >= 0 ? '+' : ''}${profit.toLocaleString()}
-          </span>
-        </div>
+        <div class="return-row">Total Return: <span style="color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${profit >= 0 ? '+' : ''}${profit.toLocaleString()}</span></div>
         <div class="input-grid">
-          <div class="input-group">
-            <span class="input-label">${s.isStock ? '現在値' : '基準価額'}</span>
-            <input class="ios-input" type="number" value="${s.price}" onchange="update(${i},'price',this.value)">
-          </div>
-          <div class="input-group">
-            <span class="input-label">数量/口数</span>
-            <input class="ios-input" type="number" value="${s.holding}" onchange="update(${i},'holding',this.value)">
-          </div>
-          <div class="input-group">
-            <span class="input-label">元本</span>
-            <input class="ios-input" type="number" value="${s.cost}" onchange="update(${i},'cost',this.value)">
-          </div>
+          <div class="input-group"><span class="input-label">${s.isStock ? '現在値($)' : '基準価額'}</span><input class="ios-input" type="number" step="any" value="${s.price}" onchange="update(${i},'price',this.value)"></div>
+          <div class="input-group"><span class="input-label">数量/口数</span><input class="ios-input" type="number" step="any" value="${s.holding}" onchange="update(${i},'holding',this.value)"></div>
+          <div class="input-group"><span class="input-label">元本(¥)</span><input class="ios-input" type="number" step="any" value="${s.cost}" onchange="update(${i},'cost',this.value)"></div>
         </div>
       </div>`;
   }).join('');
@@ -172,7 +153,6 @@ function render() {
   document.getElementById('progressPercent').textContent = prog.toFixed(2) + "%";
   document.getElementById('progressBar').style.width = prog + "%";
 }
-
 function update(i, f, v) { savedData[i][f] = parseFloat(v) || 0; saveAndRender(); }
 render();
 </script>
