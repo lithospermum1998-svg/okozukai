@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3</title>
+<title>MONEY LOG v2.3 - Tax Mode</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
@@ -13,7 +13,7 @@
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 上の島：柔らかいチャコールグレー */
+/* 上の島：チャコールグレー */
 .progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.6; }
 .progress-track { background: #48484a; border-radius: 6px; height: 8px; overflow: hidden; }
@@ -22,12 +22,13 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .price-display { margin-top: 10px; text-align: center; }
 .total-val { font-size: 28px; font-weight: 800; display: block; }
 .sub-stats { font-size: 13px; font-weight: bold; margin-top: 4px; }
-.total-return-label { font-size: 11px; opacity: 0.7; margin-top: 6px; display: block; }
+.payout-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+.payout-label { font-size: 10px; opacity: 0.6; }
+.payout-val { font-size: 16px; font-weight: 700; color: #ffd60a; } /* 手取りは少し目立つ色に */
 
 /* 銘柄カード */
 .stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; letter-spacing: -0.5px; }
-
 .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
 .main-price { font-size: 24px; font-weight: 800; }
 .day-diff { font-size: 12px; font-weight: bold; }
@@ -39,7 +40,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 9px; color: var(--text-sub); text-align: left; padding-left: 2px; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 5px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 9px; background: var(--input-bg); text-align: left; font-weight: 400; color: #3a3a3c; height: 28px; }
 
-/* updateボタン：最下部 */
+/* updateボタン */
 .btn-wrapper { margin-top: 20px; padding: 0 4px; }
 .btn-update { 
   background: #636366; color: white; border: none; 
@@ -61,7 +62,11 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     <div class="price-display">
       <span id="totalAssetsDisplay" class="total-val">¥0</span>
       <div id="totalDayDiff" class="sub-stats"></div>
-      <span id="totalReturnDisplay" class="total-return-label"></span>
+      
+      <div class="payout-box">
+        <div class="payout-label">全売却時の推定手取り額 (20.315%税込)</div>
+        <div id="estimatedPayout" class="payout-val">¥0</div>
+      </div>
     </div>
   </div>
 
@@ -74,8 +79,6 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec";
-
-// 💡 保存場所のキーを新しくすることで、古いロケットデータを完全に遮断します
 const STORAGE_KEY = "money_log_v3_clean";
 
 let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
@@ -87,7 +90,6 @@ async function fetchAllPrices() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading');
   btn.innerHTML = '<span>↻</span> updating...';
-  
   for (let s of savedData) {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
@@ -95,7 +97,6 @@ async function fetchAllPrices() {
       if (data.status === "Success") { s.price = data.price; s.diff = data.diff; }
     } catch (e) { console.error(e); }
   }
-  
   btn.classList.remove('loading');
   btn.innerHTML = '<span>↻</span> update';
   saveAndRender();
@@ -108,16 +109,19 @@ function saveAndRender() {
 
 function render() {
   const container = document.getElementById('stockList');
-  let totalAssets = 0, totalCost = 0, totalDayDiffVal = 0;
+  let totalAssets = 0, totalDayDiffVal = 0, totalPayout = 0;
   
   container.innerHTML = savedData.map((s, i) => {
     const val = s.isStock ? Math.floor(s.price * s.holding) : Math.floor((s.price * s.holding) / 10000);
     totalAssets += val;
-    totalCost += s.cost;
     const profit = val - s.cost;
     const profitRate = s.cost ? (profit / s.cost * 100).toFixed(2) : "0.00";
     const dayDiffVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
     totalDayDiffVal += dayDiffVal;
+
+    // 🛠️ 税引き後手取りの計算
+    const tax = profit > 0 ? profit * 0.20315 : 0;
+    totalPayout += (val - tax);
 
     return `
       <div class="stock-card">
@@ -151,18 +155,12 @@ function render() {
   }).join('');
 
   document.getElementById('totalAssetsDisplay').textContent = `¥${totalAssets.toLocaleString()}`;
-  const totalProfit = totalAssets - totalCost;
-  const totalProfitRate = totalCost ? (totalProfit / totalCost * 100).toFixed(2) : "0.00";
+  document.getElementById('estimatedPayout').textContent = `¥${Math.floor(totalPayout).toLocaleString()}`;
+
   const avgDiffPct = totalAssets ? ((totalDayDiffVal / totalAssets) * 100).toFixed(2) : "0.00";
-  
   document.getElementById('totalDayDiff').innerHTML = `
     <span style="color:${totalDayDiffVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
       ${totalDayDiffVal >= 0 ? '+' : ''}${totalDayDiffVal.toLocaleString()} (${avgDiffPct}%)
-    </span>`;
-    
-  document.getElementById('totalReturnDisplay').innerHTML = `
-    Total Return: <span style="color:${totalProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-      ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate}%)
     </span>`;
 
   const prog = Math.min((totalAssets / 10000000) * 100, 100);
