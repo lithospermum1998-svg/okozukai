@@ -62,11 +62,11 @@ let savedData = JSON.parse(localStorage.getItem('stocks')) || [];
 // 銘柄リストにPYPLが含まれているかチェック
 const hasPayPay = savedData.some(s => s.code === 'PYPL');
 
+// 【修正箇所】ここを今の証券口座のリアルな数字に差し替えます
 if (!hasPayPay) {
-  // PayPayが含まれていない古いデータだった場合、または新規の場合
   savedData = [
-    { name: "楽天・プラス・SOX", code: "9A311243", price: 19594, holding: 61841, cost: 121180, isStock: false },
-    { name: "PayPay", code: "PYPL", price: 15000, holding: 0.487, cost: 0, isStock: true }
+    { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 13000, cost: 25000, isStock: false },
+    { name: "PayPay", code: "PAYP", price: 3950, holding: 1.86131, cost: 4749, isStock: true }
   ];
   localStorage.setItem('stocks', JSON.stringify(savedData));
 }
