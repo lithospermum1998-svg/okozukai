@@ -83,7 +83,8 @@ const STORAGE_KEY = "money_log_v3_clean";
 
 let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 13000, cost: 25000, isStock: false },
-  { name: "PayPay", code: "PAYP", price: 3950, holding: 1.86131, cost: 4749, isStock: true }
+  // codeを「PAYP」から「NASDAQ:PAYP」へ（これでGoogleFinanceが迷わなくなります）
+  { name: "PayPay", code: "NASDAQ:PAYP", price: 3915, holding: 1.86131, cost: 4749, isStock: true }
 ];
 
 async function fetchAllPrices() {
