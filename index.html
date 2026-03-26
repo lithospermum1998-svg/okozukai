@@ -3,56 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3 - Final Refine</title>
+<title>MONEY LOG v2.3 - Balanced</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
   --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30;
 }
-body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 8px; color: var(--text-main); line-height: 1.1; }
+body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 進捗バー */
-.progress-box { background: #1c1c1e; color: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 6px; opacity: 0.7; }
+/* 進捗バー：余白を少し広げて 8px -> 12px */
+.progress-box { background: #1c1c1e; color: white; border-radius: 14px; padding: 15px; margin-bottom: 12px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.7; }
 .progress-track { background: #3a3a3c; border-radius: 6px; height: 8px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 1.5s ease-out; }
-#totalAssetsDisplay { text-align: center; font-size: 22px; font-weight: 800; margin-top: 6px; }
+#totalAssetsDisplay { text-align: center; font-size: 24px; font-weight: 800; margin-top: 8px; }
 
-/* セクション見出し */
-.section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; margin-bottom: 4px; }
-.section-title { font-size: 11px; font-weight: 800; color: var(--text-sub); }
+/* セクション見出し：4px -> 8px */
+.section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; margin-bottom: 8px; }
+.section-title { font-size: 12px; font-weight: 800; color: var(--text-sub); }
 .section-title::before { content: "|"; color: var(--text-sub); margin-right: 6px; }
 
-/* クルクル回るボタン */
-.btn-update { background: #636366; color: white; border: none; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+/* クルクル更新ボタン */
+.btn-update { background: #636366; color: white; border: none; padding: 5px 12px; border-radius: 12px; font-size: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 
-/* カードデザイン */
-.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.stock-name { font-weight: 800; font-size: 16px; margin-bottom: 4px; display: block; letter-spacing: -0.5px; }
+/* カード：パディングを 10px -> 14px に、マージンを 6px -> 10px に微増 */
+.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; letter-spacing: -0.5px; }
 
-.price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 1px; }
-.main-price { font-size: 24px; font-weight: 800; }
-.day-diff { font-size: 12px; font-weight: bold; }
-.return-row { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+.price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
+.main-price { font-size: 26px; font-weight: 800; }
+.day-diff { font-size: 13px; font-weight: bold; }
+.return-row { font-size: 11px; color: var(--text-sub); margin-bottom: 12px; }
 
-/* 🛠️ 入力グリッド：上下幅をさらに圧縮 */
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 6px; }
-.input-group { display: flex; flex-direction: column; gap: 1px; } /* ラベルと入力の隙間を最小に */
-.input-label { font-size: 9px; color: var(--text-sub); text-align: left; padding-left: 1px; }
+/* 入力グリッド：高さ28pxはキープ */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; }
+.input-group { display: flex; flex-direction: column; gap: 3px; }
+.input-label { font-size: 9px; color: var(--text-sub); text-align: left; padding-left: 2px; }
 .ios-input { 
   width: 100%; box-sizing: border-box; 
-  padding: 5px 6px; /* 8pxから5pxへ：上下幅を大幅カット */
+  padding: 5px 8px; 
   font-size: 13px; 
-  border: 1px solid var(--input-border); border-radius: 8px; 
+  border: 1px solid var(--input-border); border-radius: 9px; 
   background: var(--input-bg); 
   text-align: left; 
   font-weight: 400; 
   color: #3a3a3c;
-  height: 28px; /* 高さを固定して安定感を出す */
+  height: 28px; /* 入力欄の幅（高さ）はしっかり維持 */
 }
 </style>
 </head>
@@ -75,7 +75,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec";
 
-// 🚀 銘柄名をシンプルに「PayPay」へ
+// 🚀 銘柄名をシンプルに修正
 let savedData = JSON.parse(localStorage.getItem('stocks')) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 13000, cost: 25000, isStock: false },
   { name: "PayPay", code: "PAYP", price: 3950, holding: 1.86131, cost: 4749, isStock: true }
