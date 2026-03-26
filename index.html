@@ -3,44 +3,45 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3 - 1000万への道</title>
+<title>MONEY LOG v2.3 - Compact</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
-  --radius: 20px; --input-bg: #ffffff; --input-border: #e5e5ea;
+  --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
   --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30;
 }
-body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
+body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 8px; color: var(--text-main); line-height: 1.2; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 進捗バー（v2.3の黒デザインを継承） */
-.progress-box { background: #1c1c1e; color: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; opacity: 0.8; }
-.progress-track { background: #3a3a3c; border-radius: 10px; height: 10px; overflow: hidden; }
-.progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 2s ease-in-out; }
+/* 進捗バー：高さを抑えてコンパクトに */
+.progress-box { background: #1c1c1e; color: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 6px; opacity: 0.7; }
+.progress-track { background: #3a3a3c; border-radius: 6px; height: 8px; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 1.5s ease-out; }
+#totalAssetsDisplay { text-align: center; font-size: 22px; font-weight: 800; margin-top: 8px; }
 
-/* 資産セクション見出し */
-.section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; margin-bottom: 8px; }
-.section-title { font-size: 14px; font-weight: 800; color: var(--text-sub); }
-.section-title::before { content: "|"; color: var(--text-sub); margin-right: 8px; }
+/* セクション見出し：余白を最小限に */
+.section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; margin-bottom: 6px; }
+.section-title { font-size: 12px; font-weight: 800; color: var(--text-sub); }
+.section-title::before { content: "|"; color: var(--text-sub); margin-right: 6px; }
 
-/* 初期版に寄せたカードレイアウト */
-.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-.stock-name { font-weight: bold; font-size: 15px; margin-bottom: 12px; line-height: 1.4; }
+/* カード：パディングとマージンを大幅カット */
+.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.stock-name { font-weight: bold; font-size: 13px; margin-bottom: 6px; display: block; }
 
-.price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
-.main-price { font-size: 28px; font-weight: 800; }
-.day-diff { font-size: 14px; font-weight: bold; }
+.price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
+.main-price { font-size: 24px; font-weight: 800; }
+.day-diff { font-size: 12px; font-weight: bold; }
 
-.return-row { font-size: 13px; color: var(--text-sub); margin-bottom: 15px; }
+.return-row { font-size: 11px; color: var(--text-sub); margin-bottom: 10px; }
 
-/* 入力グリッド（ラベルが上） */
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-.input-group { display: flex; flex-direction: column; gap: 4px; }
-.input-label { font-size: 10px; color: var(--text-sub); text-align: center; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 10px 5px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); text-align: center; font-weight: 500; }
+/* 入力欄：ラベルとインプットを密着させる */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.input-group { display: flex; flex-direction: column; gap: 2px; }
+.input-label { font-size: 9px; color: var(--text-sub); text-align: center; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 6px 2px; font-size: 12px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); text-align: center; font-weight: 600; }
 
-.btn-update { background: #636366; color: white; border: none; padding: 6px 14px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+.btn-update { background: #636366; color: white; border: none; padding: 4px 12px; border-radius: 12px; font-size: 10px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -48,7 +49,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
   <div class="progress-box">
     <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progressPercent">0%</span></div>
     <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-    <div id="totalAssetsDisplay" style="text-align:center; font-size:24px; font-weight:800; margin-top:10px;">¥0</div>
+    <div id="totalAssetsDisplay">¥0</div>
   </div>
 
   <div class="section-header">
@@ -62,9 +63,9 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqAE-_Q1JcW_fH-DiqMxB_QSB6WqknRlSPteVMLoztGZM7fYLHzZeNrM6xhRryQ-KW/exec";
 
-// 初期銘柄設定（画像15のPayPay証券と現在の楽天SOXに同期）
+// ストレージから取得、なければ初期値
 let savedData = JSON.parse(localStorage.getItem('stocks')) || [
-  { name: "楽天・プラス・SOXインデックス・ファンド", code: "2931123A", price: 19994, holding: 13000, cost: 25000, isStock: false },
+  { name: "楽天・プラス・SOXインデックス・ファンド", code: "2931123A", price: 19994, holding: 61841, cost: 121180, isStock: false },
   { name: "PayPay株", code: "PAYP", price: 3950, holding: 1.86131, cost: 4749, isStock: true }
 ];
 
@@ -96,8 +97,6 @@ function render() {
     total += val;
     const profit = val - s.cost;
     const profitRate = s.cost ? (profit / s.cost * 100).toFixed(2) : "0.00";
-    
-    // 前日比の計算（簡易計算）
     const dayDiffVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
 
     return `
@@ -105,7 +104,7 @@ function render() {
         <div class="stock-name">${s.name}</div>
         <div class="price-row">
           <span class="main-price">¥${val.toLocaleString()}</span>
-          <span class="day-diff ${s.diff >= 0 ? 'pos' : 'neg'}" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+          <span class="day-diff" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
             ${dayDiffVal >= 0 ? '+' : ''}${dayDiffVal.toLocaleString()} (${s.diff || 0}%)
           </span>
         </div>
@@ -120,7 +119,7 @@ function render() {
             <input class="ios-input" type="number" value="${s.price}" onchange="update(${i},'price',this.value)">
           </div>
           <div class="input-group">
-            <span class="input-label">${s.isStock ? '保有株数' : '保有口数'}</span>
+            <span class="input-label">数量/口数</span>
             <input class="ios-input" type="number" value="${s.holding}" onchange="update(${i},'holding',this.value)">
           </div>
           <div class="input-group">
