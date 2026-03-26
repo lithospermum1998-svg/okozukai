@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.3 - Clean Bottom</title>
+<title>MONEY LOG v2.3 - Final</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
   --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30;
 }
-body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 40px; }
+body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 60px; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 上の島：墨色グレー */
+/* 上の島：チャコールグレー */
 .progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.6; }
 .progress-track { background: #48484a; border-radius: 6px; height: 8px; overflow: hidden; }
@@ -39,13 +39,14 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 9px; color: var(--text-sub); text-align: left; padding-left: 2px; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 5px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 9px; background: var(--input-bg); text-align: left; font-weight: 400; color: #3a3a3c; height: 28px; }
 
-/* 🛠️ 更新ボタン：一番下に配置するためのスタイル */
-.btn-wrapper { margin-top: 10px; padding: 0 4px; }
+/* 更新ボタン：一番下・update表記 */
+.btn-wrapper { margin-top: 20px; padding: 0 4px; }
 .btn-update { 
   background: #636366; color: white; border: none; 
   padding: 14px; border-radius: 14px; width: 100%;
-  font-size: 14px; font-weight: 700; cursor: pointer; 
-  display: flex; align-items: center; justify-content: center; gap: 8px; 
+  font-size: 15px; font-weight: 700; cursor: pointer; 
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  text-transform: lowercase; /* updateを小文字でスタイリッシュに */
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
@@ -67,7 +68,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
   <div id="stockList"></div>
 
   <div class="btn-wrapper">
-    <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> データを更新</button>
+    <button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> update</button>
   </div>
 </div>
 
@@ -82,6 +83,8 @@ let savedData = JSON.parse(localStorage.getItem('stocks')) || [
 async function fetchAllPrices() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading');
+  btn.innerHTML = '<span>↻</span> updating...'; // 更新中も英語に
+  
   for (let s of savedData) {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
@@ -89,7 +92,9 @@ async function fetchAllPrices() {
       if (data.status === "Success") { s.price = data.price; s.diff = data.diff; }
     } catch (e) { console.error(e); }
   }
+  
   btn.classList.remove('loading');
+  btn.innerHTML = '<span>↻</span> update';
   saveAndRender();
 }
 
@@ -100,9 +105,7 @@ function saveAndRender() {
 
 function render() {
   const container = document.getElementById('stockList');
-  let totalAssets = 0;
-  let totalCost = 0;
-  let totalDayDiffVal = 0;
+  let totalAssets = 0, totalCost = 0, totalDayDiffVal = 0;
   
   container.innerHTML = savedData.map((s, i) => {
     const val = s.isStock ? Math.floor(s.price * s.holding) : Math.floor((s.price * s.holding) / 10000);
