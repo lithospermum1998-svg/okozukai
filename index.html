@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.4</title>
+<title>MONEY LOG v2.6 - Minkabu</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
@@ -16,24 +16,22 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.6; }
 .progress-track { background: #48484a; border-radius: 6px; height: 8px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 1.5s ease-out; }
-.price-display { margin-top: 10px; text-align: center; }
-.total-val { font-size: 28px; font-weight: 800; display: block; }
-.sub-stats { font-size: 13px; font-weight: bold; margin-top: 4px; }
-.payout-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
-.payout-label { font-size: 10px; opacity: 0.6; }
+.total-val { font-size: 28px; font-weight: 800; display: block; text-align: center; margin: 10px 0; }
+.payout-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
 .payout-val { font-size: 16px; font-weight: 700; color: #ffd60a; }
+
 .stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; }
 .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
 .main-price { font-size: 24px; font-weight: 800; }
 .day-diff { font-size: 12px; font-weight: bold; }
-.return-row { font-size: 11px; color: var(--text-sub); margin-bottom: 12px; }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; }
+
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 10px; }
 .input-group { display: flex; flex-direction: column; gap: 3px; }
 .input-label { font-size: 9px; color: var(--text-sub); }
-.ios-input { width: 100%; box-sizing: border-box; padding: 5px 8px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 9px; background: var(--input-bg); height: 28px; -webkit-appearance: none; }
-.btn-wrapper { margin-top: 20px; padding: 0 4px; }
-.btn-update { background: #636366; color: white; border: none; padding: 14px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); -webkit-appearance: none; }
+
+.btn-update { background: #636366; color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 700; margin-top: 10px; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 </style>
@@ -41,43 +39,42 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <body>
 <div class="container">
   <div class="progress-box">
-    <div class="progress-label"><span>1,000万円プロジェクト</span><span id="progressPercent">0%</span></div>
+    <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progRate">0%</span></div>
     <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
-    <div class="price-display">
-      <span id="totalAssetsDisplay" class="total-val">¥0</span>
-      <div id="totalDayDiff" class="sub-stats"></div>
-      <div class="payout-box">
-        <div class="payout-label">全売却時の手取り概算 (20.315%税込)</div>
-        <div id="estimatedPayout" class="payout-val">¥0</div>
-      </div>
+    <span id="totalDisplay" class="total-val">¥0</span>
+    <div id="dayDiffDisplay" style="text-align:center; font-size:13px; font-weight:bold"></div>
+    <div class="payout-box">
+      <div style="font-size:10px; opacity:0.6">全売却時の手取り概算 (20.315%税込)</div>
+      <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
   <div id="stockList"></div>
-  <div class="btn-wrapper"><button id="updateBtn" class="btn-update" onclick="fetchAllPrices()"><span>↻</span> update</button></div>
+  <button id="updateBtn" class="btn-update" onclick="fetchAll()"><span>↻</span> update</button>
 </div>
 
 <script>
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz59Te3-sW38d4X29If1xzfFOCSCC1eCgv0tIS4sdPGa052h9Vil9xoHfOKRlmNmL2g/exec"; 
-const STORAGE_KEY = "money_log_v2.4_final";
+// ⚠️ 新しくデプロイしたURLを貼り付けてください
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw4OW9N3iX7l4veDflgJTQQNEnDhjVQQD6-vOgcksHp9rPw4mWEwijsD8Eo1ERMB-or/exec"; 
+const STORAGE_KEY = "money_log_v2.6_minkabu";
 
-let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 59845, cost: 121180, isStock: false },
-  { name: "PayPay", code: "PAYP", price: 24.27, holding: 1.86131, cost: 4749, isStock: true, rate: 160 }
+  { name: "PayPay", code: "PAYP", price: 23.77, holding: 1.86131, cost: 4749, isStock: true, rate: 160 }
 ];
 
-async function fetchAllPrices() {
+async function fetchAll() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading');
   btn.innerHTML = '<span>↻</span> updating...';
 
-  for (let s of savedData) {
+  for (let s of data) {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-      const data = await res.json();
-      if (data.status === "Success") {
-        s.price = data.price;
-        s.diff = data.diff;
-        if(data.rate) s.rate = data.rate; // 最新の為替を保存
+      const json = await res.json();
+      if (json.status === "Success") {
+        s.price = json.price;
+        s.diff = json.diff;
+        if (json.rate) s.rate = json.rate;
       }
     } catch (e) { console.error(e); }
   }
@@ -86,24 +83,19 @@ async function fetchAllPrices() {
   saveAndRender();
 }
 
-function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData)); render(); }
+function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); render(); }
 
 function render() {
-  const container = document.getElementById('stockList');
-  let totalAssets = 0, totalDayDiffVal = 0, totalPayout = 0;
-  
-  container.innerHTML = savedData.map((s, i) => {
-    // 円換算価格の計算
-    const yenPrice = s.code === "PAYP" ? (s.price * (s.rate || 160)) : s.price;
-    // 評価額：SOXは1万口単位、PayPayは1株単位
-    const val = s.code === "2931123A" ? Math.floor(yenPrice * s.holding / 10000) : Math.floor(yenPrice * s.holding);
-    
-    totalAssets += val;
+  const list = document.getElementById('stockList');
+  let total = 0, totalCost = 0, dayDiffSum = 0;
+
+  list.innerHTML = data.map((s, i) => {
+    const pYen = s.isStock ? (s.price * (s.rate || 160)) : s.price;
+    const val = s.isStock ? Math.floor(pYen * s.holding) : Math.floor(pYen * s.holding / 10000);
+    total += val; totalCost += s.cost;
     const profit = val - s.cost;
-    const dayDiffVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
-    totalDayDiffVal += dayDiffVal;
-    const tax = profit > 0 ? profit * 0.20315 : 0;
-    totalPayout += (val - tax);
+    const dVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
+    dayDiffSum += dVal;
 
     return `
       <div class="stock-card">
@@ -111,29 +103,35 @@ function render() {
         <div class="price-row">
           <span class="main-price">¥${val.toLocaleString()}</span>
           <span class="day-diff" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-            ${dayDiffVal >= 0 ? '+' : ''}${dayDiffVal.toLocaleString()} (${s.diff || 0}%)
+            ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${s.diff || 0}%)
           </span>
         </div>
-        <div class="return-row">Profit: <span style="color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${profit >= 0 ? '+' : ''}${profit.toLocaleString()}</span></div>
+        <div style="font-size:11px; color:var(--text-sub); margin-bottom:10px">
+          Profit: <span style="color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${profit >= 0 ? '+' : ''}${profit.toLocaleString()}</span>
+        </div>
         <div class="input-grid">
-          <div class="input-group"><span class="input-label">${s.isStock ? '現在値($)' : '基準価額'}</span><input class="ios-input" type="number" step="any" value="${s.price}" onchange="update(${i},'price',this.value)"></div>
-          <div class="input-grid-sub" style="display:contents">
-            <div class="input-group"><span class="input-label">数量</span><input class="ios-input" type="number" step="any" value="${s.holding}" onchange="update(${i},'holding',this.value)"></div>
-            <div class="input-group"><span class="input-label">元本(¥)</span><input class="ios-input" type="number" step="any" value="${s.cost}" onchange="update(${i},'cost',this.value)"></div>
+          <div class="input-group"><span class="input-label">${s.isStock ? "現在値($)" : "基準価額"}</span>
+            <input class="ios-input" type="number" step="any" value="${s.price}" onchange="update(${i},'price',this.value)">
+          </div>
+          <div class="input-group"><span class="input-label">数量</span>
+            <input class="ios-input" type="number" step="any" value="${s.holding}" onchange="update(${i},'holding',this.value)">
+          </div>
+          <div class="input-group"><span class="input-label">元本(¥)</span>
+            <input class="ios-input" type="number" step="any" value="${s.cost}" onchange="update(${i},'cost',this.value)">
           </div>
         </div>
       </div>`;
   }).join('');
 
-  document.getElementById('totalAssetsDisplay').textContent = `¥${totalAssets.toLocaleString()}`;
-  document.getElementById('estimatedPayout').textContent = `¥${Math.floor(totalPayout).toLocaleString()}`;
-  const avgDiffPct = totalAssets ? ((totalDayDiffVal / totalAssets) * 100).toFixed(2) : "0.00";
-  document.getElementById('totalDayDiff').innerHTML = `<span style="color:${totalDayDiffVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${totalDayDiffVal >= 0 ? '+' : ''}${totalDayDiffVal.toLocaleString()} (${avgDiffPct}%)</span>`;
-  const prog = Math.min((totalAssets / 10000000) * 100, 100);
-  document.getElementById('progressPercent').textContent = prog.toFixed(2) + "%";
+  document.getElementById('totalDisplay').textContent = `¥${total.toLocaleString()}`;
+  const tax = (total - totalCost) > 0 ? (total - totalCost) * 0.20315 : 0;
+  document.getElementById('payoutDisplay').textContent = `¥${Math.floor(total - tax).toLocaleString()}`;
+  const prog = Math.min((total / 10000000) * 100, 100);
+  document.getElementById('progRate').textContent = prog.toFixed(2) + "%";
   document.getElementById('progressBar').style.width = prog + "%";
+  document.getElementById('dayDiffDisplay').innerHTML = `<span style="color:${dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()}</span>`;
 }
-function update(i, f, v) { savedData[i][f] = parseFloat(v) || 0; saveAndRender(); }
+function update(i, f, v) { data[i][f] = parseFloat(v) || 0; saveAndRender(); }
 render();
 </script>
 </body>
