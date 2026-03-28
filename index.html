@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.7</title>
+<title>MONEY LOG v2.8</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
@@ -12,30 +12,17 @@
 }
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
-
-/* 進捗ボックス */
-.progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.progress-label { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; opacity: 0.6; }
-.progress-track { background: #48484a; border-radius: 6px; height: 8px; overflow: hidden; }
-.progress-fill { background: linear-gradient(90deg, #007aff, #34c759); height: 100%; width: 0%; transition: width 1.5s ease-out; }
-.total-val { font-size: 28px; font-weight: 800; display: block; text-align: center; margin: 10px 0; }
-.payout-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; }
+.progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; text-align: center; }
+.total-val { font-size: 28px; font-weight: 800; display: block; margin: 10px 0; }
 .payout-val { font-size: 16px; font-weight: 700; color: #ffd60a; }
-
-/* カード */
 .stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 .stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; }
-.price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; }
 .main-price { font-size: 24px; font-weight: 800; }
-.day-diff { font-size: 12px; font-weight: bold; }
-
-/* 入力グリッド */
+.day-diff { font-size: 12px; font-weight: bold; margin-left: 6px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 10px; }
-.input-group { display: flex; flex-direction: column; gap: 3px; }
 .input-label { font-size: 9px; color: var(--text-sub); }
 .ios-input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); -webkit-appearance: none; }
-
-.btn-update { background: #636366; color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 700; margin-top: 10px; }
+.btn-update { background: #636366; color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 700; cursor: pointer; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 </style>
@@ -43,12 +30,13 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <body>
 <div class="container">
   <div class="progress-box">
-    <div class="progress-label"><span>1,000万円プロジェクト進捗</span><span id="progRate">0%</span></div>
-    <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+    <div style="font-size:10px; opacity:0.6; display:flex; justify-content:space-between">
+      <span>1,000万円プロジェクト進捗</span><span id="progRate">0%</span>
+    </div>
     <span id="totalDisplay" class="total-val">¥0</span>
-    <div id="dayDiffDisplay" style="text-align:center; font-size:13px; font-weight:bold"></div>
-    <div class="payout-box">
-      <div style="font-size:10px; opacity:0.6">全売却時の手取り (20.315%税込)</div>
+    <div id="dayDiffDisplay" style="font-size:13px; font-weight:bold"></div>
+    <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1)">
+      <div style="font-size:10px; opacity:0.6">全売却時の手取り (税込)</div>
       <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
@@ -57,9 +45,9 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 </div>
 
 <script>
-// ⚠️ 新しくデプロイしたURLに差し替えてください
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycby0dlMtJpqlcVl7LP23Qsk_3YypFPaCzD2LXA8BnGJp-W4RV6_ZbQ7Bw2B41neBnEUO/exec"; 
-const STORAGE_KEY = "money_log_v2.7_final_perfect";
+// ⚠️ 新しくデプロイしたURLをここに貼り付け
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzNHsXu0rF0F3UB1SxF7Nw7PNGr83619BWj7bScCRkdmNM60KHpwpn7zefoo_uTocw/exec"; 
+const STORAGE_KEY = "money_log_v2.8_hybrid_final";
 
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 59845, cost: 121180, isStock: false },
@@ -79,7 +67,7 @@ async function fetchAll() {
         s.price = json.price;
         s.diff = json.diff;
         if (json.rate) s.rate = json.rate;
-      } else { console.error(s.name + ": " + json.message); }
+      }
     } catch (e) { console.error(e); }
   }
   btn.classList.remove('loading');
@@ -94,13 +82,9 @@ function render() {
   let total = 0, totalCost = 0, dayDiffSum = 0;
 
   list.innerHTML = data.map((s, i) => {
-    // 換算計算：PayPayは為替をかける、SOXはそのまま
     const pYen = s.isStock ? (s.price * (s.rate || 160)) : s.price;
-    // 評価額：SOXは1万口単位
     const val = s.isStock ? Math.floor(pYen * s.holding) : Math.floor(pYen * s.holding / 10000);
-    
     total += val; totalCost += s.cost;
-    const profit = val - s.cost;
     const dVal = Math.floor(val * (parseFloat(s.diff || 0) / 100));
     dayDiffSum += dVal;
 
@@ -112,9 +96,6 @@ function render() {
           <span class="day-diff" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
             ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${s.diff || 0}%)
           </span>
-        </div>
-        <div style="font-size:11px; color:var(--text-sub); margin-bottom:10px">
-          Profit: <span style="color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">${profit >= 0 ? '+' : ''}${profit.toLocaleString()}</span>
         </div>
         <div class="input-grid">
           <div class="input-group"><span class="input-label">${s.isStock ? "現在値($)" : "基準価額"}</span>
