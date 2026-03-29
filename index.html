@@ -30,17 +30,18 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
 
-/* ネオン・アウトライン ボタンデザイン */
+/* 枠線なし白ボタンデザイン */
 .btn-update { 
-  background: transparent; 
+  background: var(--card-bg); 
   color: var(--accent); 
-  border: 1.5px solid var(--accent); 
-  padding: 16px; 
-  border-radius: 16px; 
+  border: none; 
+  padding: 18px; 
+  border-radius: var(--radius); 
   width: 100%; 
   font-size: 16px; 
   font-weight: 700; 
   cursor: pointer; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* カードと同じ軽い影 */
   transition: all 0.2s ease;
   display: flex;
   justify-content: center;
@@ -50,7 +51,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 }
 
 .btn-update:active {
-  background: rgba(0, 122, 255, 0.1);
+  background: #ebebeb; /* 押した時だけ少し暗く */
   transform: scale(0.98);
 }
 
