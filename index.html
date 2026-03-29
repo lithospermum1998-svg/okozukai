@@ -39,10 +39,12 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <div class="container">
   <div class="progress-box">
     <div style="font-size:10px; opacity:0.7; display:flex; justify-content:space-between; font-weight:bold;">
-      <span>1,000万円プロジェクト</span>
       <div>
-        <span id="fxRateDisplay" style="color:#ffffff; margin-right:10px;">USD/JPY: ---</span>
-        <span id="progRate">0%</span>
+        <span>Project 10M</span>
+        <span id="progRate" style="margin-left:4px;">(0%)</span>
+      </div>
+      <div>
+        <span id="fxRateDisplay" style="color:#ffffff;">USD/JPY: ---</span>
       </div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
@@ -167,7 +169,7 @@ function render() {
   document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.7; font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
   
   const prog = Math.min((totalValue / 10000000) * 100, 100);
-  document.getElementById('progRate').textContent = prog.toFixed(2) + "%";
+  document.getElementById('progRate').textContent = "(" + prog.toFixed(2) + "%)";
   document.getElementById('progressBar').style.width = prog + "%";
 }
 
