@@ -30,7 +30,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
 
-/* 枠線なし白ボタンデザイン */
+/* 左側に青いラベルラインを入れた白ボタン */
 .btn-update { 
   background: var(--card-bg); 
   color: var(--accent); 
@@ -41,17 +41,21 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
   font-size: 16px; 
   font-weight: 700; 
   cursor: pointer; 
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* カードと同じ軽い影 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
   transition: all 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
   margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  /* ここで左側のラインを追加 */
+  border-left: 5px solid var(--accent);
 }
 
 .btn-update:active {
-  background: #ebebeb; /* 押した時だけ少し暗く */
+  background: #ebebeb; 
   transform: scale(0.98);
 }
 
