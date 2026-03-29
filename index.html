@@ -3,36 +3,34 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v3.2 - Minimalist</title>
+<title>MONEY LOG v3.3</title>
 <style>
 :root {
-  --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #636366; 
-  --radius: 16px; --input-bg: #f2f2f7; --input-border: #e5e5ea;
-  --accent: #007aff; --pos-color: #248a3d; --neg-color: #d70015;
+  --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
+  --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
+  --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30;
 }
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 上部サマリー：コントラストを抑えたダークグレー */
-.progress-box { background: #2c2c2e; color: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
-.progress-bar-container { background: #48484a; height: 4px; border-radius: 2px; margin: 12px 0; overflow: hidden; }
-#progressBar { background: #8e8e93; height: 100%; width: 0%; transition: width 0.5s; }
-.total-val { font-size: 34px; font-weight: 800; display: block; margin: 4px 0; letter-spacing: -1px; }
-.summary-stats { display: flex; justify-content: center; gap: 15px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
-.payout-val { font-size: 15px; font-weight: 600; color: #ffffff; opacity: 0.9; }
+/* 黒い島：情報を整理しつつ視認性を確保 */
+.progress-box { background: #1c1c21; color: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
+.progress-bar-container { background: #3a3a3c; height: 5px; border-radius: 3px; margin: 12px 0; overflow: hidden; }
+#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s; }
+.total-val { font-size: 32px; font-weight: 800; display: block; margin: 4px 0; letter-spacing: -0.5px; }
+.summary-stats { display: flex; justify-content: center; gap: 12px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
 
-/* カード：色を排除し、余白で整理 */
-.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.nisa-tag { font-size: 10px; font-weight: bold; color: var(--text-sub); border: 1px solid var(--input-border); padding: 1px 6px; border-radius: 4px; }
-.stock-name { font-weight: 700; font-size: 15px; color: var(--text-main); }
-.main-price { font-size: 24px; font-weight: 800; margin-top: 4px; letter-spacing: -0.5px; }
+/* カード：ラベルをしっかり見せる */
+.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.nisa-tag { font-size: 10px; font-weight: 800; color: var(--text-sub); border: 1px solid #e5e5ea; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+.stock-name { font-weight: 800; font-size: 15px; color: var(--text-main); }
+.main-price { font-size: 24px; font-weight: 800; margin-top: 4px; }
 
-/* 入力欄：よりフラットに */
 .input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 15px; }
-.input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 4px; display: block; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); -webkit-appearance: none; font-weight: 500; color: var(--text-main); }
+.input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 4px; display: block; font-weight: 600; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
 
-.btn-update { background: #3a3a3c; color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 600; cursor: pointer; }
+.btn-update { background: #48484a; color: white; border: none; padding: 18px; border-radius: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 </style>
@@ -40,10 +38,10 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <body>
 <div class="container">
   <div class="progress-box">
-    <div style="font-size:10px; opacity:0.6; display:flex; justify-content:space-between; font-weight:600;">
-      <span>1,000万円プロジェクト</span>
+    <div style="font-size:10px; opacity:0.7; display:flex; justify-content:space-between; font-weight:bold;">
+      <span>1,000万円 PROJECT</span>
       <div>
-        <span id="fxRateDisplay" style="margin-right:10px;">USD/JPY: ---</span>
+        <span id="fxRateDisplay" style="color:#ffd60a; margin-right:10px;">USD/JPY: ---</span>
         <span id="progRate">0%</span>
       </div>
     </div>
@@ -57,8 +55,8 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     </div>
     
     <div style="padding-top:12px; border-top:1px solid rgba(255,255,255,0.1)">
-      <div style="font-size:10px; opacity:0.5;">全売却時の推定手取り</div>
-      <div id="payoutDisplay" class="payout-val">¥0</div>
+      <div style="font-size:10px; opacity:0.6; font-weight:600;">全売却時の手取り (推定)</div>
+      <div id="payoutDisplay" style="font-size:16px; font-weight:700; color:#ffd60a;">¥0</div>
     </div>
   </div>
 
@@ -68,7 +66,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBwS13vfLF_Ndut84W1Sjujp538VOoSNa_18dtxJOqT4y6ubnpOEVm6aUTLzksI6sl/exec"; 
-const STORAGE_KEY = "money_log_v3.2_minimal";
+const STORAGE_KEY = "money_log_v3.3";
 
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: 0 },
@@ -124,25 +122,25 @@ function render() {
           <span class="stock-name">${s.name}</span>
           <span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:4px;">
+        <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:6px;">
           <span class="main-price">¥${valuation.toLocaleString()}</span>
           <div style="text-align:right">
-            <div style="font-size:12px; font-weight:700; color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-              ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${parseFloat(s.diff || 0).toFixed(2)}%)
+            <div style="font-size:13px; font-weight:800; color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+              前日: ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()}
             </div>
-            <div style="font-size:11px; font-weight:600; color:${totalProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}; opacity:0.8;">
-              通算: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()}
+            <div style="font-size:11px; font-weight:700; color:${totalProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}; opacity:0.8;">
+              通算: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate}%)
             </div>
           </div>
         </div>
         <div class="input-grid">
-          <div class="input-group"><span class="input-label">価格</span>
+          <div class="input-group"><span class="input-label">価格/基準価額</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.price}" onchange="updateItem(${i},'price',this.value)">
           </div>
           <div class="input-group"><span class="input-label">数量</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
           </div>
-          <div class="input-group"><span class="input-label">元本</span>
+          <div class="input-group"><span class="input-label">元本(¥)</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
           </div>
         </div>
@@ -156,16 +154,14 @@ function render() {
   document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
   document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
   
-  const dayEl = document.getElementById('totalDayDiff');
-  dayEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
-  dayEl.textContent = `前日 ${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()} (${dayRate}%)`;
+  document.getElementById('totalDayDiff').style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+  document.getElementById('totalDayDiff').textContent = `前日 ${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()} (${dayRate}%)`;
 
-  const profEl = document.getElementById('totalProfitAll');
-  profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
-  profEl.textContent = `通算 ${overallProfit >= 0 ? '+' : ''}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
+  document.getElementById('totalProfitAll').style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+  document.getElementById('totalProfitAll').textContent = `通算 ${overallProfit >= 0 ? '+' : ''}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.5; font-weight:400;">(税抜)</span>`;
+  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.6; font-weight:normal; color:white;">(税抜)</span>`;
   
   const prog = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById('progRate').textContent = prog.toFixed(2) + "%";
