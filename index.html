@@ -47,6 +47,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
     
+    <div style="font-size:10px; opacity:0.7; font-weight:600; margin-bottom:-4px;">Total Assets</div>
     <span id="totalDisplay" class="total-val">¥0</span>
     
     <div class="summary-stats">
@@ -55,7 +56,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     </div>
     
     <div style="padding-top:12px; border-top:1px solid rgba(255,255,255,0.15)">
-      <div style="font-size:10px; opacity:0.7; font-weight:600;">全売却時の手取り (推定税引後)</div>
+      <div style="font-size:10px; opacity:0.7; font-weight:600;">Net (Est.)</div>
       <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
@@ -120,34 +121,33 @@ function render() {
       <div class="stock-card" style="border-left: 5px solid ${s.isNisa ? 'var(--nisa-color)' : 'var(--tax-color)'}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="stock-name">${s.name}</span>
-          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : '特定'}</span>
+          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : 'Taxable'}</span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:4px;">
           <span class="main-price">¥${valuation.toLocaleString()}</span>
           <div style="text-align:right">
             <div style="font-size:12px; font-weight:bold; color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-              前日: ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${parseFloat(s.diff || 0).toFixed(2)}%)
+              Prev: ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${parseFloat(s.diff || 0).toFixed(2)}%)
             </div>
             <div style="font-size:11px; font-weight:bold; color:${totalProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-              通算: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate}%)
+              Total: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate}%)
             </div>
           </div>
         </div>
         <div class="input-grid">
-          <div class="input-group"><span class="input-label">${s.isStock ? "価格($)" : "基準価額"}</span>
+          <div class="input-group"><span class="input-label">${s.isStock ? "Price($)" : "NAV(¥)"}</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.price}" onchange="updateItem(${i},'price',this.value)">
           </div>
-          <div class="input-group"><span class="input-label">数量</span>
+          <div class="input-group"><span class="input-label">Qty</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
           </div>
-          <div class="input-group"><span class="input-label">元本(¥)</span>
+          <div class="input-group"><span class="input-label">Cost(¥)</span>
             <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
           </div>
         </div>
       </div>`;
   }).join('');
 
-  // サマリー表示の計算
   const overallProfit = totalValue - totalCost;
   const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100).toFixed(2) : 0;
   const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100).toFixed(2) : 0;
@@ -155,16 +155,19 @@ function render() {
   document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
   document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
   
+  // サマリーの Prev 表記変更
   const dayEl = document.getElementById('totalDayDiff');
   dayEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
-  dayEl.textContent = `前日: ${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()} (${dayRate}%)`;
+  dayEl.textContent = `Prev: ${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()} (${dayRate}%)`;
 
+  // サマリーの Total 表記変更
   const profEl = document.getElementById('totalProfitAll');
   profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
-  profEl.textContent = `通算: ${overallProfit >= 0 ? '+' : ''}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
+  profEl.textContent = `Total: ${overallProfit >= 0 ? '+' : ''}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.7; font-weight:normal;">(税: ¥${estTax.toLocaleString()})</span>`;
+  // 税額表示も英語(Tax)に
+  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.7; font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
   
   const prog = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById('progRate').textContent = prog.toFixed(2) + "%";
