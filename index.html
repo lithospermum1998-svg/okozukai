@@ -3,28 +3,41 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>MONEY LOG v2.9</title>
+<title>MONEY LOG v3.0 - NISA/FX Support</title>
 <style>
 :root {
   --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
   --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
-  --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30;
+  --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30; --nisa-color: #34c759; --tax-color: #ff9500;
 }
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
-.progress-box { background: #2c2c2e; color: white; border-radius: 14px; padding: 18px; margin-bottom: 15px; text-align: center; }
-.progress-bar-container { background: #48484a; height: 6px; border-radius: 3px; margin: 10px 0; overflow: hidden; }
-#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.3s; }
-.total-val { font-size: 28px; font-weight: 800; display: block; margin: 10px 0; }
+.progress-box { background: #1c1c1e; color: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.progress-bar-container { background: #3a3a3c; height: 6px; border-radius: 3px; margin: 12px 0; overflow: hidden; }
+#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+.total-val { font-size: 32px; font-weight: 800; display: block; margin: 8px 0; letter-spacing: -1px; }
 .payout-val { font-size: 16px; font-weight: 700; color: #ffd60a; }
-.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-.stock-name { font-weight: 800; font-size: 16px; margin-bottom: 6px; display: block; }
-.main-price { font-size: 24px; font-weight: 800; }
-.day-diff { font-size: 12px; font-weight: bold; margin-left: 6px; }
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 10px; }
-.input-label { font-size: 9px; color: var(--text-sub); margin-bottom: 2px; display: block; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); -webkit-appearance: none; }
-.btn-update { background: #636366; color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-size: 15px; font-weight: 700; cursor: pointer; }
+
+.stock-card { 
+  background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden;
+}
+.nisa-tag { font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 6px; }
+.tag-nisa { background: #e1f7e6; color: var(--nisa-color); }
+.tag-taxable { background: #fff4e5; color: var(--tax-color); }
+
+.stock-name { font-weight: 800; font-size: 15px; color: var(--text-main); }
+.main-price { font-size: 24px; font-weight: 800; margin-top: 4px; display: inline-block; }
+.diff-container { text-align: right; }
+.day-diff { font-size: 12px; font-weight: bold; }
+.total-profit { font-size: 11px; font-weight: bold; margin-top: 2px; }
+
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 12px; }
+.input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
+
+.btn-update { background: #636366; color: white; border: none; padding: 18px; border-radius: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.btn-update:active { background: #48484a; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 </style>
@@ -32,50 +45,65 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 <body>
 <div class="container">
   <div class="progress-box">
-    <div style="font-size:10px; opacity:0.6; display:flex; justify-content:space-between">
-      <span>1,000万円プロジェクト進捗</span><span id="progRate">0%</span>
+    <div style="font-size:10px; opacity:0.7; display:flex; justify-content:space-between; font-weight:bold;">
+      <span>1,000万円プロジェクト</span>
+      <div>
+        <span id="fxRateDisplay" style="color:#ffd60a; margin-right:10px;">USD/JPY: ---</span>
+        <span id="progRate">0%</span>
+      </div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
     <span id="totalDisplay" class="total-val">¥0</span>
-    <div id="dayDiffDisplay" style="font-size:13px; font-weight:bold"></div>
-    <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1)">
-      <div style="font-size:10px; opacity:0.6">全売却時の手取り (税込)</div>
+    <div id="dayDiffDisplay" style="font-size:14px; font-weight:bold; margin-bottom:10px;"></div>
+    
+    <div style="padding-top:12px; border-top:1px solid rgba(255,255,255,0.15)">
+      <div style="font-size:10px; opacity:0.7; font-weight:600;">全売却時の手取り (推定税引後)</div>
       <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
+
   <div id="stockList"></div>
   <button id="updateBtn" class="btn-update" onclick="fetchAll()"><span>↻</span> update</button>
 </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBwS13vfLF_Ndut84W1Sjujp538VOoSNa_18dtxJOqT4y6ubnpOEVm6aUTLzksI6sl/exec"; 
-const STORAGE_KEY = "money_log_v2.9_final";
+const STORAGE_KEY = "money_log_v3.0_final";
 
-// 初期データ（LocalStorageになければこれを使用）
+// 初期データ（isNisaを追加）
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-  { name: "楽天・プラス・SOX", code: "2931123A", price: 19994, holding: 59845, cost: 121180, isStock: false, diff: 0 },
-  { name: "PayPay証券(株)", code: "PAYP", price: 23.77, holding: 1.86131, cost: 4749, isStock: true, rate: 160, diff: 0 }
+  { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: 0 },
+  { name: "PayPay証券(株)", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: 160, diff: 0 }
 ];
+
+let currentUsdJpy = 160.00;
 
 async function fetchAll() {
   const btn = document.getElementById('updateBtn');
   btn.classList.add('loading');
   btn.innerHTML = '<span>↻</span> updating...';
 
-  for (let s of data) {
-    try {
-      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-      const json = await res.json();
-      if (json.status === "Success") {
-        s.price = json.price;
-        s.diff = json.diff;
-        if (json.rate) s.rate = json.rate;
-      }
-    } catch (e) { console.error("Fetch Error:", e); }
+  try {
+    // 全銘柄を並列でフェッチ（高速化）
+    await Promise.all(data.map(async (s) => {
+      try {
+        const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+        const json = await res.json();
+        if (json.status === "Success") {
+          s.price = json.price;
+          s.diff = json.diff;
+          if (json.rate) {
+            s.rate = json.rate;
+            currentUsdJpy = json.rate; // 最新レートを更新
+          }
+        }
+      } catch (e) { console.error(`Error fetching ${s.name}:`, e); }
+    }));
+  } finally {
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>↻</span> update';
+    saveAndRender();
   }
-  btn.classList.remove('loading');
-  btn.innerHTML = '<span>↻</span> update';
-  saveAndRender();
 }
 
 function saveAndRender() { 
@@ -85,38 +113,57 @@ function saveAndRender() {
 
 function render() {
   const list = document.getElementById('stockList');
-  let totalValue = 0, totalCost = 0, dayDiffSum = 0;
+  let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
 
   list.innerHTML = data.map((s, i) => {
-    // 評価額の計算: 投信は(基準価額 * 数量 / 10000)、株式は(ドル価格 * レート * 数量)
-    const currentPriceYen = s.isStock ? (s.price * (s.rate || 160)) : s.price;
+    // 評価額計算
+    const currentPriceYen = s.isStock ? (s.price * (s.rate || currentUsdJpy)) : s.price;
     const valuation = s.isStock ? Math.floor(currentPriceYen * s.holding) : Math.floor(currentPriceYen * s.holding / 10000);
     
     totalValue += valuation; 
     totalCost += s.cost;
     
-    // 前日比の計算
+    // 前日比計算（近似値）
     const dVal = Math.floor(valuation * (parseFloat(s.diff || 0) / 100));
     dayDiffSum += dVal;
 
+    // 通算損益
+    const totalProfit = valuation - s.cost;
+    const totalProfitRate = s.cost > 0 ? (totalProfit / s.cost * 100).toFixed(2) : 0;
+
+    // 課税対象額（NISA以外かつ利益が出ている場合のみ）
+    if (!s.isNisa) {
+      taxableProfit += totalProfit;
+    }
+
     return `
-      <div class="stock-card">
-        <div class="stock-name">${s.name}</div>
-        <div class="price-row">
-          <span class="main-price">¥${valuation.toLocaleString()}</span>
-          <span class="day-diff" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-            ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${s.diff || 0}%)
-          </span>
+      <div class="stock-card" style="border-left: 5px solid ${s.isNisa ? 'var(--nisa-color)' : 'var(--tax-color)'}">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="stock-name">${s.name}</span>
+          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : '特定'}</span>
         </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:4px;">
+          <span class="main-price">¥${valuation.toLocaleString()}</span>
+          <div class="diff-container">
+            <div class="day-diff" style="color:${s.diff >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+              前日: ${dVal >= 0 ? '+' : ''}${dVal.toLocaleString()} (${parseFloat(s.diff || 0).toFixed(2)}%)
+            </div>
+            <div class="total-profit" style="color:${totalProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+              通算: ${totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()} (${totalProfitRate}%)
+            </div>
+          </div>
+        </div>
+
         <div class="input-grid">
-          <div class="input-group"><span class="input-label">${s.isStock ? "現在値($)" : "基準価額"}</span>
-            <input class="ios-input" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)">
+          <div class="input-group"><span class="input-label">${s.isStock ? "価格($)" : "基準価額"}</span>
+            <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.price}" onchange="updateItem(${i},'price',this.value)">
           </div>
           <div class="input-group"><span class="input-label">数量</span>
-            <input class="ios-input" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
+            <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
           </div>
           <div class="input-group"><span class="input-label">元本(¥)</span>
-            <input class="ios-input" type="number" step="any" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
+            <input class="ios-input" type="number" step="any" inputmode="decimal" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
           </div>
         </div>
       </div>`;
@@ -124,17 +171,22 @@ function render() {
 
   // 上部サマリーの更新
   document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
+  document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
   
-  const profit = totalValue - totalCost;
-  const tax = profit > 0 ? profit * 0.20315 : 0;
-  document.getElementById('payoutDisplay').textContent = `¥${Math.floor(totalValue - tax).toLocaleString()}`;
+  // 税金計算（特定口座の合算利益に対してのみ課税）
+  const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
+  const finalPayout = totalValue - estTax;
+  document.getElementById('payoutDisplay').innerHTML = `
+    ¥${finalPayout.toLocaleString()} 
+    <span style="font-size:10px; opacity:0.7; font-weight:normal;">(特定口座分 税: ¥${estTax.toLocaleString()})</span>
+  `;
   
+  // 進捗
   const prog = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById('progRate').textContent = prog.toFixed(2) + "%";
-  
-  const pb = document.getElementById('progressBar');
-  if(pb) pb.style.width = prog + "%";
+  document.getElementById('progressBar').style.width = prog + "%";
 
+  // 合計の前日比
   const diffEl = document.getElementById('dayDiffDisplay');
   diffEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
   diffEl.textContent = `${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()}`;
@@ -145,7 +197,6 @@ function updateItem(i, field, val) {
   saveAndRender(); 
 }
 
-// 初回起動
 render();
 </script>
 </body>
