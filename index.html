@@ -41,13 +41,13 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     <div style="font-size:10px; opacity:0.7; display:flex; justify-content:space-between; font-weight:bold;">
       <span>1,000万円プロジェクト</span>
       <div>
-        <span id="fxRateDisplay" style="color:#ffd60a; margin-right:10px;">USD/JPY: ---</span>
+        <span id="fxRateDisplay" style="color:#ffffff; margin-right:10px;">USD/JPY: ---</span>
         <span id="progRate">0%</span>
       </div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
     
-    <div style="font-size:10px; opacity:0.7; font-weight:600; margin-bottom:-4px;">Total Assets</div>
+    <div style="font-size:12px; opacity:0.8; font-weight:700; margin-bottom:-2px;">Total Assets</div>
     <span id="totalDisplay" class="total-val">¥0</span>
     
     <div class="summary-stats">
@@ -56,7 +56,7 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
     </div>
     
     <div style="padding-top:12px; border-top:1px solid rgba(255,255,255,0.15)">
-      <div style="font-size:10px; opacity:0.7; font-weight:600;">Net (Est.)</div>
+      <div style="font-size:10px; color:#ffd60a; font-weight:700; margin-bottom:2px;">Net (Est.)</div>
       <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
@@ -121,7 +121,7 @@ function render() {
       <div class="stock-card" style="border-left: 5px solid ${s.isNisa ? 'var(--nisa-color)' : 'var(--tax-color)'}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="stock-name">${s.name}</span>
-          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : 'Taxable'}</span>
+          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : '特定'}</span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:4px;">
           <span class="main-price">¥${valuation.toLocaleString()}</span>
@@ -155,18 +155,15 @@ function render() {
   document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
   document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
   
-  // サマリーの Prev 表記変更
   const dayEl = document.getElementById('totalDayDiff');
   dayEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
   dayEl.textContent = `Prev: ${dayDiffSum >= 0 ? '+' : ''}${dayDiffSum.toLocaleString()} (${dayRate}%)`;
 
-  // サマリーの Total 表記変更
   const profEl = document.getElementById('totalProfitAll');
   profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
   profEl.textContent = `Total: ${overallProfit >= 0 ? '+' : ''}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  // 税額表示も英語(Tax)に
   document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; opacity:0.7; font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
   
   const prog = Math.min((totalValue / 10000000) * 100, 100);
