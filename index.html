@@ -30,7 +30,32 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
 .input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
 .ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
 
-.btn-update { background: #636366; color: white; border: none; padding: 18px; border-radius: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+/* アップグレードしたボタンデザイン */
+.btn-update { 
+  background: rgba(28, 28, 30, 0.85); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--accent); 
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  padding: 18px; 
+  border-radius: 16px; 
+  width: 100%; 
+  font-size: 16px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-update:active {
+  transform: scale(0.97);
+  background: rgba(44, 44, 46, 0.95);
+}
+
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading span { display: inline-block; animation: spin 1s linear infinite; }
 </style>
