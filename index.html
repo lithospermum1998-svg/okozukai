@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
@@ -13,77 +14,78 @@
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
 
-.progress-box { 
-  background: var(--card-bg); 
-  color: var(--text-main); 
-  border-radius: 20px; 
-  padding: 20px; 
-  margin-bottom: 15px; 
-  text-align: center; 
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-  border-left: 5px solid var(--text-main);
-  overflow: hidden;
+.progress-box {
+background: var(–card-bg);
+color: var(–text-main);
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 15px;
+text-align: center;
+box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+border-left: 5px solid var(–text-main);
+overflow: hidden;
 }
 .progress-bar-container { background: #e5e5ea; height: 6px; border-radius: 3px; margin: 12px 0; overflow: hidden; }
-#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+#progressBar { background: var(–accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
 .total-val { font-size: 34px; font-weight: 800; display: block; margin: 4px 0; letter-spacing: -1px; }
 .summary-stats { display: flex; justify-content: center; gap: 15px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
 
-.payout-box { 
-  background: #fff9e6; 
-  padding: 10px;
-  border-radius: 12px;
-  margin-top: 12px;
+.payout-box {
+background: #fff9e6;
+padding: 10px;
+border-radius: 12px;
+margin-top: 12px;
 }
 .payout-val { font-size: 16px; font-weight: 700; color: #b8860b; }
 
-.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+.stock-card { background: var(–card-bg); border-radius: var(–radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
 .nisa-tag { font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 6px; }
-.tag-nisa { background: #e1f7e6; color: var(--nisa-color); }
-.tag-taxable { background: #fff4e5; color: var(--tax-color); }
+.tag-nisa { background: #e1f7e6; color: var(–nisa-color); }
+.tag-taxable { background: #fff4e5; color: var(–tax-color); }
 
 .stock-name { font-weight: 800; font-size: 15px; }
 
 .main-price { font-size: 24px; font-weight: 800; margin-top: 4px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 12px; }
-.input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
-.ios-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+.input-label { font-size: 10px; color: var(–text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(–input-border); border-radius: 10px; background: var(–input-bg); -webkit-appearance: none; font-weight: 600; }
+.ios-input:focus { outline: none; border-color: var(–accent); background: #fff; }
 
 /* holding=0のとき警告スタイル */
-.ios-input.warn { border-color: var(--neg-color); background: #fff5f5; }
+.ios-input.warn { border-color: var(–neg-color); background: #fff5f5; }
 
-.btn-update { 
-  background: var(--card-bg); 
-  color: var(--accent); 
-  border: none; 
-  padding: 18px; 
-  border-radius: var(--radius); 
-  width: 100%; 
-  font-size: 16px; 
-  font-weight: 700; 
-  cursor: pointer; 
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-  transition: all 0.2s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  border-left: 5px solid var(--accent);
+.btn-update {
+background: var(–card-bg);
+color: var(–accent);
+border: none;
+padding: 18px;
+border-radius: var(–radius);
+width: 100%;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+transition: all 0.2s ease;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 8px;
+margin-top: 10px;
+border-left: 5px solid var(–accent);
 }
 .btn-update:active { background: #ebebeb; transform: scale(0.98); }
 .btn-update:disabled { opacity: 0.5; pointer-events: none; }
 
 /* 最終更新時刻 */
-.last-updated { font-size: 10px; color: var(--text-sub); text-align: center; margin-top: 6px; }
+.last-updated { font-size: 10px; color: var(–text-sub); text-align: center; margin-top: 6px; }
 
 /* fetch失敗バナー */
-.error-banner { background: #fff0f0; color: var(--neg-color); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; display: none; }
+.error-banner { background: #fff0f0; color: var(–neg-color); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; display: none; }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading-icon { display: inline-block; animation: spin 1s linear infinite; }
 </style>
+
 </head>
 <body>
 <div class="container">
@@ -101,19 +103,22 @@ body { font-family: -apple-system, sans-serif; background: var(--bg-color); marg
       </div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
-    
-    <div class="stock-name" style="color:var(--text-main); margin-bottom:4px;">Total Assets</div>
-    <span id="totalDisplay" class="total-val">¥0</span>
-    
-    <div class="summary-stats">
-      <span id="totalDayDiff">--</span>
-      <span id="totalProfitAll">--</span>
-    </div>
-    
-    <div class="payout-box">
-      <div style="font-size:10px; color:#b8860b; font-weight:700; margin-bottom:2px;">Net (Est.)</div>
-      <div id="payoutDisplay" class="payout-val">¥0</div>
-    </div>
+
+```
+<div class="stock-name" style="color:var(--text-main); margin-bottom:4px;">Total Assets</div>
+<span id="totalDisplay" class="total-val">¥0</span>
+
+<div class="summary-stats">
+  <span id="totalDayDiff">--</span>
+  <span id="totalProfitAll">--</span>
+</div>
+
+<div class="payout-box">
+  <div style="font-size:10px; color:#b8860b; font-weight:700; margin-bottom:2px;">Net (Est.)</div>
+  <div id="payoutDisplay" class="payout-val">¥0</div>
+</div>
+```
+
   </div>
 
   <div id="stockList"></div>
@@ -363,5 +368,6 @@ function updateItem(i, field, val) {
 // 初回描画
 render();
 </script>
+
 </body>
 </html>
