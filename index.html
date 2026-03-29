@@ -1,86 +1,113 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>MONEY LOG v3.2</title>
 <style>
+/* CSS変数の修正：ハイフンを標準のものに直しました */
 :root {
-  --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; 
-  --radius: 16px; --input-bg: #f9f9fb; --input-border: #e5e5ea;
-  --accent: #007aff; --pos-color: #34c759; --neg-color: #ff3b30; --nisa-color: #34c759; --tax-color: #ff9500;
+  --bg-color: #f2f2f7; 
+  --card-bg: #ffffff; 
+  --text-main: #1c1c1e; 
+  --text-sub: #8e8e93; 
+  --radius: 16px; 
+  --input-bg: #f9f9fb; 
+  --input-border: #e5e5ea;
+  --accent: #007aff; 
+  --pos-color: #34c759; 
+  --neg-color: #ff3b30; 
+  --nisa-color: #34c759; 
+  --tax-color: #ff9500;
 }
 body { font-family: -apple-system, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); line-height: 1.2; padding-bottom: 80px; }
 .container { max-width: 420px; margin: 0 auto; }
 
 .progress-box {
-background: var(–card-bg);
-color: var(–text-main);
+background: var(--card-bg);
+color: var(--text-main);
 border-radius: 20px;
 padding: 20px;
 margin-bottom: 15px;
 text-align: center;
 box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-border-left: 5px solid var(–text-main);
+border-left: 5px solid var(--text-main);
 overflow: hidden;
 }
 .progress-bar-container { background: #e5e5ea; height: 6px; border-radius: 3px; margin: 12px 0; overflow: hidden; }
-#progressBar { background: var(–accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
 .total-val { font-size: 34px; font-weight: 800; display: block; margin: 4px 0; letter-spacing: -1px; }
 .summary-stats { display: flex; justify-content: center; gap: 15px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
 
+/* --- 修正箇所：Net(Est.)ボックスを灰色に --- */
 .payout-box {
-background: #fff9e6;
-padding: 10px;
-border-radius: 12px;
-margin-top: 12px;
+  background: #e5e5ea; /* 薄いグレー背景 */
+  padding: 10px;
+  border-radius: 12px;
+  margin-top: 12px;
 }
-.payout-val { font-size: 16px; font-weight: 700; color: #b8860b; }
+.payout-val { 
+  font-size: 16px; 
+  font-weight: 700; 
+  color: var(--text-main); /* 文字色を黒に */
+}
 
-.stock-card { background: var(–card-bg); border-radius: var(–radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
-.nisa-tag { font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 6px; }
-.tag-nisa { background: #e1f7e6; color: var(–nisa-color); }
-.tag-taxable { background: #fff4e5; color: var(–tax-color); }
+.stock-card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+
+/* --- 修正箇所：NISA/特定タグを灰色に --- */
+.nisa-tag { 
+  font-size: 10px; 
+  font-weight: bold; 
+  padding: 2px 8px; 
+  border-radius: 6px; 
+  background: #e5e5ea; /* グレー背景 */
+  color: var(--text-main); /* 黒文字 */
+}
+/* 個別色の指定を無効化 */
+.tag-nisa, .tag-taxable { 
+  background: #e5e5ea; 
+  color: var(--text-main); 
+}
 
 .stock-name { font-weight: 800; font-size: 15px; }
 
 .main-price { font-size: 24px; font-weight: 800; margin-top: 4px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 8px; margin-top: 12px; }
-.input-label { font-size: 10px; color: var(–text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
-.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(–input-border); border-radius: 10px; background: var(–input-bg); -webkit-appearance: none; font-weight: 600; }
-.ios-input:focus { outline: none; border-color: var(–accent); background: #fff; }
+.input-label { font-size: 10px; color: var(--text-sub); margin-bottom: 3px; display: block; font-weight: 600; }
+.ios-input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 14px; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); -webkit-appearance: none; font-weight: 600; }
+.ios-input:focus { outline: none; border-color: var(--accent); background: #fff; }
 
 /* holding=0のとき警告スタイル */
-.ios-input.warn { border-color: var(–neg-color); background: #fff5f5; }
+.ios-input.warn { border-color: var(--neg-color); background: #fff5f5; }
 
+/* --- 修正箇所：Updateボタンのテキスト色を灰色に --- */
 .btn-update {
-background: var(–card-bg);
-color: var(–accent);
-border: none;
-padding: 18px;
-border-radius: var(–radius);
-width: 100%;
-font-size: 16px;
-font-weight: 700;
-cursor: pointer;
-box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-transition: all 0.2s ease;
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 8px;
-margin-top: 10px;
-border-left: 5px solid var(–accent);
+  background: var(--card-bg); /* ボタンの色はそのまま（白） */
+  color: #8e8e93; /* テキストとアイコンの色をグレーに */
+  border: none;
+  padding: 18px;
+  border-radius: var(--radius);
+  width: 100%;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  border-left: 5px solid #8e8e93; /* 左端のアクセントもグレーに */
 }
 .btn-update:active { background: #ebebeb; transform: scale(0.98); }
 .btn-update:disabled { opacity: 0.5; pointer-events: none; }
 
 /* 最終更新時刻 */
-.last-updated { font-size: 10px; color: var(–text-sub); text-align: center; margin-top: 6px; }
+.last-updated { font-size: 10px; color: var(--text-sub); text-align: center; margin-top: 6px; }
 
 /* fetch失敗バナー */
-.error-banner { background: #fff0f0; color: var(–neg-color); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; display: none; }
+.error-banner { background: #fff0f0; color: var(--neg-color); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; display: none; }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading-icon { display: inline-block; animation: spin 1s linear infinite; }
@@ -113,7 +140,7 @@ border-left: 5px solid var(–accent);
 </div>
 
 <div class="payout-box">
-  <div style="font-size:10px; color:#b8860b; font-weight:700; margin-bottom:2px;">Net (Est.)</div>
+  <div style="font-size:10px; color:var(--text-sub); font-weight:700; margin-bottom:2px;">Net (Est.)</div>
   <div id="payoutDisplay" class="payout-val">¥0</div>
 </div>
 
@@ -159,7 +186,7 @@ let data = (() => {
   }
 })();
 
-// 銘柄ごとのカスタムカラー
+// 銘柄ごとのカスタムカラー（タグが灰色になったので、カードの左端のアクセントカラーとして機能します）
 const BRAND_COLORS = {
   "2931123A": "#8B0000",  // 楽天SOX: 黒味がかった赤
   "PAYP":     "#ff3b30",  // PayPay: 赤
@@ -243,7 +270,6 @@ function calcValuation(s) {
     return Math.floor(s.price * rate * s.holding);
   } else {
     // 投資信託: NAV(円/10000口) × holding(口数) ÷ 10000
-    // holding単位: 口（例: 59845口 → 59845/10000口分のNAVで評価）
     return Math.floor(s.price * s.holding / 10000);
   }
 }
@@ -276,7 +302,8 @@ function render() {
     // holding=0警告
     const holdingWarn = s.holding === 0;
 
-    const brandColor = BRAND_COLORS[s.code] || (s.isNisa ? 'var(--nisa-color)' : 'var(--tax-color)');
+    // ブランドカラーを左端のアクセントに使用
+    const brandColor = BRAND_COLORS[s.code] || '#e5e5ea'; 
 
     const prevDiffHtml = hasDiff
       ? `<div style="font-size:12px; font-weight:bold; color:${dVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
@@ -288,7 +315,7 @@ function render() {
       <div class="stock-card" style="border-left: 5px solid ${brandColor}">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="stock-name">${s.name}</span>
-          <span class="nisa-tag ${s.isNisa ? 'tag-nisa' : 'tag-taxable'}">${s.isNisa ? 'NISA' : '特定'}</span>
+          <span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:4px;">
           <span class="main-price">${valuation !== null ? '¥' + valuationDisplay.toLocaleString() : '¥---'}</span>
@@ -356,7 +383,6 @@ function render() {
 // --- 入力更新 ---
 function updateItem(i, field, val) {
   const parsed = parseFloat(val);
-  // NaN or 空入力 → 元の値を保持（0にしない）
   if (!isNaN(parsed)) {
     data[i][field] = parsed;
     saveAndRender();
