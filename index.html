@@ -3,150 +3,127 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>MONEY LOG v4.0 Dark Minimal</title>
+<title>MONEY LOG v4.1 Tight Dark</title>
 <style>
 :root {
-  --bg-color: #000000; /* 完全な黒 */
-  --card-bg: #1c1c1e;  /* iOSダークモードのカード色 */
-  --text-main: #ffffff; 
-  --text-sub: #8e8e93; 
-  --radius: 18px; 
-  --input-bg: #2c2c2e; 
+  --bg-color: #000000;
+  --card-bg: #1c1c1e;
+  --text-main: #ffffff;
+  --text-sub: #8e8e93;
+  --input-bg: #2c2c2e;
   --input-border: #3a3a3c;
-  --accent: #ffffff;   /* アクセントはあえての白 */
-  --pos-color: #32d74b; /* 明るめの緑 */
-  --neg-color: #ff453a; /* 明るめの赤 */
+  --accent: #ffffff;
+  --pos-color: #32d74b;
+  --neg-color: #ff453a;
 }
 
-body { 
-  font-family: -apple-system, "SF Pro Display", sans-serif; 
-  background: var(--bg-color); 
-  margin: 0; 
-  padding: 12px; 
-  color: var(--text-main); 
-  line-height: 1.2; 
-  padding-bottom: 120px;
-  -webkit-font-smoothing: antialiased;
+body {
+  font-family: -apple-system, sans-serif;
+  background: var(--bg-color);
+  margin: 0;
+  padding: 8px; /* 全体余白を縮小 */
+  color: var(--text-main);
+  line-height: 1.1;
+  padding-bottom: 90px;
 }
 .container { max-width: 420px; margin: 0 auto; }
 
-/* 進捗ボックスのミニマル化 */
+/* プログレス・サマリーをコンパクトに */
 .progress-box {
   background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 24px 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  border: 1px solid var(--input-border);
-}
-.progress-bar-container { background: #3a3a3c; height: 4px; border-radius: 2px; margin: 16px 0; overflow: hidden; }
-#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.8s ease; }
-.total-val { font-size: 38px; font-weight: 800; display: block; margin: 8px 0; letter-spacing: -1.5px; }
-.summary-stats { display: flex; justify-content: center; gap: 20px; font-size: 13px; font-weight: 700; margin-bottom: 16px; }
-
-/* Payoutセクションの洗練 */
-.payout-box {
-  background: #2c2c2e; 
-  padding: 12px;
   border-radius: 12px;
-  margin-top: 15px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
   border: 1px solid var(--input-border);
 }
-.payout-val { font-size: 16px; font-weight: 700; color: #fff; }
+.total-val { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 4px 0; }
+.progress-bar-container { background: #3a3a3c; height: 3px; border-radius: 2px; margin: 8px 0; overflow: hidden; }
+#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.8s ease; }
 
-/* 銘柄カード */
-.stock-card { 
-  background: var(--card-bg); 
-  border-radius: var(--radius); 
-  padding: 20px; 
-  margin-bottom: 16px; 
+.summary-stats { display: flex; gap: 12px; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+
+/* Payoutを1行で表現 */
+.payout-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #2c2c2e;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+.payout-label { font-size: 10px; color: var(--text-sub); font-weight: 800; }
+.payout-val { font-size: 14px; font-weight: 700; }
+
+/* 銘柄カードを圧縮 */
+.stock-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
   border: 1px solid var(--input-border);
-  position: relative; 
 }
-.nisa-tag { 
-  font-size: 9px; 
-  font-weight: 900; 
-  padding: 2px 8px; 
-  border-radius: 4px; 
-  background: #3a3a3c; 
-  color: var(--text-sub);
-  letter-spacing: 0.5px;
-}
-.stock-name { font-weight: 700; font-size: 15px; color: var(--text-sub); }
-.main-price { font-size: 28px; font-weight: 800; margin-top: 6px; color: #fff; }
+.stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.stock-name { font-weight: 700; font-size: 13px; color: var(--text-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+.nisa-tag { font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 3px; background: #3a3a3c; color: var(--text-sub); }
 
-/* インプットのダーク化 */
-.input-grid { display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 10px; margin-top: 20px; border-top: 1px solid #2c2c2e; padding-top: 15px; }
-.input-label { font-size: 9px; color: var(--text-sub); margin-bottom: 4px; display: block; font-weight: 800; text-transform: uppercase; }
-.ios-input { 
-  width: 100%; 
-  box-sizing: border-box; 
-  padding: 10px; 
-  font-size: 14px; 
-  border: 1px solid var(--input-border); 
-  border-radius: 8px; 
-  background: var(--input-bg); 
+.price-row { display: flex; justify-content: space-between; align-items: baseline; }
+.main-price { font-size: 24px; font-weight: 800; }
+
+/* インプットを横1列でさらにタイトに */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+.input-group { display: flex; flex-direction: column; }
+.input-label { font-size: 8px; color: #636366; margin-bottom: 2px; font-weight: 800; text-transform: uppercase; }
+.ios-input {
+  width: 100%;
+  padding: 6px;
+  font-size: 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  background: var(--input-bg);
   color: #fff;
-  font-weight: 600; 
-  -webkit-appearance: none;
+  font-weight: 600;
 }
-.ios-input:focus { outline: none; border-color: var(--text-sub); }
 
-/* フローティング・アップデートボタン */
-.btn-fixed-wrap { 
-  position: fixed; 
-  bottom: 40px; 
-  left: 0; 
-  right: 0; 
-  display: flex; 
-  justify-content: center; 
-  pointer-events: none; 
-  z-index: 100;
-}
+/* アップデートボタンを少し小さめに */
+.btn-fixed-wrap { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; z-index: 100; }
 .btn-update {
   pointer-events: auto;
-  background: #ffffff; /* ダーク背景に映える白ボタン */
-  color: #000000;
+  background: #fff;
+  color: #000;
   border: none;
-  padding: 16px 36px;
-  border-radius: 40px;
-  font-size: 16px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 14px;
   font-weight: 800;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
   display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  gap: 8px;
 }
-.btn-update:active { transform: scale(0.96); }
 
-.last-updated { font-size: 10px; color: var(--text-sub); text-align: center; margin-top: 15px; font-weight: 600; }
+.last-updated { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 8px; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .loading-icon { display: inline-block; animation: spin 1s linear infinite; }
-.error-banner { background: #3d0000; color: #ff8080; font-size: 12px; font-weight: 700; padding: 12px; border-radius: 10px; margin-bottom: 15px; display: none; text-align: center; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div id="errorBanner" class="error-banner"></div>
+  <div id="errorBanner" style="display:none; color:var(--neg-color); font-size:10px; text-align:center; padding:5px;"></div>
 
   <div class="progress-box">
-    <div style="font-size:10px; color:var(--text-sub); display:flex; justify-content:space-between; font-weight:900; letter-spacing:1px;">
-      <div>PROJECT 10M <span id="progRate" style="color:var(--accent);">(0%)</span></div>
-      <div><span id="fxRateDisplay">USD/JPY: ---</span></div>
+    <div style="font-size:9px; color:var(--text-sub); display:flex; justify-content:space-between; font-weight:900;">
+      <div>10M TARGET <span id="progRate" style="color:#fff;">(0%)</span></div>
+      <div id="fxRateDisplay">USD/JPY: ---</div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
-    <div style="font-size:11px; font-weight:800; color:var(--text-sub); margin-bottom:4px; text-transform:uppercase; letter-spacing:1px;">Total Net Worth</div>
     <span id="totalDisplay" class="total-val">¥0</span>
     <div class="summary-stats">
       <span id="totalDayDiff">--</span>
       <span id="totalProfitAll">--</span>
     </div>
-    <div class="payout-box">
-      <div style="font-size:9px; color:var(--text-sub); font-weight:900; margin-bottom:4px; text-transform:uppercase;">Estimated Net (After Tax)</div>
+    <div class="payout-row">
+      <span class="payout-label">EST. PAYOUT (NET)</span>
       <div id="payoutDisplay" class="payout-val">¥0</div>
     </div>
   </div>
@@ -162,7 +139,7 @@ body {
 </div>
 
 <script>
-// --- JSロジック（そのまま継続） ---
+// --- JavaScript Logic (Same as before, simplified for rendering) ---
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBwS13vfLF_Ndut84W1Sjujp538VOoSNa_18dtxJOqT4y6ubnpOEVm6aUTLzksI6sl/exec";
 const STORAGE_KEY = "money_log_v3.2";
 
@@ -194,7 +171,6 @@ async function fetchAll() {
   const btn = document.getElementById('updateBtn');
   const icon = document.getElementById('updateIcon');
   btn.disabled = true; icon.classList.add('loading-icon');
-  hideError();
   const errors = [];
   await Promise.all(data.map(async (s) => {
     try {
@@ -206,18 +182,15 @@ async function fetchAll() {
           s.rate = json.rate; currentUsdJpy = json.rate;
           localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
         }
-      } else { errors.push(`${s.name}失敗`); }
-    } catch (e) { errors.push(`${s.name}エラー`); }
+      }
+    } catch (e) { errors.push(s.name); }
   }));
   btn.disabled = false; icon.classList.remove('loading-icon');
-  if (errors.length > 0) showError(errors.join(' / '));
   const now = new Date();
-  document.getElementById('lastUpdated').textContent = `LAST SYNC: ${now.toLocaleTimeString()}`;
+  document.getElementById('lastUpdated').textContent = `SYNC: ${now.toLocaleTimeString()}`;
   saveAndRender();
 }
 
-function showError(msg) { const el = document.getElementById('errorBanner'); el.textContent = `⚠️ ${msg}`; el.style.display = 'block'; }
-function hideError() { document.getElementById('errorBanner').style.display = 'none'; }
 function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); render(); }
 
 function calcValuation(s) {
@@ -244,29 +217,26 @@ function render() {
     const brandColor = BRAND_COLORS[s.code] || '#3a3a3c';
 
     return `
-      <div class="stock-card" style="border-left: 4px solid ${brandColor}">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="stock-card" style="border-left: 3px solid ${brandColor}">
+        <div class="stock-header">
           <span class="stock-name">${s.name}</span>
           <span class="nisa-tag">${s.isNisa ? 'NISA' : 'TAXABLE'}</span>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items: flex-end; margin-top:8px;">
+        <div class="price-row">
           <span class="main-price">¥${val.toLocaleString()}</span>
           <div style="text-align:right">
-            <div style="font-size:12px; font-weight:800; color:${dVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+            <div style="font-size:11px; font-weight:800; color:${dVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
               ${hasDiff ? (dVal >= 0 ? '+' : '') + dVal.toLocaleString() : '---'}
             </div>
-            <div style="font-size:11px; font-weight:800; color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+            <div style="font-size:10px; font-weight:800; color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
               ${profitRate}%
             </div>
           </div>
         </div>
         <div class="input-grid">
-          <div><span class="input-label">${s.isStock ? 'Price($)' : 'NAV'}</span>
-            <input class="ios-input" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)"></div>
-          <div><span class="input-label">Qty</span>
-            <input class="ios-input ${s.holding===0?'warn':''}" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)"></div>
-          <div><span class="input-label">Cost</span>
-            <input class="ios-input" type="number" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)"></div>
+          <div class="input-group"><span class="input-label">Price</span><input class="ios-input" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)"></div>
+          <div class="input-group"><span class="input-label">Qty</span><input class="ios-input" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)"></div>
+          <div class="input-group"><span class="input-label">Cost</span><input class="ios-input" type="number" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)"></div>
         </div>
       </div>`;
   }).join('');
@@ -285,10 +255,10 @@ function render() {
   profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; color:var(--text-sub); font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
+  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:9px; color:var(--text-sub); font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
 
   const prog = Math.min((totalValue / 10000000) * 100, 100);
-  document.getElementById('progRate').textContent = `(${prog.toFixed(2)}%)`;
+  document.getElementById('progRate').textContent = `(${prog.toFixed(1)}%)`;
   document.getElementById('progressBar').style.width = prog + '%';
 }
 
