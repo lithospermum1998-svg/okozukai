@@ -6,225 +6,275 @@
 <title>MONEY LOG v3.5</title>
 <style>
 :root {
-  --bg-color: #f8f9fa; /* 少し明るいグレー */
-  --card-bg: #ffffff;
-  --text-main: #1a1a1e;
-  --text-sub: #86868b;
-  --accent: #000000; /* 黒を基調に */
-  --border-color: #efeff4;
-  --pos-color: #34c759;
-  --neg-color: #ff3b30;
+  --bg-color: #f2f2f7; 
+  --card-bg: #ffffff; 
+  --text-main: #1c1c1e; 
+  --text-sub: #8e8e93; 
+  --accent: #000000; 
+  --border-color: #e5e5ea;
+  --pos-color: #34c759; 
+  --neg-color: #ff3b30; 
   --radius-lg: 24px;
   --radius-sm: 12px;
 }
 
 body {
-  font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, "SF Pro Display", sans-serif;
   background: var(--bg-color);
   margin: 0;
-  padding: env(safe-area-inset-top) 16px 100px;
+  padding: 16px 16px 100px;
   color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
 }
 
-.container { max-width: 400px; margin: 0 auto; }
+.container { max-width: 420px; margin: 0 auto; }
 
-/* ヘッダーエリアの洗練 */
-.header-box {
-  padding: 32px 8px 16px;
-  text-align: left;
+/* ヘッダー: 合計表示 */
+.header-section {
+  padding: 24px 8px;
+  text-align: center;
 }
+.total-label { font-size: 12px; font-weight: 700; color: var(--text-sub); letter-spacing: 0.05em; margin-bottom: 4px; }
+.total-val { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
 
-.total-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-sub);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
+/* プログレスバー */
+.prog-wrapper { margin-bottom: 24px; }
+.prog-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+.prog-bar-bg { background: #e5e5ea; height: 6px; border-radius: 3px; overflow: hidden; }
+#progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.8s ease; }
 
-.total-val {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  margin: 8px 0;
-}
-
-/* 進捗バーのミニマル化 */
-.progress-container {
-  margin-bottom: 24px;
-}
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-bottom: 6px;
-}
-.progress-bar-bg {
-  background: #e5e5ea;
-  height: 4px;
-  border-radius: 2px;
-  overflow: hidden;
-}
-#progressBar {
-  background: var(--accent);
-  height: 100%;
-  width: 0%;
-  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* 統計情報のタイル表示 */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--card-bg);
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-}
-.stat-label { font-size: 10px; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; }
+/* 統計タイル */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.stat-card { background: var(--card-bg); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+.stat-label { font-size: 10px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
 .stat-value { font-size: 14px; font-weight: 700; }
 
-/* 銘柄カードのスリム化 */
+/* 銘柄カード */
 .stock-card {
   background: var(--card-bg);
   border-radius: var(--radius-lg);
   padding: 20px;
   margin-bottom: 16px;
   border: 1px solid var(--border-color);
-  transition: transform 0.2s ease;
+  position: relative;
 }
+.stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.stock-name { font-size: 16px; font-weight: 800; color: var(--text-main); }
+.nisa-tag { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: #f2f2f7; color: var(--text-sub); }
 
-.stock-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-.stock-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-.nisa-tag {
-  font-size: 9px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 20px;
-  background: #f2f2f7;
-  color: #8e8e93;
-}
+.price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
+.main-price { font-size: 28px; font-weight: 800; }
 
-.valuation-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 16px;
-}
-.main-price { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-.diff-badge { font-size: 12px; font-weight: 700; }
+/* 入力エリア */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; border-top: 1px solid #f2f2f7; padding-top: 16px; }
+.input-label { font-size: 10px; color: var(--text-sub); font-weight: 700; margin-bottom: 4px; }
+.ios-input { width: 100%; border: none; background: #f9f9f9; padding: 8px; font-size: 13px; font-weight: 700; border-radius: 8px; box-sizing: border-box; }
+.ios-input:focus { outline: 1px solid var(--accent); background: #fff; }
+.ios-input.warn { border: 1px solid var(--neg-color); background: #fff5f5; }
 
-/* インプットの透過デザイン */
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  border-top: 1px solid var(--border-color);
-  padding-top: 16px;
-}
-.input-group { display: flex; flex-direction: column; }
-.ios-input {
-  border: none;
-  background: transparent;
-  padding: 4px 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-main);
-  border-bottom: 1px solid transparent;
-}
-.ios-input:focus {
-  outline: none;
-  border-bottom-color: var(--accent);
-}
-
-/* アップデートボタンのフローティング化 */
-.update-wrapper {
-  position: fixed;
-  bottom: 30px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  z-index: 100;
-}
+/* フローティングボタン */
+.btn-fixed-wrap { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
 .btn-update {
+  pointer-events: auto;
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 14px 28px;
+  padding: 14px 32px;
   border-radius: 40px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
 }
-.btn-update:active { transform: scale(0.95); }
+.btn-update:active { transform: scale(0.96); opacity: 0.9; }
 
+/* ユーティリティ */
+.error-banner { background: #fff0f0; color: var(--neg-color); font-size: 12px; font-weight: 700; padding: 12px; border-radius: 12px; margin-bottom: 16px; display: none; text-align: center; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-.loading-icon { animation: spin 1s linear infinite; }
+.loading-icon { display: inline-block; animation: spin 1s linear infinite; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header-box">
-    <div class="total-label">Total Assets</div>
+  <div id="errorBanner" class="error-banner"></div>
+
+  <div class="header-section">
+    <div class="total-label">TOTAL ASSETS</div>
     <div id="totalDisplay" class="total-val">¥0</div>
-    
-    <div class="progress-container">
-      <div class="progress-info">
+
+    <div class="prog-wrapper">
+      <div class="prog-info">
         <span id="progRate">0.00%</span>
         <span id="fxRateDisplay">USD/JPY: ---</span>
       </div>
-      <div class="progress-bar-bg"><div id="progressBar"></div></div>
+      <div class="prog-bar-bg"><div id="progressBar"></div></div>
     </div>
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">PREVIOUS DAY</div>
+        <div class="stat-label">Prev. Day</div>
         <div id="totalDayDiff" class="stat-value">---</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">TOTAL PROFIT</div>
+        <div class="stat-label">Total Profit</div>
         <div id="totalProfitAll" class="stat-value">---</div>
       </div>
     </div>
-    
-    <div class="stat-card" style="margin-bottom: 32px;">
-      <div class="stat-label">ESTIMATED PAYOUT (NET)</div>
+
+    <div class="stat-card" style="text-align: left;">
+      <div class="stat-label">Estimated Payout (Net)</div>
       <div id="payoutDisplay" class="stat-value">¥0</div>
     </div>
   </div>
 
   <div id="stockList"></div>
 
-  <div class="update-wrapper">
-    <button id="updateBtn" class="btn-update" onclick="fetchAll()">
-      <span id="updateIcon">↻</span> Update
-    </button>
-  </div>
-
   <div id="lastUpdated" style="text-align: center; font-size: 10px; color: var(--text-sub); margin-top: 20px;"></div>
 </div>
 
+<div class="btn-fixed-wrap">
+  <button id="updateBtn" class="btn-update" onclick="fetchAll()">
+    <span id="updateIcon">↻</span> Update
+  </button>
+</div>
+
 <script>
-// --- JavaScript部分は前回のロジックをそのまま継承 ---
-// (変数名やIDもHTMLに合わせて微調整)
-// ... [ここに前回のスクリプトを挿入してください] ...
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBwS13vfLF_Ndut84W1Sjujp538VOoSNa_18dtxJOqT4y6ubnpOEVm6aUTLzksI6sl/exec";
+const STORAGE_KEY = "money_log_v3.2";
+
+// --- Data Logic ---
+const ITEM_DEFAULTS = { diff: null, rate: null };
+function migrateData(raw) {
+  if (!Array.isArray(raw)) return null;
+  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
+}
+
+const INITIAL_DATA = [
+  { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
+  { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
+];
+
+let data = (() => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return migrateData(raw) || INITIAL_DATA;
+  } catch (e) { return INITIAL_DATA; }
+})();
+
+const BRAND_COLORS = { "2931123A": "#8B0000", "PAYP": "#ff3b30" };
+let currentUsdJpy = (() => {
+  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
+  return saved ? parseFloat(saved) : null;
+})();
+
+async function fetchAll() {
+  const btn = document.getElementById('updateBtn');
+  const icon = document.getElementById('updateIcon');
+  btn.disabled = true; icon.classList.add('loading-icon');
+  hideError();
+  const errors = [];
+  await Promise.all(data.map(async (s) => {
+    try {
+      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
+      const json = await res.json();
+      if (json.status === "Success") {
+        s.price = json.price; s.diff = json.diff ?? null;
+        if (json.rate) { s.rate = json.rate; currentUsdJpy = json.rate; localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate)); }
+      } else { errors.push(`${s.name}取得失敗`); }
+    } catch (e) { errors.push(`${s.name}通信エラー`); }
+  }));
+  btn.disabled = false; icon.classList.remove('loading-icon');
+  if (errors.length > 0) showError(errors.join(' / '));
+  const now = new Date();
+  document.getElementById('lastUpdated').textContent = `Last Update: ${now.toLocaleTimeString()}`;
+  saveAndRender();
+}
+
+function showError(msg) { const el = document.getElementById('errorBanner'); el.textContent = `⚠️ ${msg}`; el.style.display = 'block'; }
+function hideError() { document.getElementById('errorBanner').style.display = 'none'; }
+function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); render(); }
+function calcValuation(s) {
+  if (s.isStock) {
+    const rate = s.rate ?? currentUsdJpy;
+    return rate ? Math.floor(s.price * rate * s.holding) : null;
+  }
+  return Math.floor(s.price * s.holding / 10000);
+}
+
+function render() {
+  const list = document.getElementById('stockList');
+  let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
+
+  list.innerHTML = data.map((s, i) => {
+    const val = calcValuation(s) || 0;
+    totalValue += val; totalCost += s.cost;
+    const hasDiff = s.diff !== null;
+    const dVal = hasDiff ? Math.floor(val * (parseFloat(s.diff) / 100)) : 0;
+    dayDiffSum += dVal;
+    const profit = val - s.cost;
+    const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : '0.00';
+    if (!s.isNisa) taxableProfit += profit;
+
+    const brandColor = BRAND_COLORS[s.code] || '#e5e5ea';
+    const diffColor = dVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+    const profColor = profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+
+    return `
+      <div class="stock-card" style="border-left: 6px solid ${brandColor}">
+        <div class="stock-header">
+          <span class="stock-name">${s.name}</span>
+          <span class="nisa-tag">${s.isNisa ? 'NISA' : 'TAXABLE'}</span>
+        </div>
+        <div class="price-row">
+          <span class="main-price">¥${val.toLocaleString()}</span>
+          <div style="text-align:right">
+            <div style="font-size:12px; font-weight:800; color:${diffColor}">${hasDiff ? (dVal >= 0 ? '+' : '') + dVal.toLocaleString() : '---'}</div>
+            <div style="font-size:11px; font-weight:700; color:${profColor}">${profit >= 0 ? '+' : ''}${profitRate}%</div>
+          </div>
+        </div>
+        <div class="input-grid">
+          <div><div class="input-label">${s.isStock ? 'Price($)' : 'NAV'}</div>
+            <input class="ios-input" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)"></div>
+          <div><div class="input-label">Qty</div>
+            <input class="ios-input ${s.holding===0?'warn':''}" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)"></div>
+          <div><div class="input-label">Cost</div>
+            <input class="ios-input" type="number" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // サマリー更新
+  const overallProfit = totalValue - totalCost;
+  const anyDiff = data.some(s => s.diff !== null);
+  document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
+  document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy?.toFixed(2) || '---'}`;
+  
+  const dayEl = document.getElementById('totalDayDiff');
+  dayEl.textContent = anyDiff ? (dayDiffSum >= 0 ? '+' : '') + dayDiffSum.toLocaleString() : '---';
+  dayEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+
+  const profEl = document.getElementById('totalProfitAll');
+  profEl.textContent = (overallProfit >= 0 ? '+' : '') + overallProfit.toLocaleString();
+  profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
+
+  const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
+  document.getElementById('payoutDisplay').innerHTML = `¥${(totalValue - estTax).toLocaleString()} <span style="font-size:10px; color:var(--text-sub); font-weight:normal;">(Tax: ¥${estTax.toLocaleString()})</span>`;
+
+  const prog = Math.min((totalValue / 10000000) * 100, 100);
+  document.getElementById('progRate').textContent = `${prog.toFixed(2)}%`;
+  document.getElementById('progressBar').style.width = prog + '%';
+}
+
+function updateItem(i, field, val) {
+  const parsed = parseFloat(val);
+  if (!isNaN(parsed)) { data[i][field] = parsed; saveAndRender(); }
+}
+
+render();
 </script>
 </body>
 </html>
