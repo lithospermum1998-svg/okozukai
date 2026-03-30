@@ -39,16 +39,7 @@ body {
 }
 .progress-bar-container { background: #3a3a3c; height: 6px; border-radius: 3px; margin: 12px 0; overflow: hidden; }
 #progressBar { background: var(--accent); height: 100%; width: 0%; transition: width 0.5s ease-out; }
-/* --- 総資産額のフォント拡大とスタイル変更 --- */
-.total-val {
-  font-family: -apple-system, sans-serif; /* 銘柄名とフォント統一 */
-  font-size: 42px; /* 大きくする */
-  font-weight: 800; /* .stock-name と同じウェイト */
-  display: block;
-  margin: 0; /* マージン調整 */
-  letter-spacing: -1.5px; /* 文字間隔をさらに詰める */
-  color: var(--text-main);
-}
+.total-val { font-size: 34px; font-weight: 800; display: block; margin: 4px 0; letter-spacing: -1px; }
 .summary-stats { display: flex; justify-content: center; gap: 15px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
 
 .payout-box {
@@ -134,17 +125,13 @@ body {
   <div id="errorBanner" class="error-banner"></div>
 
   <div class="progress-box">
-    <div style="font-size:10px; color:var(--text-sub); display:flex; justify-content:space-between; font-weight:bold; padding: 0 4px;">
-      <div><span>Project 10M</span> <span id="progRate" style="margin-left:4px;">(0%)</span></div>
+    <div style="font-size:10px; color:var(--text-sub); display:flex; justify-content:space-between; font-weight:bold;">
+      <div><span>Project 10M</span> <span id="progRate">(0%)</span></div>
       <div><span id="fxRateDisplay" style="color:var(--text-main);">USD/JPY: ---</span></div>
     </div>
     <div class="progress-bar-container"><div id="progressBar"></div></div>
-
-    <div style="margin-top: 10px; display: flex; flex-direction: column; align-items: center;">
-      <div class="stock-name" style="color:var(--text-sub); font-size: 13px; font-weight: 800;">Total Assets</div>
-      <span id="totalDisplay" class="total-val">¥0</span>
-    </div>
-
+    <div class="stock-name" style="color:var(--text-sub); margin-bottom:4px; font-size:11px;">Total Assets</div>
+    <span id="totalDisplay" class="total-val">¥0</span>
     <div class="summary-stats">
       <span id="totalDayDiff">--</span>
       <span id="totalProfitAll">--</span>
@@ -166,7 +153,6 @@ body {
 </div>
 
 <script>
-// --- JSロジック（そのまま継続） ---
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyBwS13vfLF_Ndut84W1Sjujp538VOoSNa_18dtxJOqT4y6ubnpOEVm6aUTLzksI6sl/exec";
 const STORAGE_KEY = "money_log_v3.2";
 
@@ -259,10 +245,8 @@ function render() {
             <div style="font-size:12px; font-weight:bold; color:${dVal >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
               Prev: ${hasDiff ? (dVal >= 0 ? '+' : '') + dVal.toLocaleString() + ' (' + (parseFloat(s.diff) >= 0 ? '+' : '') + parseFloat(s.diff).toFixed(2) + '%)' : '---'}
             </div>
-            <div style="font-size:11px; font-weight:bold; line-height: 1.1; color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
-              Total: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()}
-              <br>
-              <span style="font-size: 10px; font-weight: bold;">(${profitRate}%)</span>
+            <div style="font-size:11px; font-weight:bold; color:${profit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)'}">
+              Total: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${profitRate}%)
             </div>
           </div>
         </div>
@@ -280,14 +264,21 @@ function render() {
   document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
   document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy?.toFixed(2) || '---'}`;
   
+  // --- サマリーの前日比％計算 ---
   const anyDiff = data.some(s => s.diff !== null);
+  const prevTotalValue = totalValue - dayDiffSum;
+  const totalDayRate = (anyDiff && prevTotalValue > 0) ? (dayDiffSum / prevTotalValue * 100).toFixed(2) : '0.00';
+  
   const dayEl = document.getElementById('totalDayDiff');
-  dayEl.textContent = anyDiff ? `Prev: ${(dayDiffSum >= 0 ? '+' : '')}${dayDiffSum.toLocaleString()}` : 'Prev: ---';
+  dayEl.textContent = anyDiff ? `Prev: ${(dayDiffSum >= 0 ? '+' : '')}${dayDiffSum.toLocaleString()} (${(dayDiffSum >= 0 ? '+' : '')}${totalDayRate}%)` : 'Prev: ---';
   dayEl.style.color = dayDiffSum >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
 
+  // --- サマリーの通算損益％計算 ---
   const overallProfit = totalValue - totalCost;
+  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100).toFixed(2) : '0.00';
+  
   const profEl = document.getElementById('totalProfitAll');
-  profEl.textContent = `Total: ${(overallProfit >= 0 ? '+' : '')}${overallProfit.toLocaleString()}`;
+  profEl.textContent = `Total: ${(overallProfit >= 0 ? '+' : '')}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
   profEl.style.color = overallProfit >= 0 ? 'var(--pos-color)' : 'var(--neg-color)';
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
