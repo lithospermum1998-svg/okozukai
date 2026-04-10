@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG iOS Edit Mode</title>
+<title>MONEY LOG iOS Direct Edit</title>
 
 <style>
 :root {
@@ -37,7 +37,6 @@
   --radius-sm: 12px;
 
   --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
-  --shadow-float: 0 12px 30px rgba(0,0,0,0.35);
 }
 
 * {
@@ -58,7 +57,6 @@ body {
     calc(10px + env(safe-area-inset-top))
     14px
     calc(110px + env(safe-area-inset-bottom));
-  line-height: 1.2;
 }
 
 .container {
@@ -74,17 +72,9 @@ body {
 /* Header */
 .app-header {
   padding: 6px 4px 14px;
-}
-
-.nav-row {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-}
-
-.title-wrap {
-  min-width: 0;
+  align-items: flex-start;
 }
 
 .app-title {
@@ -101,362 +91,106 @@ body {
   font-weight: 500;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 4px;
-}
-
-.header-btn {
-  border: 1px solid rgba(255,255,255,0.09);
-  background: rgba(255,255,255,0.05);
-  color: var(--accent);
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: transform 0.14s ease, opacity 0.18s ease, background-color 0.18s ease;
-}
-
-.header-btn:active {
-  transform: scale(0.97);
-}
-
-body.editing .header-btn {
-  background: rgba(10,132,255,0.16);
-  border-color: rgba(10,132,255,0.26);
-  color: #6eb6ff;
-}
-
-.editing-hint {
-  display: none;
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(10,132,255,0.12);
-  border: 1px solid rgba(10,132,255,0.2);
-  color: #8bc3ff;
-  font-size: 12px;
-  font-weight: 700;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-body.editing .editing-hint {
-  display: block;
-  animation: fadeDown 0.2s ease;
-}
-
-/* Error */
-.error-banner {
-  display: none;
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(255, 69, 58, 0.14);
-  border: 1px solid rgba(255, 69, 58, 0.22);
-  color: #ff9b94;
-  font-size: 12px;
-  font-weight: 700;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-}
-
-/* Summary */
+/* Summary Card */
 .summary-card {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%),
-    var(--surface-1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--surface-1) 100%);
   border: 1px solid var(--line);
   border-radius: 28px;
   padding: 18px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.04),
-    var(--shadow-soft);
   margin-bottom: 16px;
-}
-
-.summary-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.summary-kicker {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-sub);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.summary-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: var(--text-main);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.summary-label {
-  color: var(--text-sub);
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
+  box-shadow: var(--shadow-soft);
 }
 
 .total-display {
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -1.1px;
-  margin: 0 0 14px;
-}
-
-.progress-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  color: var(--text-sub);
-  font-size: 11px;
-  font-weight: 700;
+  margin: 10px 0;
 }
 
 .progress-track {
   height: 8px;
   background: rgba(255,255,255,0.08);
   border-radius: 999px;
+  margin: 10px 0;
   overflow: hidden;
-  margin-bottom: 14px;
 }
 
 .progress-fill {
   height: 100%;
-  width: 0%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #ffffff 0%, #d0d0d0 100%);
-  transition: width 0.55s cubic-bezier(.2,.8,.2,1);
+  background: #fff;
+  transition: width 0.5s ease;
 }
 
 .summary-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 12px;
+  margin: 12px 0;
 }
 
 .stat-chip {
-  min-height: 58px;
-  border-radius: 16px;
-  padding: 10px 12px;
+  padding: 12px;
   background: rgba(255,255,255,0.045);
-  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  border: 1px solid var(--line);
 }
 
 .stat-chip-label {
   font-size: 10px;
   color: var(--text-sub);
-  font-weight: 700;
-  margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  margin-bottom: 4px;
 }
 
 .stat-chip-value {
   font-size: 13px;
   font-weight: 800;
-  line-height: 1.25;
 }
 
-.net-card {
-  border-radius: 18px;
-  padding: 12px 14px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%),
-    var(--surface-2);
-  border: 1px solid var(--line);
-}
-
-.net-card-label {
-  font-size: 10px;
-  color: var(--text-sub);
-  font-weight: 700;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.net-card-value {
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.net-card-tax {
-  font-size: 11px;
-  color: var(--text-sub);
-  margin-top: 4px;
-}
-
-.last-updated {
-  margin-top: 12px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 600;
-}
-
-/* Section */
-.section-title {
-  margin: 18px 4px 12px;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-}
-
-/* Cards */
-.stock-list {
-  display: grid;
-  gap: 14px;
-}
-
+/* Stock Card */
 .stock-card {
   position: relative;
   overflow: hidden;
   border-radius: 22px;
   padding: 16px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%),
-    var(--surface-1);
+  background: var(--surface-1);
   border: 1px solid var(--line);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.035),
-    var(--shadow-soft);
-  animation: fadeUp 0.35s ease both;
+  margin-bottom: 14px;
 }
 
 .stock-card::before {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
+  left: 0; top: 0; bottom: 0;
   width: 5px;
   background: var(--brand, #3a3a3c);
 }
 
 .stock-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.stock-name-wrap {
-  min-width: 0;
+  margin-bottom: 12px;
 }
 
 .stock-name {
   font-size: 16px;
   font-weight: 800;
-  letter-spacing: -0.2px;
-  margin-bottom: 4px;
-}
-
-.stock-code {
-  font-size: 11px;
-  color: var(--text-sub);
-  font-weight: 700;
-}
-
-.account-badge {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 54px;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.07);
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--text-main);
-}
-
-.stock-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 14px;
-  margin-bottom: 12px;
-}
-
-.stock-value-block {
-  min-width: 0;
-}
-
-.stock-value-label {
-  color: var(--text-sub);
-  font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 5px;
 }
 
 .stock-value {
   font-size: 30px;
   font-weight: 800;
-  letter-spacing: -0.8px;
+  margin-bottom: 12px;
 }
 
-.stock-performance {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.stock-performance-row {
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.35;
-}
-
-.stock-performance-row + .stock-performance-row {
-  margin-top: 6px;
-}
-
-/* View rows */
-.view-meta {
-  display: grid;
-  gap: 8px;
-}
-
+/* Direct Input Style */
 .meta-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 38px;
-  padding: 0 2px;
+  padding: 8px 0;
   border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.meta-row:first-child {
-  border-top: none;
 }
 
 .meta-label {
@@ -465,233 +199,70 @@ body.editing .editing-hint {
   font-weight: 700;
 }
 
-.meta-value {
+.ios-direct-input {
+  background: transparent;
+  border: none;
   color: var(--text-main);
+  font-family: inherit;
   font-size: 14px;
   font-weight: 800;
   text-align: right;
-}
-
-/* Edit panel */
-.edit-panel {
-  display: none;
-  margin-top: 12px;
-  padding: 10px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.05);
-}
-
-body.editing .edit-panel {
-  display: block;
-  animation: fadeDown 0.18s ease;
-}
-
-body.editing .view-meta {
-  display: none;
-}
-
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.1fr;
-  gap: 8px;
-}
-
-.field {
-  min-width: 0;
-}
-
-.field-label {
-  display: block;
-  margin-bottom: 5px;
-  padding-left: 2px;
-  color: var(--text-sub);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.ios-input {
-  width: 100%;
-  height: 40px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: var(--surface-2);
-  color: var(--text-main);
-  font-size: 14px;
-  font-weight: 700;
-  text-align: right;
+  width: 50%;
+  padding: 6px 8px;
+  border-radius: 8px;
   outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-  transition:
-    border-color 0.18s ease,
-    background-color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.12s ease;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
-.ios-input:focus {
-  border-color: rgba(10,132,255,0.8);
-  box-shadow: 0 0 0 4px rgba(10,132,255,0.16);
-  background: #303033;
+.ios-direct-input:focus {
+  background: var(--surface-3);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
-.ios-input.warn {
-  border-color: rgba(255,69,58,0.38);
-  background: rgba(255,69,58,0.12);
-}
-
-.ios-input::-webkit-outer-spin-button,
-.ios-input::-webkit-inner-spin-button {
+.ios-direct-input::-webkit-outer-spin-button,
+.ios-direct-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Bottom bar */
+/* Bottom Bar */
 .bottom-bar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(14px + env(safe-area-inset-bottom));
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 0; right: 0;
   display: flex;
   justify-content: center;
-  pointer-events: none;
   z-index: 100;
 }
 
 .update-btn {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 144px;
-  height: 54px;
-  padding: 0 22px;
-  border: 1px solid rgba(255,255,255,0.14);
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 14px 28px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.88);
-  color: #000000;
   font-size: 16px;
   font-weight: 800;
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
-  box-shadow:
-    0 10px 28px rgba(0,0,0,0.34),
-    inset 0 1px 0 rgba(255,255,255,0.65);
-  cursor: pointer;
-  transition:
-    transform 0.14s ease,
-    opacity 0.18s ease,
-    box-shadow 0.22s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.update-btn:active {
-  transform: scale(0.97);
-}
-
-.update-btn:disabled {
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.update-icon {
-  display: inline-block;
-  font-size: 16px;
-}
-
-/* Utility */
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
-.warn-text { color: var(--warn); }
-.muted { color: var(--text-sub); }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-icon {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 380px) {
-  .total-display {
-    font-size: 34px;
-  }
-
-  .stock-value {
-    font-size: 26px;
-  }
-
-  .summary-stats {
-    grid-template-columns: 1fr;
-  }
-}
 </style>
 </head>
 
 <body>
   <div class="container">
     <header class="app-header">
-      <div class="nav-row">
-        <div class="title-wrap">
-          <h1 class="app-title">資産</h1>
-          <div class="app-subtitle">MONEY LOG</div>
-        </div>
-        <div class="header-actions">
-          <button id="editModeBtn" class="header-btn" onclick="toggleEditMode()">編集</button>
-        </div>
+      <div>
+        <h1 class="app-title">資産</h1>
+        <div class="app-subtitle">MONEY LOG v3.1</div>
       </div>
-      <div id="editingHint" class="editing-hint">編集モード中です。変更は自動保存されます。</div>
     </header>
 
-    <div id="errorBanner" class="error-banner"></div>
-
     <section class="summary-card">
-      <div class="summary-top">
-        <div class="summary-kicker">
-          <span>Project 10M</span>
-        </div>
-        <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
-      </div>
-
-      <div class="summary-label">Total Assets</div>
       <div id="totalDisplay" class="total-display numeric">¥0</div>
-
-      <div class="progress-meta">
-        <span>Goal progress</span>
-        <span id="progRate" class="numeric">(0.00%)</span>
-      </div>
-      <div class="progress-track">
-        <div id="progressBar" class="progress-fill"></div>
-      </div>
-
+      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
       <div class="summary-stats">
         <div class="stat-chip">
           <div class="stat-chip-label">Previous Day</div>
@@ -702,342 +273,93 @@ body.editing .view-meta {
           <div id="totalProfitAll" class="stat-chip-value numeric">---</div>
         </div>
       </div>
-
-      <div class="net-card">
-        <div class="net-card-label">Net (Est.)</div>
-        <div id="payoutDisplay" class="net-card-value numeric">¥0</div>
-        <div id="taxNote" class="net-card-tax numeric">Tax: ¥0</div>
-      </div>
-
-      <div id="lastUpdated" class="last-updated">最終更新: --:--:--</div>
     </section>
 
-    <div class="section-title">Portfolio</div>
-    <div id="stockList" class="stock-list"></div>
+    <div id="stockList"></div>
   </div>
 
   <div class="bottom-bar">
-    <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span id="updateIcon" class="update-icon">↻</span>
-      <span id="updateLabel">update</span>
-    </button>
+    <button class="update-btn" onclick="fetchAll()">Update Prices ↻</button>
   </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_v3_ios_edit";
+const STORAGE_KEY = "money_log_v3_direct";
 
-const ITEM_DEFAULTS = {
-  diff: null,
-  rate: null
-};
-
-function migrateData(raw) {
-  if (!Array.isArray(raw)) return null;
-  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
-}
-
-const INITIAL_DATA = [
-  { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
-  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
-  { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+  { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: 0 },
+  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: 0 },
+  { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: 150.00, diff: 0 }
 ];
 
-const BRAND_COLORS = {
-  "2931123A": "#8b0000",
-  "02311251": "#d4af37",
-  "PAYP": "#ff3b30"
-};
+const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
-let isEditMode = false;
-
-let data = (() => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return migrateData(raw) || INITIAL_DATA;
-  } catch (e) {
-    return INITIAL_DATA;
-  }
-})();
-
-let currentUsdJpy = (() => {
-  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
-  return saved ? parseFloat(saved) : null;
-})();
-
-function formatYen(value) {
-  return "¥" + Math.floor(value).toLocaleString("ja-JP");
-}
-
-function formatDisplayNumber(value, digits = 2) {
-  return Number(value).toLocaleString("ja-JP", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: digits
-  });
-}
-
-function formatSignedNumber(value) {
-  const sign = value > 0 ? "+" : "";
-  return sign + Math.floor(value).toLocaleString("ja-JP");
-}
-
-function formatSignedPercent(value, digits = 2) {
-  const n = Number(value);
-  const sign = n > 0 ? "+" : "";
-  return sign + n.toFixed(digits) + "%";
-}
-
-function showError(msg) {
-  const el = document.getElementById("errorBanner");
-  el.textContent = `⚠️ ${msg}`;
-  el.style.display = "block";
-}
-
-function hideError() {
-  document.getElementById("errorBanner").style.display = "none";
-}
-
-function saveAndRender() {
+function updateItem(index, field, value) {
+  data[index][field] = parseFloat(value) || 0;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
 }
 
-function calcValuation(item) {
-  if (item.isStock) {
-    const rate = item.rate ?? currentUsdJpy;
-    return rate ? Math.floor(item.price * rate * item.holding) : null;
-  }
-  return Math.floor(item.price * item.holding / 10000);
-}
-
-function toggleEditMode() {
-  isEditMode = !isEditMode;
-  document.body.classList.toggle("editing", isEditMode);
-  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
-}
-
 async function fetchAll() {
-  const btn = document.getElementById("updateBtn");
-  const icon = document.getElementById("updateIcon");
-  const label = document.getElementById("updateLabel");
-
-  btn.disabled = true;
-  icon.classList.add("loading-icon");
-  label.textContent = "updating";
-
-  hideError();
-  const errors = [];
-
-  await Promise.all(
-    data.map(async (item) => {
-      try {
-        const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
-        const json = await res.json();
-
-        if (json.status === "Success") {
-          item.price = json.price;
-          item.diff = json.diff ?? null;
-
-          if (json.rate) {
-            item.rate = json.rate;
-            currentUsdJpy = json.rate;
-            localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
-          }
-        } else {
-          errors.push(`${item.name}失敗`);
-        }
-      } catch (e) {
-        errors.push(`${item.name}エラー`);
+  await Promise.all(data.map(async (item) => {
+    try {
+      const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
+      const json = await res.json();
+      if (json.status === "Success") {
+        item.price = json.price;
+        item.diff = json.diff || 0;
+        if (json.rate) item.rate = json.rate;
       }
-    })
-  );
-
-  btn.disabled = false;
-  icon.classList.remove("loading-icon");
-  label.textContent = "update";
-
-  if (errors.length > 0) {
-    showError(errors.join(" / "));
-  }
-
-  const now = new Date();
-  document.getElementById("lastUpdated").textContent =
-    `最終更新: ${now.toLocaleTimeString("ja-JP", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    })}`;
-
-  saveAndRender();
-}
-
-function updateItem(index, field, value) {
-  const parsed = parseFloat(value);
-  if (!isNaN(parsed)) {
-    data[index][field] = parsed;
-    saveAndRender();
-  }
+    } catch (e) { console.error("Fetch error", e); }
+  }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  render();
 }
 
 function render() {
-  document.body.classList.toggle("editing", isEditMode);
-  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
-
   const list = document.getElementById("stockList");
-
-  let totalValue = 0;
-  let totalCost = 0;
-  let dayDiffSum = 0;
-  let taxableProfit = 0;
+  let totalValue = 0, totalCost = 0, dayDiffSum = 0;
 
   list.innerHTML = data.map((item, index) => {
-    const valuation = calcValuation(item) || 0;
+    const valuation = item.isStock ? (item.price * (item.rate || 150) * item.holding) : (item.price * item.holding / 10000);
     totalValue += valuation;
     totalCost += item.cost;
-
-    const hasDiff = item.diff !== null;
-    const diffRate = hasDiff ? parseFloat(item.diff) : 0;
-    const dayDiffValue = hasDiff ? Math.floor(valuation * (diffRate / 100)) : 0;
-    if (hasDiff) dayDiffSum += dayDiffValue;
-
-    const profit = valuation - item.cost;
-    const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
-
-    if (!item.isNisa) taxableProfit += profit;
-
-    const brandColor = BRAND_COLORS[item.code] || "#3a3a3c";
-    const prevClass = dayDiffValue >= 0 ? "pos" : "neg";
-    const profitClass = profit >= 0 ? "pos" : "neg";
-
-    const fxText = item.isStock
-      ? `${item.rate ?? currentUsdJpy ? "¥" + (item.rate ?? currentUsdJpy).toFixed(2) : "---"}`
-      : "-";
+    const dayDiff = valuation * (item.diff / 100);
+    dayDiffSum += dayDiff;
 
     return `
-      <section class="stock-card" style="--brand:${brandColor}">
+      <div class="stock-card" style="--brand:${BRAND_COLORS[item.code] || '#3a3a3c'}">
         <div class="stock-header">
-          <div class="stock-name-wrap">
-            <div class="stock-name">${item.name}</div>
-            <div class="stock-code numeric">${item.code}</div>
-          </div>
-          <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
+          <span class="stock-name">${item.name}</span>
+          <span class="numeric" style="font-size:11px; color:var(--text-sub)">${item.isNisa ? 'NISA' : '特定'}</span>
         </div>
-
-        <div class="stock-main">
-          <div class="stock-value-block">
-            <div class="stock-value-label">Valuation</div>
-            <div class="stock-value numeric">${formatYen(valuation)}</div>
-          </div>
-
-          <div class="stock-performance">
-            <div class="stock-performance-row ${prevClass} numeric">
-              Prev:
-              ${
-                hasDiff
-                  ? `${formatSignedNumber(dayDiffValue)} (${formatSignedPercent(diffRate)})`
-                  : "---"
-              }
-            </div>
-            <div class="stock-performance-row ${profitClass} numeric">
-              Total: ${formatSignedNumber(profit)} (${formatSignedPercent(profitRate)})
-            </div>
-          </div>
+        <div class="stock-value numeric">¥${Math.floor(valuation).toLocaleString()}</div>
+        
+        <div class="meta-row">
+          <div class="meta-label">${item.isStock ? 'Price ($)' : 'NAV'}</div>
+          <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)">
         </div>
-
-        <div class="view-meta">
-          <div class="meta-row">
-            <div class="meta-label">${item.isStock ? "Price ($)" : "NAV"}</div>
-            <div class="meta-value numeric">${formatDisplayNumber(item.price, item.isStock ? 4 : 2)}</div>
-          </div>
-          <div class="meta-row">
-            <div class="meta-label">Qty</div>
-            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}">${formatDisplayNumber(item.holding, 5)}</div>
-          </div>
-          <div class="meta-row">
-            <div class="meta-label">Cost</div>
-            <div class="meta-value numeric">¥${Math.floor(item.cost).toLocaleString("ja-JP")}</div>
-          </div>
-          <div class="meta-row">
-            <div class="meta-label">FX</div>
-            <div class="meta-value numeric">${fxText}</div>
-          </div>
+        <div class="meta-row">
+          <div class="meta-label">Quantity</div>
+          <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)">
         </div>
-
-        <div class="edit-panel">
-          <div class="input-grid">
-            <div class="field">
-              <label class="field-label">${item.isStock ? "Price ($)" : "NAV"}</label>
-              <input
-                class="ios-input numeric"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.price}"
-                onchange="updateItem(${index}, 'price', this.value)"
-              />
-            </div>
-
-            <div class="field">
-              <label class="field-label">Qty</label>
-              <input
-                class="ios-input numeric ${item.holding === 0 ? "warn" : ""}"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.holding}"
-                onchange="updateItem(${index}, 'holding', this.value)"
-              />
-            </div>
-
-            <div class="field">
-              <label class="field-label">Cost</label>
-              <input
-                class="ios-input numeric"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.cost}"
-                onchange="updateItem(${index}, 'cost', this.value)"
-              />
-            </div>
-          </div>
+        <div class="meta-row">
+          <div class="meta-label">Cost (¥)</div>
+          <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)">
         </div>
-      </section>
+      </div>
     `;
   }).join("");
 
-  document.getElementById("totalDisplay").textContent = formatYen(totalValue);
-  document.getElementById("fxRateDisplay").textContent =
-    `USD/JPY: ${currentUsdJpy ? "¥" + currentUsdJpy.toFixed(2) : "---"}`;
-
-  const anyDiff = data.some(item => item.diff !== null);
-  const prevTotalValue = totalValue - dayDiffSum;
-  const totalDayRate = (anyDiff && prevTotalValue > 0)
-    ? (dayDiffSum / prevTotalValue * 100)
-    : 0;
-
-  const dayEl = document.getElementById("totalDayDiff");
-  dayEl.textContent = anyDiff
-    ? `${formatSignedNumber(dayDiffSum)} (${formatSignedPercent(totalDayRate)})`
-    : "---";
-  dayEl.className = "stat-chip-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
-
-  const overallProfit = totalValue - totalCost;
-  const overallProfitRate = totalCost > 0
-    ? (overallProfit / totalCost * 100)
-    : 0;
-
-  const profitEl = document.getElementById("totalProfitAll");
-  profitEl.textContent =
-    `${formatSignedNumber(overallProfit)} (${formatSignedPercent(overallProfitRate)})`;
-  profitEl.className = "stat-chip-value numeric " + (overallProfit >= 0 ? "pos" : "neg");
-
-  const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString("ja-JP")}`;
+  document.getElementById("totalDisplay").textContent = "¥" + Math.floor(totalValue).toLocaleString();
+  document.getElementById("totalDayDiff").textContent = (dayDiffSum >= 0 ? "+" : "") + Math.floor(dayDiffSum).toLocaleString();
+  document.getElementById("totalDayDiff").className = "stat-chip-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
+  
+  const profit = totalValue - totalCost;
+  document.getElementById("totalProfitAll").textContent = (profit >= 0 ? "+" : "") + Math.floor(profit).toLocaleString();
+  document.getElementById("totalProfitAll").className = "stat-chip-value numeric " + (profit >= 0 ? "pos" : "neg");
 
   const progress = Math.min((totalValue / 10000000) * 100, 100);
-  document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
   document.getElementById("progressBar").style.width = progress + "%";
 }
 
