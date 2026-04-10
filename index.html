@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
@@ -94,7 +95,7 @@ body {
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--surface-1);
   border: 1px solid var(--line);
   border-radius: 28px;
-  padding: 24px 18px 18px; /* 上部バッジ削除に伴い余白調整 */
+  padding: 24px 18px 18px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-soft);
   margin-bottom: 16px;
 }
@@ -106,7 +107,6 @@ body {
   margin-bottom: 5px;
 }
 
-/* メインエリア：左側に金額、右側にパフォーマンス */
 .main-display-row {
   display: flex;
   justify-content: space-between;
@@ -152,25 +152,67 @@ body {
   transition: width 0.55s cubic-bezier(.2,.8,.2,1);
 }
 
+/* Net Card — row layout */
 .net-card {
-  border-radius: 18px;
-  padding: 12px 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%), var(--surface-2);
-  border: 1px solid var(--line);
+  padding: 0;
 }
 
-.net-card-label {
-  font-size: 10px;
-  color: var(--text-sub);
+.net-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 38px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.net-row:first-child {
+  border-top: none;
+}
+
+.net-row-label {
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 4px;
+  color: var(--text-sub);
 }
 
-.net-card-value {
-  font-size: 18px;
+.net-row-value {
+  font-size: 14px;
   font-weight: 800;
+}
+
+.net-row-value.main {
+  font-size: 14px;
+}
+
+/* Last sync badge */
+.sync-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-soft);
+  flex-shrink: 0;
+}
+
+.sync-dot.active {
+  background: var(--pos);
 }
 
 /* Portfolio Section */
@@ -227,7 +269,6 @@ body {
 }
 
 .stock-value { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; }
-
 .stock-performance { text-align: right; font-size: 12px; font-weight: 800; line-height: 1.35; }
 
 /* Inline Edit Field */
@@ -263,6 +304,7 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-icon { animation: spin 1s linear infinite; display: inline-block; }
 </style>
+
 </head>
 
 <body>
@@ -272,35 +314,49 @@ body {
       <div class="app-subtitle">MONEY LOG</div>
     </header>
 
-    <div id="errorBanner" class="error-banner"></div>
+```
+<div id="errorBanner"></div>
 
-    <section class="summary-card">
-      <div class="summary-label">Total Assets</div>
-      
-      <div class="main-display-row">
-        <div class="total-display numeric" id="totalDisplay">¥0</div>
-        <div class="summary-performance">
-          <div id="totalDayDiff" class="numeric">---</div>
-          <div id="totalProfitAll" class="numeric" style="margin-top: 6px;">---</div>
-        </div>
-      </div>
+<section class="summary-card">
+  <div class="summary-label">Total Assets</div>
 
-      <div class="progress-meta">
-        <span>Project 10M</span>
-        <span id="progRate" class="numeric">(0.00%)</span>
-      </div>
-      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+  <div class="main-display-row">
+    <div class="total-display numeric" id="totalDisplay">¥0</div>
+    <div class="summary-performance">
+      <div id="totalDayDiff" class="numeric">---</div>
+      <div id="totalProfitAll" class="numeric" style="margin-top: 6px;">---</div>
+    </div>
+  </div>
 
-      <div class="net-card">
-        <div class="net-card-label">Net (Est.)</div>
-        <div class="net-card-value numeric" id="payoutDisplay">¥0</div>
-        <div id="taxNote" style="font-size:11px; color:var(--text-sub); margin-top:4px;">Tax: ¥0</div>
-      </div>
-      <div id="lastUpdated" style="text-align:center; font-size:11px; color:var(--text-soft); margin-top:12px;">Last sync: --:--:--</div>
-    </section>
+  <div class="progress-meta">
+    <span>Project 10M</span>
+    <span id="progRate" class="numeric">(0.00%)</span>
+  </div>
+  <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
 
-    <div class="section-title">Portfolio</div>
-    <div id="stockList" class="stock-list"></div>
+  <div class="net-card">
+    <div class="net-row">
+      <div class="net-row-label">Net (Est.)</div>
+      <div class="net-row-value main numeric" id="payoutDisplay">¥0</div>
+    </div>
+    <div class="net-row">
+      <div class="net-row-label">Tax</div>
+      <div class="net-row-value numeric" id="taxNote" style="color:var(--text-sub);">¥0</div>
+    </div>
+  </div>
+
+  <div class="sync-row">
+    <div class="sync-badge">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="lastUpdated">Last sync: --:--:--</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-title">Portfolio</div>
+<div id="stockList" class="stock-list"></div>
+```
+
   </div>
 
   <div class="bottom-bar">
@@ -364,7 +420,8 @@ async function fetchAll() {
     } catch (e) { console.error(e); }
   }));
   icon.classList.remove("loading-icon");
-  document.getElementById("lastUpdated").textContent = `最終更新: ${new Date().toLocaleTimeString()}`;
+  document.getElementById("lastUpdated").textContent = `Last sync: ${new Date().toLocaleTimeString()}`;
+  document.getElementById("syncDot").classList.add("active");
   saveAndRender();
 }
 
@@ -407,27 +464,28 @@ function render() {
   }).join("");
 
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
-  
+
   const anyDiff = data.some(item => item.diff !== null);
   const dayEl = document.getElementById("totalDayDiff");
   const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
   dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${formatPercent(dayRate)})` : "---";
-  dayEl.className = (dayDiffSum >= 0 ? "pos" : "neg");
+  dayEl.className = (dayDiffSum >= 0 ? "pos" : "neg") + " numeric";
 
   const profitEl = document.getElementById("totalProfitAll");
   const overallProfit = totalValue - totalCost;
   const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
   profitEl.textContent = `Total: ${formatSigned(overallProfit)} (${formatPercent(overallProfitRate)})`;
-  profitEl.className = (overallProfit >= 0 ? "pos" : "neg");
+  profitEl.className = (overallProfit >= 0 ? "pos" : "neg") + " numeric";
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString()}`;
+  document.getElementById("taxNote").textContent = `¥${estTax.toLocaleString()}`;
   const progress = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
   document.getElementById("progressBar").style.width = progress + "%";
 }
 render();
 </script>
+
 </body>
 </html>
