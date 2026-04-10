@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG iOS Style</title>
+<title>MONEY LOG iOS Edit Mode</title>
 
 <style>
 :root {
@@ -25,10 +25,11 @@
   --line-strong: rgba(255,255,255,0.12);
 
   --accent: #0a84ff;
-  --accent-soft: rgba(10,132,255,0.18);
+  --accent-soft: rgba(10,132,255,0.16);
 
   --pos: #30d158;
   --neg: #ff453a;
+  --warn: #ffd60a;
 
   --radius-xl: 24px;
   --radius-lg: 18px;
@@ -72,7 +73,18 @@ body {
 
 /* Header */
 .app-header {
-  padding: 8px 4px 14px;
+  padding: 6px 4px 14px;
+}
+
+.nav-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title-wrap {
+  min-width: 0;
 }
 
 .app-title {
@@ -87,6 +99,57 @@ body {
   font-size: 13px;
   color: var(--text-sub);
   font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.header-btn {
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.05);
+  color: var(--accent);
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 0.14s ease, opacity 0.18s ease, background-color 0.18s ease;
+}
+
+.header-btn:active {
+  transform: scale(0.97);
+}
+
+body.editing .header-btn {
+  background: rgba(10,132,255,0.16);
+  border-color: rgba(10,132,255,0.26);
+  color: #6eb6ff;
+}
+
+.editing-hint {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(10,132,255,0.12);
+  border: 1px solid rgba(10,132,255,0.2);
+  color: #8bc3ff;
+  font-size: 12px;
+  font-weight: 700;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+body.editing .editing-hint {
+  display: block;
+  animation: fadeDown 0.2s ease;
 }
 
 /* Error */
@@ -342,7 +405,7 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .stock-value-block {
@@ -377,11 +440,55 @@ body {
   margin-top: 6px;
 }
 
+/* View rows */
+.view-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 2px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.meta-row:first-child {
+  border-top: none;
+}
+
+.meta-label {
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.meta-value {
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 800;
+  text-align: right;
+}
+
+/* Edit panel */
 .edit-panel {
+  display: none;
+  margin-top: 12px;
   padding: 10px;
   border-radius: 18px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.05);
+}
+
+body.editing .edit-panel {
+  display: block;
+  animation: fadeDown 0.18s ease;
+}
+
+body.editing .view-meta {
+  display: none;
 }
 
 .input-grid {
@@ -444,7 +551,7 @@ body {
   margin: 0;
 }
 
-/* Floating action */
+/* Bottom bar */
 .bottom-bar {
   position: fixed;
   left: 0;
@@ -462,7 +569,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 138px;
+  min-width: 144px;
   height: 54px;
   padding: 0 22px;
   border: 1px solid rgba(255,255,255,0.14);
@@ -497,23 +604,35 @@ body {
   font-size: 16px;
 }
 
-.loading-icon {
-  animation: spin 1s linear infinite;
-}
-
 /* Utility */
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
+.warn-text { color: var(--warn); }
 .muted { color: var(--text-sub); }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
 @keyframes fadeUp {
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -540,8 +659,16 @@ body {
 <body>
   <div class="container">
     <header class="app-header">
-      <h1 class="app-title">資産</h1>
-      <div class="app-subtitle">MONEY LOG</div>
+      <div class="nav-row">
+        <div class="title-wrap">
+          <h1 class="app-title">資産</h1>
+          <div class="app-subtitle">MONEY LOG</div>
+        </div>
+        <div class="header-actions">
+          <button id="editModeBtn" class="header-btn" onclick="toggleEditMode()">編集</button>
+        </div>
+      </div>
+      <div id="editingHint" class="editing-hint">編集モード中です。変更は自動保存されます。</div>
     </header>
 
     <div id="errorBanner" class="error-banner"></div>
@@ -598,7 +725,7 @@ body {
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_v3_ios";
+const STORAGE_KEY = "money_log_v3_ios_edit";
 
 const ITEM_DEFAULTS = {
   diff: null,
@@ -622,6 +749,8 @@ const BRAND_COLORS = {
   "PAYP": "#ff3b30"
 };
 
+let isEditMode = false;
+
 let data = (() => {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -638,6 +767,13 @@ let currentUsdJpy = (() => {
 
 function formatYen(value) {
   return "¥" + Math.floor(value).toLocaleString("ja-JP");
+}
+
+function formatDisplayNumber(value, digits = 2) {
+  return Number(value).toLocaleString("ja-JP", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits
+  });
 }
 
 function formatSignedNumber(value) {
@@ -672,6 +808,12 @@ function calcValuation(item) {
     return rate ? Math.floor(item.price * rate * item.holding) : null;
   }
   return Math.floor(item.price * item.holding / 10000);
+}
+
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  document.body.classList.toggle("editing", isEditMode);
+  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
 }
 
 async function fetchAll() {
@@ -720,7 +862,11 @@ async function fetchAll() {
 
   const now = new Date();
   document.getElementById("lastUpdated").textContent =
-    `最終更新: ${now.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
+    `最終更新: ${now.toLocaleTimeString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })}`;
 
   saveAndRender();
 }
@@ -734,6 +880,9 @@ function updateItem(index, field, value) {
 }
 
 function render() {
+  document.body.classList.toggle("editing", isEditMode);
+  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
+
   const list = document.getElementById("stockList");
 
   let totalValue = 0;
@@ -757,9 +906,12 @@ function render() {
     if (!item.isNisa) taxableProfit += profit;
 
     const brandColor = BRAND_COLORS[item.code] || "#3a3a3c";
-
     const prevClass = dayDiffValue >= 0 ? "pos" : "neg";
     const profitClass = profit >= 0 ? "pos" : "neg";
+
+    const fxText = item.isStock
+      ? `${item.rate ?? currentUsdJpy ? "¥" + (item.rate ?? currentUsdJpy).toFixed(2) : "---"}`
+      : "-";
 
     return `
       <section class="stock-card" style="--brand:${brandColor}">
@@ -789,6 +941,25 @@ function render() {
             <div class="stock-performance-row ${profitClass} numeric">
               Total: ${formatSignedNumber(profit)} (${formatSignedPercent(profitRate)})
             </div>
+          </div>
+        </div>
+
+        <div class="view-meta">
+          <div class="meta-row">
+            <div class="meta-label">${item.isStock ? "Price ($)" : "NAV"}</div>
+            <div class="meta-value numeric">${formatDisplayNumber(item.price, item.isStock ? 4 : 2)}</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-label">Qty</div>
+            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}">${formatDisplayNumber(item.holding, 5)}</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-label">Cost</div>
+            <div class="meta-value numeric">¥${Math.floor(item.cost).toLocaleString("ja-JP")}</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-label">FX</div>
+            <div class="meta-value numeric">${fxText}</div>
           </div>
         </div>
 
