@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.1 Direct Edit</title>
+<title>MONEY LOG iOS Direct Edit</title>
 
 <style>
 :root {
@@ -37,7 +37,6 @@
   --radius-sm: 12px;
 
   --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
-  --shadow-float: 0 12px 30px rgba(0,0,0,0.35);
 }
 
 * {
@@ -76,13 +75,6 @@ body {
   padding: 6px 4px 14px;
 }
 
-.nav-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .app-title {
   font-size: 34px;
   font-weight: 800;
@@ -95,21 +87,6 @@ body {
   font-size: 13px;
   color: var(--text-sub);
   font-weight: 500;
-}
-
-/* Error Banner */
-.error-banner {
-  display: none;
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(255, 69, 58, 0.14);
-  border: 1px solid rgba(255, 69, 58, 0.22);
-  color: #ff9b94;
-  font-size: 12px;
-  font-weight: 700;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
 }
 
 /* Summary Card */
@@ -137,6 +114,7 @@ body {
   border-radius: 999px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text-main);
   font-size: 11px;
   font-weight: 700;
 }
@@ -146,6 +124,16 @@ body {
   font-weight: 800;
   letter-spacing: -1.1px;
   margin: 0 0 14px;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .progress-track {
@@ -158,6 +146,7 @@ body {
 
 .progress-fill {
   height: 100%;
+  width: 0%;
   background: linear-gradient(90deg, #ffffff 0%, #d0d0d0 100%);
   transition: width 0.55s cubic-bezier(.2,.8,.2,1);
 }
@@ -179,7 +168,10 @@ body {
 .stat-chip-label {
   font-size: 10px;
   color: var(--text-sub);
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
 }
 
 .stat-chip-value {
@@ -190,8 +182,17 @@ body {
 .net-card {
   border-radius: 18px;
   padding: 12px 14px;
-  background: var(--surface-2);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%), var(--surface-2);
   border: 1px solid var(--line);
+}
+
+.net-card-label {
+  font-size: 10px;
+  color: var(--text-sub);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
 }
 
 .net-card-value {
@@ -200,15 +201,22 @@ body {
 }
 
 /* Portfolio Card */
+.section-title {
+  margin: 18px 4px 12px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
 .stock-card {
   position: relative;
   overflow: hidden;
   border-radius: 22px;
   padding: 16px;
-  background: var(--surface-1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%), var(--surface-1);
   border: 1px solid var(--line);
   margin-bottom: 14px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035), var(--shadow-soft);
 }
 
 .stock-card::before {
@@ -228,6 +236,13 @@ body {
 .stock-name {
   font-size: 16px;
   font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.stock-code {
+  font-size: 11px;
+  color: var(--text-sub);
+  font-weight: 700;
 }
 
 .account-badge {
@@ -251,6 +266,7 @@ body {
 .stock-value {
   font-size: 30px;
   font-weight: 800;
+  letter-spacing: -0.8px;
 }
 
 .stock-performance {
@@ -259,7 +275,12 @@ body {
   font-weight: 800;
 }
 
-/* Inline Edit Field */
+/* Inline Edit Field (Sizes traced from Original) */
+.view-meta {
+  display: grid;
+  gap: 8px;
+}
+
 .meta-row {
   display: flex;
   justify-content: space-between;
@@ -270,17 +291,24 @@ body {
 
 .meta-row:first-child { border-top: none; }
 
+.meta-label {
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* インライン入力：閲覧時と全く同じサイズ・フォントに調整 */
 .ios-direct-input {
   background: transparent;
   border: none;
   color: var(--text-main);
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 14px; /* 元の .meta-value と同じ */
+  font-weight: 800; /* 元の .meta-value と同じ */
   text-align: right;
-  width: 150px;
-  padding: 6px 8px;
-  border-radius: 8px;
+  width: 160px;
+  padding: 4px 2px; /* 余白を最小限に */
+  border-radius: 6px;
   outline: none;
   transition: background 0.18s;
   -webkit-appearance: none;
@@ -289,6 +317,10 @@ body {
 .ios-direct-input:focus {
   background: var(--surface-3);
   box-shadow: 0 0 0 1px var(--accent);
+}
+
+.ios-direct-input.warn-text {
+  color: var(--neg);
 }
 
 /* Bottom Bar */
@@ -305,7 +337,7 @@ body {
 .update-btn {
   pointer-events: auto;
   height: 54px;
-  padding: 0 24px;
+  padding: 0 22px;
   border-radius: 999px;
   background: rgba(255,255,255,0.88);
   color: #000;
@@ -327,12 +359,8 @@ body {
 <body>
   <div class="container">
     <header class="app-header">
-      <div class="nav-row">
-        <div>
-          <h1 class="app-title">資産</h1>
-          <div class="app-subtitle">MONEY LOG v3.1</div>
-        </div>
-      </div>
+      <h1 class="app-title">資産</h1>
+      <div class="app-subtitle">MONEY LOG</div>
     </header>
 
     <div id="errorBanner" class="error-banner"></div>
@@ -342,6 +370,7 @@ body {
         <div class="summary-badge numeric">Project 10M</div>
         <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
       </div>
+      <div style="color:var(--text-sub); font-size:12px; font-weight:600; margin-bottom:6px;">Total Assets</div>
       <div class="total-display numeric" id="totalDisplay">¥0</div>
       <div class="progress-meta"><span>Goal progress</span><span id="progRate" class="numeric">(0.00%)</span></div>
       <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
@@ -350,24 +379,25 @@ body {
         <div class="stat-chip"><div class="stat-chip-label">Total Profit</div><div id="totalProfitAll" class="stat-chip-value numeric">---</div></div>
       </div>
       <div class="net-card">
+        <div class="net-card-label">Net (Est.)</div>
         <div class="net-card-value numeric" id="payoutDisplay">¥0</div>
         <div id="taxNote" style="font-size:11px; color:var(--text-sub); margin-top:4px;">Tax: ¥0</div>
       </div>
       <div id="lastUpdated" style="text-align:center; font-size:11px; color:var(--text-soft); margin-top:12px;">最終更新: --:--:--</div>
     </section>
 
+    <div class="section-title">Portfolio</div>
     <div id="stockList" class="stock-list"></div>
   </div>
 
   <div class="bottom-bar">
     <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span id="updateIcon">↻</span> <span id="updateLabel">update</span>
+      <span id="updateIcon">↻</span> update
     </button>
   </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-// STORAGE_KEYを元のコードと一致させる
 const STORAGE_KEY = "money_log_v3_ios_edit";
 
 const ITEM_DEFAULTS = { diff: null, rate: null };
@@ -421,9 +451,7 @@ function updateItem(index, field, value) {
 
 async function fetchAll() {
   const icon = document.getElementById("updateIcon");
-  const label = document.getElementById("updateLabel");
   icon.classList.add("loading-icon");
-  label.textContent = "updating";
 
   await Promise.all(data.map(async (item) => {
     try {
@@ -441,7 +469,6 @@ async function fetchAll() {
   }));
 
   icon.classList.remove("loading-icon");
-  label.textContent = "update";
   document.getElementById("lastUpdated").textContent = `最終更新: ${new Date().toLocaleTimeString()}`;
   saveAndRender();
 }
@@ -454,11 +481,9 @@ function render() {
     const valuation = calcValuation(item);
     totalValue += valuation;
     totalCost += item.cost;
-    
     const hasDiff = item.diff !== null;
     const dayDiffValue = hasDiff ? Math.floor(valuation * (item.diff / 100)) : 0;
     if (hasDiff) dayDiffSum += dayDiffValue;
-    
     const profit = valuation - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     if (!item.isNisa) taxableProfit += profit;
@@ -470,10 +495,10 @@ function render() {
           <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
         </div>
         <div class="stock-main">
-          <div class="stock-value numeric">${formatYen(valuation)}</div>
+          <div><div style="color:var(--text-sub); font-size:11px; font-weight:700; margin-bottom:5px;">Valuation</div><div class="stock-value numeric">${formatYen(valuation)}</div></div>
           <div class="stock-performance">
-            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'} numeric">Prev: ${hasDiff ? formatSigned(dayDiffValue) + ' (' + formatPercent(item.diff) + ')' : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'} numeric" style="margin-top:6px">Total: ${formatSigned(profit)} (${formatPercent(profitRate)})</div>
+            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'} numeric" style="line-height:1.35;">Prev: ${hasDiff ? formatSigned(dayDiffValue) + ' (' + formatPercent(item.diff) + ')' : '---'}</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'} numeric" style="line-height:1.35; margin-top:6px;">Total: ${formatSigned(profit)} (${formatPercent(profitRate)})</div>
           </div>
         </div>
         <div class="view-meta">
@@ -481,12 +506,12 @@ function render() {
             <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)">
           </div>
           <div class="meta-row"><div class="meta-label">Qty</div>
-            <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)">
+            <input class="ios-direct-input numeric ${item.holding === 0 ? 'warn-text' : ''}" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)">
           </div>
           <div class="meta-row"><div class="meta-label">Cost</div>
             <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)">
           </div>
-          <div class="meta-row"><div class="meta-label">FX</div><div class="numeric" style="padding-right:8px; font-weight:800; font-size:14px;">${item.isStock ? (currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---') : '-'}</div></div>
+          <div class="meta-row"><div class="meta-label">FX</div><div class="numeric" style="padding:4px 2px; font-weight:800; font-size:14px; text-align:right;">${item.isStock ? (currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---') : '-'}</div></div>
         </div>
       </section>
     `;
@@ -494,20 +519,16 @@ function render() {
 
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
   document.getElementById("fxRateDisplay").textContent = `USD/JPY: ${currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---'}`;
-  
   const anyDiff = data.some(item => item.diff !== null);
   const dayEl = document.getElementById("totalDayDiff");
   dayEl.textContent = anyDiff ? `${formatSigned(dayDiffSum)} (${formatPercent(dayDiffSum / (totalValue - dayDiffSum) * 100)})` : "---";
   dayEl.className = "stat-chip-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
-
   const profitEl = document.getElementById("totalProfitAll");
   profitEl.textContent = `${formatSigned(totalValue - totalCost)} (${formatPercent((totalValue - totalCost) / totalCost * 100)})`;
   profitEl.className = "stat-chip-value numeric " + (totalValue >= totalCost ? "pos" : "neg");
-
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
   document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString()}`;
-
   const progress = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
   document.getElementById("progressBar").style.width = progress + "%";
