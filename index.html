@@ -94,29 +94,9 @@ body {
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--surface-1);
   border: 1px solid var(--line);
   border-radius: 28px;
-  padding: 18px;
+  padding: 24px 18px 18px; /* 上部バッジ削除に伴い余白調整 */
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-soft);
   margin-bottom: 16px;
-}
-
-.summary-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.summary-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: var(--text-main);
-  font-size: 11px;
-  font-weight: 700;
 }
 
 .summary-label {
@@ -126,7 +106,7 @@ body {
   margin-bottom: 5px;
 }
 
-/* 統一スタイル：左側に金額、右側にパフォーマンス */
+/* メインエリア：左側に金額、右側にパフォーマンス */
 .main-display-row {
   display: flex;
   justify-content: space-between;
@@ -295,11 +275,6 @@ body {
     <div id="errorBanner" class="error-banner"></div>
 
     <section class="summary-card">
-      <div class="summary-top">
-        <div class="summary-badge numeric">Project 10M</div>
-        <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
-      </div>
-      
       <div class="summary-label">Total Assets</div>
       
       <div class="main-display-row">
@@ -311,7 +286,7 @@ body {
       </div>
 
       <div class="progress-meta">
-        <span>Goal progress</span>
+        <span>Project 10M</span>
         <span id="progRate" class="numeric">(0.00%)</span>
       </div>
       <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
@@ -338,27 +313,11 @@ body {
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
 const STORAGE_KEY = "money_log_v3_ios_edit";
 
-const ITEM_DEFAULTS = { diff: null, rate: null };
-
-function migrateData(raw) {
-  if (!Array.isArray(raw)) return null;
-  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
-}
-
-const INITIAL_DATA = [
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
   { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
-
-const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
-
-let data = (() => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return migrateData(raw) || INITIAL_DATA;
-  } catch (e) { return INITIAL_DATA; }
-})();
 
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 
@@ -423,6 +382,8 @@ function render() {
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     if (!item.isNisa) taxableProfit += profit;
 
+    const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
+
     return `
       <section class="stock-card" style="--brand:${BRAND_COLORS[item.code] || '#3a3a3c'}">
         <div class="stock-header">
@@ -446,7 +407,6 @@ function render() {
   }).join("");
 
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
-  document.getElementById("fxRateDisplay").textContent = `USD/JPY: ${currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---'}`;
   
   const anyDiff = data.some(item => item.diff !== null);
   const dayEl = document.getElementById("totalDayDiff");
