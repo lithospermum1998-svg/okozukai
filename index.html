@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.8 Final</title>
+<title>MONEY LOG v3.1 Direct Edit</title>
 
 <style>
 :root {
@@ -15,174 +15,315 @@
   --surface-1: #1c1c1e;
   --surface-2: #2c2c2e;
   --surface-3: #3a3a3c;
+  --surface-4: #48484a;
+
   --text-main: #ffffff;
   --text-sub: #8e8e93;
+  --text-soft: #636366;
+
   --line: rgba(255,255,255,0.07);
+  --line-strong: rgba(255,255,255,0.12);
+
   --accent: #0a84ff;
+  --accent-soft: rgba(10,132,255,0.16);
+
   --pos: #30d158;
   --neg: #ff453a;
+  --warn: #ffd60a;
+
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 12px;
+
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg); color: var(--text-main); font-family: -apple-system, sans-serif; }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+}
 
 body {
-  padding: calc(15px + env(safe-area-inset-top)) 12px calc(90px + env(safe-area-inset-bottom));
+  min-height: 100vh;
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    14px
+    calc(110px + env(safe-area-inset-bottom));
   line-height: 1.2;
 }
 
-.container { max-width: 430px; margin: 0 auto; }
-.numeric { font-variant-numeric: tabular-nums; }
+.container {
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
 
 /* Header */
-.app-header { padding: 4px 4px 14px; }
+.app-header {
+  padding: 6px 4px 14px;
+}
+
 .app-title {
-  font-size: 20px;
+  font-size: 34px;
   font-weight: 800;
-  letter-spacing: -0.3px;
-  text-transform: uppercase;
+  letter-spacing: -0.8px;
+  margin: 0;
+}
+
+.app-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-sub);
+  font-weight: 500;
 }
 
 /* Summary Card */
 .summary-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--surface-1) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--surface-1);
   border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 18px;
+  border-radius: 28px;
+  padding: 24px 18px 18px; /* 上部バッジ削除に伴い余白調整 */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-soft);
+  margin-bottom: 16px;
+}
+
+.summary-label {
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+/* メインエリア：左側に金額、右側にパフォーマンス */
+.main-display-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-bottom: 12px;
 }
 
-.summary-label { font-size: 10px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
-.main-display-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
-.total-display { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
-.summary-performance { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
+.total-display {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
 
-/* NET Style */
-.net-row {
+.summary-performance {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.progress-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 2px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 8px;
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
 }
-.net-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
-.net-value-wrap { text-align: right; }
-.net-value { font-size: 14px; font-weight: 800; }
-.net-tax { font-size: 10px; color: var(--text-main); font-weight: 700; margin-left: 6px; }
+
+.progress-track {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ffffff 0%, #d0d0d0 100%);
+  transition: width 0.55s cubic-bezier(.2,.8,.2,1);
+}
+
+.net-card {
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%), var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.net-card-label {
+  font-size: 10px;
+  color: var(--text-sub);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.net-card-value {
+  font-size: 18px;
+  font-weight: 800;
+}
 
 /* Portfolio Section */
-.section-title { margin: 12px 4px 8px; font-size: 17px; font-weight: 800; color: var(--text-sub); }
+.section-title {
+  margin: 18px 4px 12px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.stock-list {
+  display: grid;
+  gap: 14px;
+}
 
 .stock-card {
   position: relative;
-  border-radius: 18px;
-  padding: 12px 14px;
-  background: var(--surface-1);
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%), var(--surface-1);
   border: 1px solid var(--line);
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035), var(--shadow-soft);
 }
 
 .stock-card::before {
-  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px;
-  width: 4px; border-radius: 0 2px 2px 0; background: var(--brand, #3a3a3c);
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  background: var(--brand, #3a3a3c);
 }
 
-.stock-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.stock-name { font-size: 14px; font-weight: 700; }
-.account-badge { font-size: 9px; font-weight: 800; color: var(--text-sub); background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; }
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
 
-.stock-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.stock-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-.stock-performance { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
+.stock-name { font-size: 16px; font-weight: 800; letter-spacing: -0.2px; }
+.stock-code { font-size: 11px; color: var(--text-sub); font-weight: 700; }
+.account-badge {
+  height: 26px; padding: 0 10px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center;
+}
 
-.view-meta { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.meta-row { display: flex; flex-direction: column; justify-content: center; padding: 4px 0; }
-.meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+.stock-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.stock-value { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; }
+
+.stock-performance { text-align: right; font-size: 12px; font-weight: 800; line-height: 1.35; }
+
+/* Inline Edit Field */
+.view-meta { display: grid; gap: 8px; }
+.meta-row {
+  display: flex; justify-content: space-between; align-items: center;
+  min-height: 38px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.meta-row:first-child { border-top: none; }
+.meta-label { color: var(--text-sub); font-size: 12px; font-weight: 700; }
 
 .ios-direct-input {
-  background: transparent; border: none; color: var(--text-main); font-family: inherit;
-  font-size: 13px; font-weight: 700; text-align: left;
-  width: 100%; padding: 2px 0; outline: none; border-radius: 4px;
+  background: transparent; border: none; color: var(--text-main);
+  font-family: inherit; font-size: 14px; font-weight: 800;
+  text-align: right; width: 160px; padding: 4px 0; outline: none;
+  transition: background 0.18s; border-radius: 6px; -webkit-appearance: none;
 }
-.ios-direct-input:focus { background: var(--surface-3); padding-left: 4px; }
+.ios-direct-input:focus { background: var(--surface-3); padding: 4px 8px; box-shadow: 0 0 0 1px var(--accent); }
 
 /* Bottom Bar */
-.bottom-bar { position: fixed; left: 0; right: 0; bottom: 20px; display: flex; justify-content: center; pointer-events: none; }
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom));
+  display: flex; justify-content: center; pointer-events: none; z-index: 100;
+}
 .update-btn {
-  pointer-events: auto; height: 44px; padding: 0 20px; border-radius: 99px;
-  background: #fff; color: #000; font-size: 14px; font-weight: 800; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  pointer-events: auto; height: 54px; padding: 0 22px; border-radius: 999px;
+  background: rgba(255,255,255,0.88); color: #000; font-size: 16px; font-weight: 800;
+  backdrop-filter: blur(22px); box-shadow: 0 10px 28px rgba(0,0,0,0.34); border: none;
 }
 
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading { animation: spin 1s linear infinite; display: inline-block; }
+.loading-icon { animation: spin 1s linear infinite; display: inline-block; }
 </style>
 </head>
 
 <body>
   <div class="container">
     <header class="app-header">
-      <div class="app-title">MONEY LOG</div>
+      <h1 class="app-title">資産</h1>
+      <div class="app-subtitle">MONEY LOG</div>
     </header>
+
+    <div id="errorBanner" class="error-banner"></div>
 
     <section class="summary-card">
       <div class="summary-label">Total Assets</div>
+      
       <div class="main-display-row">
         <div class="total-display numeric" id="totalDisplay">¥0</div>
         <div class="summary-performance">
           <div id="totalDayDiff" class="numeric">---</div>
-          <div id="totalProfitAll" class="numeric" style="margin-top: 4px;">---</div>
+          <div id="totalProfitAll" class="numeric" style="margin-top: 6px;">---</div>
         </div>
       </div>
-      
-      <div class="net-row">
-        <div class="net-label">NET (EST.)</div>
-        <div class="net-value-wrap">
-          <span class="net-value numeric" id="payoutDisplay">¥0</span>
-          <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
-        </div>
+
+      <div class="progress-meta">
+        <span>Project 10M</span>
+        <span id="progRate" class="numeric">(0.00%)</span>
       </div>
+      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+
+      <div class="net-card">
+        <div class="net-card-label">Net (Est.)</div>
+        <div class="net-card-value numeric" id="payoutDisplay">¥0</div>
+        <div id="taxNote" style="font-size:11px; color:var(--text-sub); margin-top:4px;">Tax: ¥0</div>
+      </div>
+      <div id="lastUpdated" style="text-align:center; font-size:11px; color:var(--text-soft); margin-top:12px;">最終更新: --:--:--</div>
     </section>
 
     <div class="section-title">Portfolio</div>
-    <div id="stockList"></div>
+    <div id="stockList" class="stock-list"></div>
   </div>
 
   <div class="bottom-bar">
-    <button class="update-btn" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button>
+    <button id="updateBtn" class="update-btn" onclick="fetchAll()">
+      <span id="updateIcon">↻</span> update
+    </button>
   </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
 const STORAGE_KEY = "money_log_v3_ios_edit";
 
-const ITEM_DEFAULTS = { diff: null, rate: null };
-
-function migrateData(raw) {
-  if (!Array.isArray(raw)) return null;
-  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
-}
-
-const INITIAL_DATA = [
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
   { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
 
-const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
-
-let data = (() => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return migrateData(raw) || INITIAL_DATA;
-  } catch (e) { return INITIAL_DATA; }
-})();
-
-let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || 150.00;
+let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 
 function formatYen(v) { return "¥" + Math.floor(v).toLocaleString("ja-JP"); }
 function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v).toLocaleString("ja-JP"); }
+function formatPercent(v) { return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; }
 
 function saveAndRender() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -207,13 +348,12 @@ function updateItem(index, field, value) {
 
 async function fetchAll() {
   const icon = document.getElementById("updateIcon");
-  icon.classList.add("loading");
-  
+  icon.classList.add("loading-icon");
   await Promise.all(data.map(async (item) => {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
       const json = await res.json();
-      if (json && json.status === "Success") {
+      if (json.status === "Success") {
         item.price = json.price;
         item.diff = json.diff ?? null;
         if (json.rate) {
@@ -223,8 +363,8 @@ async function fetchAll() {
       }
     } catch (e) { console.error(e); }
   }));
-
-  icon.classList.remove("loading");
+  icon.classList.remove("loading-icon");
+  document.getElementById("lastUpdated").textContent = `最終更新: ${new Date().toLocaleTimeString()}`;
   saveAndRender();
 }
 
@@ -235,40 +375,33 @@ function render() {
   list.innerHTML = data.map((item, index) => {
     const valuation = calcValuation(item);
     totalValue += valuation; totalCost += item.cost;
-    
     const hasDiff = item.diff !== null;
     const dayDiffValue = hasDiff ? Math.floor(valuation * (item.diff / 100)) : 0;
     if (hasDiff) dayDiffSum += dayDiffValue;
-    
     const profit = valuation - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     if (!item.isNisa) taxableProfit += profit;
 
+    const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
+
     return `
       <section class="stock-card" style="--brand:${BRAND_COLORS[item.code] || '#3a3a3c'}">
         <div class="stock-header">
-          <div class="stock-name">${item.name}</div>
+          <div><div class="stock-name">${item.name}</div><div class="stock-code numeric">${item.code}</div></div>
           <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
         </div>
         <div class="stock-main">
           <div class="stock-value numeric">${formatYen(valuation)}</div>
           <div class="stock-performance">
-            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? formatSigned(dayDiffValue) : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'}" style="margin-top:4px;">Total: ${formatSigned(profit)} (${profitRate.toFixed(1)}%)</div>
+            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'} numeric">Prev: ${hasDiff ? formatSigned(dayDiffValue) + ' (' + formatPercent(item.diff) + ')' : '---'}</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'} numeric" style="margin-top:6px;">Total: ${formatSigned(profit)} (${formatPercent(profitRate)})</div>
           </div>
         </div>
         <div class="view-meta">
-          <div class="meta-row">
-            <div class="meta-label">${item.isStock ? 'Price($)' : 'NAV'}</div>
-            <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)">
-          </div>
-          <div class="meta-row">
-            <div class="meta-label">Qty / Cost(¥)</div>
-            <div style="display:flex; gap:8px;">
-              <input class="ios-direct-input numeric" style="width:45%;" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)">
-              <input class="ios-direct-input numeric" style="width:45%;" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)">
-            </div>
-          </div>
+          <div class="meta-row"><div class="meta-label">${item.isStock ? "Price ($)" : "NAV"}</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">Qty</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">Cost</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">FX</div><div class="numeric" style="font-weight:800; font-size:14px; text-align:right;">${item.isStock ? (currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---') : '-'}</div></div>
         </div>
       </section>`;
   }).join("");
@@ -276,22 +409,24 @@ function render() {
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
   
   const anyDiff = data.some(item => item.diff !== null);
-  const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
   const dayEl = document.getElementById("totalDayDiff");
-  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${dayRate.toFixed(2)}%)` : "---";
-  dayEl.className = "numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
-  
+  const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
+  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${formatPercent(dayRate)})` : "---";
+  dayEl.className = (dayDiffSum >= 0 ? "pos" : "neg");
+
+  const profitEl = document.getElementById("totalProfitAll");
   const overallProfit = totalValue - totalCost;
   const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
-  const profEl = document.getElementById("totalProfitAll");
-  profEl.textContent = `Total: ${formatSigned(overallProfit)} (${overallProfitRate.toFixed(2)}%)`;
-  profEl.className = "numeric " + (overallProfit >= 0 ? "pos" : "neg");
+  profitEl.textContent = `Total: ${formatSigned(overallProfit)} (${formatPercent(overallProfitRate)})`;
+  profitEl.className = (overallProfit >= 0 ? "pos" : "neg");
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = `(Tax: ${estTax > 0 ? formatSigned(estTax * -1) : '¥0'})`;
+  document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString()}`;
+  const progress = Math.min((totalValue / 10000000) * 100, 100);
+  document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
+  document.getElementById("progressBar").style.width = progress + "%";
 }
-
 render();
 </script>
 </body>
