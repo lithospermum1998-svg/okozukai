@@ -53,9 +53,10 @@ body {
 /* Section Title */
 .section-title { margin: 24px 2px 10px; font-size: 17px; font-weight: 800; }
 
-/* Card Common UI (Total & Portfolio) */
+/* List Common */
 .list-container { display: grid; gap: 10px; }
 
+/* Card UI */
 .stock-card {
   position: relative;
   overflow: hidden;
@@ -77,7 +78,7 @@ body {
 
 .meta-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
 .meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
-.meta-value { font-size: 12px; font-weight: 800; }
+.meta-value { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* In-place Edit Input */
 .inline-input {
@@ -110,8 +111,7 @@ body {
     </header>
 
     <div class="section-title">Summary</div>
-    <div id="summaryCards" class="list-container">
-      </div>
+    <div id="summaryCards" class="list-container"></div>
 
     <div class="section-title">Portfolio</div>
     <div id="stockList" class="list-container"></div>
@@ -194,7 +194,6 @@ function render() {
   const summary = document.getElementById("summaryCards");
   let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
 
-  // Calculate totals first
   data.forEach(item => {
     const val = calcValuation(item) || 0;
     totalValue += val;
@@ -208,42 +207,43 @@ function render() {
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   const netValue = totalValue - estTax;
 
-  // Render Summary Cards
+  // Summary Card (Integrated)
   summary.innerHTML = `
     <section class="stock-card" style="--brand:#ffffff">
       <div class="card-top">
-        <div><div class="card-label">Total Assets</div><div class="card-sub-label">GROSS</div></div>
+        <div><div class="card-label">Total Assets</div><div class="card-sub-label">SUMMARY</div></div>
       </div>
       <div class="card-main">
         <div class="value-main numeric">${formatYen(totalValue)}</div>
         <div class="performance-wrap">
           <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">Prev: ${formatSigned(dayDiffSum)}</div>
-          <div class="performance-line numeric ${overallProfit >= 0 ? "pos" : "neg"}">Profit: ${formatPct(overallProfitRate)}</div>
+          <div class="performance-line numeric ${overallProfit >= 0 ? "pos" : "neg"}">Total: ${formatPct(overallProfitRate)}</div>
         </div>
       </div>
-    </section>
-
-    <section class="stock-card" style="--brand:#636366">
-      <div class="card-top">
-        <div><div class="card-label">Net Estimation</div><div class="card-sub-label">AFTER TAX</div></div>
-      </div>
-      <div class="card-main">
-        <div class="value-main numeric">${formatYen(netValue)}</div>
-        <div class="performance-wrap">
-          <div class="performance-line numeric" style="color:var(--text-soft)">Tax: ${formatYen(estTax)}</div>
+      <div class="meta-grid">
+        <div style="grid-column: span 2;">
+          <div class="meta-label">Net Estimation</div>
+          <div class="meta-value numeric">${formatYen(netValue)}</div>
+        </div>
+        <div>
+          <div class="meta-label">Tax</div>
+          <div class="meta-value numeric" style="color:var(--text-soft)">${formatYen(estTax)}</div>
+        </div>
+        <div>
+          <div class="meta-label">Profit</div>
+          <div class="meta-value numeric ${overallProfit >= 0 ? 'pos' : 'neg'}">${formatSigned(overallProfit)}</div>
         </div>
       </div>
     </section>
   `;
 
-  // Render Portfolio Cards
+  // Portfolio Cards
   list.innerHTML = data.map((item, index) => {
     const val = calcValuation(item) || 0;
     const profit = val - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     const hasDiff = item.diff !== null;
     const dayDiffValue = hasDiff ? Math.floor(val * (parseFloat(item.diff) / 100)) : 0;
-
     const brand = BRAND_COLORS[item.code] || "#3a3a3c";
     
     const renderInline = (field, val, display) => {
