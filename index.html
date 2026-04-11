@@ -136,7 +136,6 @@ const INITIAL_DATA = [
 const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_DATA;
-let data = INITIAL_DATA;
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 let editingCell = { index: null, field: null };
 
@@ -208,7 +207,6 @@ function render() {
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   const netValue = totalValue - estTax;
 
-  // Summary Card (Integrated)
   summary.innerHTML = `
     <section class="stock-card" style="--brand:#ffffff">
       <div class="card-top">
@@ -238,7 +236,6 @@ function render() {
     </section>
   `;
 
-  // Portfolio Cards
   list.innerHTML = data.map((item, index) => {
     const val = calcValuation(item) || 0;
     const profit = val - item.cost;
