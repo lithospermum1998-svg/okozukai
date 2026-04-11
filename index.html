@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
@@ -72,6 +73,7 @@ body {
 .performance-line { font-size: 11px; font-weight: 800; line-height: 1.3; text-align: right; }
 
 .meta-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
+.summary-meta-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
 .meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
 .meta-value { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -148,6 +150,7 @@ body {
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
 </style>
+
 </head>
 
 <body>
@@ -155,8 +158,11 @@ body {
     <div class="section-title">MONEY LOG</div>
     <div id="summaryCards" class="list-container"></div>
 
-    <div class="section-title">Portfolio</div>
-    <div id="stockList" class="list-container"></div>
+```
+<div class="section-title">Portfolio</div>
+<div id="stockList" class="list-container"></div>
+```
+
   </div>
 
   <div class="bottom-bar">
@@ -239,21 +245,27 @@ async function fetchAll() {
 function render() {
   const list = document.getElementById("stockList");
   const summary = document.getElementById("summaryCards");
-  let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
+  let totalValue = 0, totalCost = 0, dayDiffSum = 0;
+  let taxableValue = 0, taxableCost = 0, taxableProfit = 0;
 
   data.forEach(item => {
     const val = calcValuation(item) || 0;
     totalValue += val;
     totalCost += item.cost;
     if (item.diff !== null) dayDiffSum += Math.floor(val * (parseFloat(item.diff) / 100));
+
+    // NISA除く集計
     if (!item.isNisa) {
+      taxableValue += val;
+      taxableCost += item.cost;
       const itemProfit = val - item.cost;
       if (itemProfit > 0) taxableProfit += itemProfit;
     }
   });
 
-  const overallProfit = totalValue - totalCost;
-  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
+  // Profit・ProfitRate はNISA除くコストで統一
+  const overallProfit = taxableValue - taxableCost;
+  const overallProfitRate = taxableCost > 0 ? (overallProfit / taxableCost * 100) : 0;
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   const netValue = totalValue - estTax;
 
@@ -269,14 +281,18 @@ function render() {
           <div class="performance-line numeric ${overallProfit >= 0 ? "pos" : "neg"}">Total: ${formatPct(overallProfitRate)}</div>
         </div>
       </div>
-      <div class="meta-grid">
-        <div style="grid-column: span 2;">
+      <div class="summary-meta-grid">
+        <div>
           <div class="meta-label">Net Estimation</div>
           <div class="meta-value numeric">${formatYen(netValue)}</div>
         </div>
         <div>
           <div class="meta-label">Tax</div>
           <div class="meta-value numeric" style="color:var(--text-soft)">${formatYen(estTax)}</div>
+        </div>
+        <div>
+          <div class="meta-label">Cost</div>
+          <div class="meta-value numeric" style="color:var(--text-sub)">${formatYen(totalCost)}</div>
         </div>
         <div>
           <div class="meta-label">Profit</div>
@@ -334,5 +350,6 @@ function render() {
 
 render();
 </script>
+
 </body>
 </html>
