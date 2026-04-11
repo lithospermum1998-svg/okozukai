@@ -97,7 +97,15 @@ body {
 /* Bottom Bar */
 .bottom-bar { position: fixed; left: 0; right: 0; bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: center; pointer-events: none; }
 .update-btn { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 20px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #000; font-size: 15px; font-weight: 800; border: none; backdrop-filter: blur(20px); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
-
+.account-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-soft);
+  border: 1px solid var(--text-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  white-space: nowrap;
+}
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
 </style>
