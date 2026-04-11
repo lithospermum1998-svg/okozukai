@@ -97,6 +97,7 @@ body {
 /* Bottom Bar */
 .bottom-bar { position: fixed; left: 0; right: 0; bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: center; pointer-events: none; }
 .update-btn { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 20px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #000; font-size: 15px; font-weight: 800; border: none; backdrop-filter: blur(20px); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+
 .account-badge {
   font-size: 9px;
   font-weight: 700;
@@ -106,6 +107,7 @@ body {
   padding: 1px 5px;
   white-space: nowrap;
 }
+
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
 </style>
@@ -207,7 +209,10 @@ function render() {
     totalValue += val;
     totalCost += item.cost;
     if (item.diff !== null) dayDiffSum += Math.floor(val * (parseFloat(item.diff) / 100));
-    if (!item.isNisa) taxableProfit += (val - item.cost);
+    if (!item.isNisa) {
+      const itemProfit = val - item.cost;
+      if (itemProfit > 0) taxableProfit += itemProfit;
+    }
   });
 
   const overallProfit = totalValue - totalCost;
