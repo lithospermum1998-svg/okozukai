@@ -2,163 +2,1017 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>MONEY LOG v3.9 Fixed</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+/>
+<meta name="theme-color" content="#000000" />
+<title>MONEY LOG Compact iOS</title>
+
 <style>
 :root {
-  --bg: #000000; --card: #1c1c1e; --sub: #2c2c2e;
-  --text: #ffffff; --text-sub: #8e8e93;
-  --pos: #32d74b; --neg: #ff453a; --accent: #0a84ff;
+  --bg: #000000;
+  --surface-1: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
+
+  --text-main: #ffffff;
+  --text-sub: #8e8e93;
+  --text-soft: #636366;
+
+  --line: rgba(255,255,255,0.07);
+  --line-strong: rgba(255,255,255,0.12);
+
+  --accent: #0a84ff;
+  --accent-soft: rgba(10,132,255,0.16);
+
+  --pos: #30d158;
+  --neg: #ff453a;
+  --warn: #ffd60a;
+
+  --shadow-soft: 0 8px 24px rgba(0,0,0,0.22);
+  --shadow-float: 0 10px 26px rgba(0,0,0,0.32);
 }
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; line-height: 1.2; }
-body { padding: calc(15px + env(safe-area-inset-top)) 12px calc(100px + env(safe-area-inset-bottom)); }
-.container { max-width: 420px; margin: 0 auto; }
-.numeric { font-variant-numeric: tabular-nums; }
-.app-header { padding: 4px 4px 14px; }
-.app-title { font-size: 20px; font-weight: 800; text-transform: uppercase; }
-.summary-card { background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--card) 100%); border-radius: 24px; padding: 18px; margin-bottom: 15px; border: 1px solid #3a3a3c; }
-.summary-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
-.main-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
-.total-val { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
-.summary-perf { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
-.net-row { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #3a3a3c; }
-.net-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
-.net-val { font-size: 14px; font-weight: 800; }
-.net-tax { font-size: 10px; color: var(--text); font-weight: 700; margin-left: 6px; }
-.stock-card { background: var(--card); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid #3a3a3c; position: relative; }
-.stock-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.stock-name { font-weight: 800; font-size: 14px; }
-.nisa-tag { font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: #3a3a3c; }
-.stock-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-.price-display { font-size: 22px; font-weight: 800; }
-.perf-display { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
-.view-meta { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.meta-row { display: flex; flex-direction: column; justify-content: center; padding: 4px 0; }
-.meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
-.ios-input { width: 100%; background: transparent; border: none; color: #fff; padding: 2px 0; font-size: 13px; font-weight: 700; outline: none; }
-.ios-input:focus { background: var(--sub); border-radius: 4px; padding-left: 4px; }
-.btn-wrap { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
-.btn-update { pointer-events: auto; background: #fff; color: #000; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
-.btn-update:active { transform: scale(0.96); }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.loading { animation: spin 1s linear infinite; display: inline-block; }
-.pos { color: var(--pos); } .neg { color: var(--neg); }
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  padding:
+    calc(8px + env(safe-area-inset-top))
+    12px
+    calc(92px + env(safe-area-inset-bottom));
+  line-height: 1.18;
+}
+
+.container {
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Header */
+.app-header {
+  padding: 4px 2px 10px;
+}
+
+.nav-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title-wrap {
+  min-width: 0;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.app-subtitle {
+  margin-top: 3px;
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.header-btn {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: var(--accent);
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 0.14s ease, opacity 0.18s ease, background-color 0.18s ease;
+}
+
+.header-btn:active {
+  transform: scale(0.97);
+}
+
+body.editing .header-btn {
+  background: rgba(10,132,255,0.16);
+  border-color: rgba(10,132,255,0.25);
+  color: #7cc1ff;
+}
+
+.editing-hint {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(10,132,255,0.11);
+  border: 1px solid rgba(10,132,255,0.18);
+  color: #8fc7ff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+body.editing .editing-hint {
+  display: block;
+}
+
+/* Error */
+.error-banner {
+  display: none;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 69, 58, 0.14);
+  border: 1px solid rgba(255, 69, 58, 0.22);
+  color: #ff9b94;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+
+/* Summary */
+.summary-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.014) 100%),
+    var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.035),
+    var(--shadow-soft);
+  margin-bottom: 12px;
+}
+
+.summary-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.summary-kicker {
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text-main);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.summary-main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.total-block {
+  min-width: 0;
+}
+
+.summary-label {
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.total-display {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.9px;
+}
+
+.goal-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.goal-meta-label {
+  color: var(--text-sub);
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.goal-meta-value {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.progress-track {
+  height: 7px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffffff 0%, #cdcdcd 100%);
+  transition: width 0.5s cubic-bezier(.2,.8,.2,1);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-box {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.055);
+}
+
+.stat-label {
+  color: var(--text-sub);
+  font-size: 9px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.last-updated {
+  margin-top: 10px;
+  color: var(--text-soft);
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Section */
+.section-title {
+  margin: 14px 2px 10px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.25px;
+}
+
+/* List */
+.stock-list {
+  display: grid;
+  gap: 10px;
+}
+
+.stock-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  padding: 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.032) 0%, rgba(255,255,255,0.012) 100%),
+    var(--surface-1);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.03),
+    var(--shadow-soft);
+}
+
+.stock-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--brand, #3a3a3c);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.card-top-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.stock-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.15px;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-code {
+  color: var(--text-sub);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.card-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.account-badge,
+.edit-chip {
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.account-badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text-main);
+}
+
+.edit-chip {
+  border: 1px solid rgba(10,132,255,0.25);
+  background: rgba(10,132,255,0.12);
+  color: #7cc1ff;
+  cursor: pointer;
+}
+
+.edit-chip.active {
+  background: rgba(10,132,255,0.22);
+  color: #b5dcff;
+}
+
+.card-main {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.value-wrap {
+  min-width: 0;
+}
+
+.value-label {
+  color: var(--text-sub);
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.value-main {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.65px;
+}
+
+.performance-wrap {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.performance-line {
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.performance-line + .performance-line {
+  margin-top: 4px;
+}
+
+.meta-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.meta-cell {
+  min-width: 0;
+}
+
+.meta-label {
+  color: var(--text-sub);
+  font-size: 9px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.meta-value {
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-panel {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.stock-card.editor-open .edit-panel {
+  display: block;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.1fr;
+  gap: 8px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 5px;
+  padding-left: 1px;
+  color: var(--text-sub);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+}
+
+.ios-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: var(--surface-2);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+}
+
+.ios-input:focus {
+  border-color: rgba(10,132,255,0.78);
+  box-shadow: 0 0 0 4px rgba(10,132,255,0.14);
+  background: #303033;
+}
+
+.ios-input.warn {
+  border-color: rgba(255,69,58,0.35);
+  background: rgba(255,69,58,0.11);
+}
+
+.ios-input::-webkit-outer-spin-button,
+.ios-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Bottom action */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.update-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 126px;
+  height: 50px;
+  padding: 0 20px;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.9);
+  color: #000000;
+  font-size: 15px;
+  font-weight: 800;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.33),
+    inset 0 1px 0 rgba(255,255,255,0.62);
+  cursor: pointer;
+  transition: transform 0.14s ease, opacity 0.18s ease;
+}
+
+.update-btn:active {
+  transform: scale(0.97);
+}
+
+.update-btn:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.update-icon {
+  display: inline-block;
+  font-size: 15px;
+}
+
+/* Utility */
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+.warn-text { color: var(--warn); }
+
+.loading-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 380px) {
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .value-main {
+    font-size: 22px;
+  }
+
+  .total-display {
+    font-size: 29px;
+  }
+}
 </style>
 </head>
+
 <body>
-<div class="container">
-  <header class="app-header"><div class="app-title">MONEY LOG</div></header>
-  <div class="summary-card">
-    <div class="summary-top">
-      <div>Project 10M <span id="progRate">(0.00%)</span></div>
-      <div id="fxRateDisplay">USD/JPY: ---</div>
-    </div>
-    <div style="font-size:10px; color:var(--text-sub); font-weight:700; margin-bottom:5px;">TOTAL ASSETS</div>
-    <div class="main-row">
-      <span id="totalDisplay" class="total-val numeric">¥0</span>
-      <div class="summary-perf">
-        <div id="totalDayDiff" class="numeric">---</div>
-        <div id="totalProfitAll" class="numeric" style="margin-top:4px;">---</div>
+  <div class="container">
+    <header class="app-header">
+      <div class="nav-row">
+        <div class="title-wrap">
+          <h1 class="app-title">資産</h1>
+          <div class="app-subtitle">MONEY LOG</div>
+        </div>
+        <div class="header-actions">
+          <button id="editModeBtn" class="header-btn" onclick="toggleEditMode()">編集</button>
+        </div>
       </div>
-    </div>
-    <div class="net-row">
-      <div class="net-label">NET (EST.)</div>
-      <div style="text-align:right;">
-        <span class="net-val numeric" id="payoutDisplay">¥0</span>
-        <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
+      <div class="editing-hint">編集モード中です。必要な銘柄だけ「入力」を開いて修正できます。</div>
+    </header>
+
+    <div id="errorBanner" class="error-banner"></div>
+
+    <section class="summary-card">
+      <div class="summary-top">
+        <div class="summary-kicker">Project 10M</div>
+        <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
       </div>
-    </div>
+
+      <div class="summary-main">
+        <div class="total-block">
+          <div class="summary-label">Total Assets</div>
+          <div id="totalDisplay" class="total-display numeric">¥0</div>
+        </div>
+        <div class="goal-meta">
+          <div class="goal-meta-label">Goal</div>
+          <div id="progRate" class="goal-meta-value numeric">(0.00%)</div>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div id="progressBar" class="progress-fill"></div>
+      </div>
+
+      <div class="summary-stats">
+        <div class="stat-box">
+          <div class="stat-label">Previous</div>
+          <div id="totalDayDiff" class="stat-value numeric">---</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Profit</div>
+          <div id="totalProfitAll" class="stat-value numeric">---</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Net (Est.)</div>
+          <div id="payoutDisplay" class="stat-value numeric">¥0</div>
+        </div>
+      </div>
+
+      <div id="taxNote" class="last-updated numeric" style="margin-top:8px;">Tax: ¥0</div>
+      <div id="lastUpdated" class="last-updated">最終更新: --:--:--</div>
+    </section>
+
+    <div class="section-title">Portfolio</div>
+    <div id="stockList" class="stock-list"></div>
   </div>
-  <div id="stockList"></div>
-  <div id="lastUpdated" style="font-size:10px; color:var(--text-sub); text-align:center; margin-top:10px;"></div>
-</div>
-<div class="btn-wrap"><button id="updateBtn" class="btn-update" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button></div>
+
+  <div class="bottom-bar">
+    <button id="updateBtn" class="update-btn" onclick="fetchAll()">
+      <span id="updateIcon" class="update-icon">↻</span>
+      <span id="updateLabel">update</span>
+    </button>
+  </div>
+
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_v3_ios_edit";
-const BRAND_COLORS = { "2931123A": "#8B0000", "02311251": "#D4AF37", "PAYP": "#ff3b30" };
+const STORAGE_KEY = "money_log_compact_ios";
 
-let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+const ITEM_DEFAULTS = {
+  diff: null,
+  rate: null
+};
+
+const INITIAL_DATA = [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
   { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
-let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || 150.00;
 
-function formatYen(v) { return "¥" + Math.floor(v || 0).toLocaleString("ja-JP"); }
-function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v || 0).toLocaleString("ja-JP"); }
+const BRAND_COLORS = {
+  "2931123A": "#8b0000",
+  "02311251": "#d4af37",
+  "PAYP": "#ff3b30"
+};
 
-async function fetchAll() {
-  const icon = document.getElementById('updateIcon');
-  icon.classList.add('loading');
-  await Promise.all(data.map(async (s) => {
-    try {
-      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
-      const json = await res.json();
-      if (json.status === "Success" && json.price) {
-        s.price = parseFloat(json.price);
-        // diffが文字列で来ても数値化。取れなければ現状維持
-        if (json.diff !== undefined) s.diff = parseFloat(String(json.diff).replace(/[+%]/g, ''));
-        if (json.rate) { currentUsdJpy = parseFloat(json.rate); localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy); }
-      }
-    } catch (e) { console.error(s.name + " fetch error"); }
-  }));
-  icon.classList.remove('loading');
-  document.getElementById('lastUpdated').textContent = `最終更新: ${new Date().toLocaleTimeString()}`;
+let isEditMode = false;
+let expandedEditIndex = null;
+
+function migrateData(raw) {
+  if (!Array.isArray(raw)) return null;
+  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
+}
+
+let data = (() => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return migrateData(raw) || INITIAL_DATA;
+  } catch (e) {
+    return INITIAL_DATA;
+  }
+})();
+
+let currentUsdJpy = (() => {
+  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
+  return saved ? parseFloat(saved) : null;
+})();
+
+function formatYen(value) {
+  return "¥" + Math.floor(value).toLocaleString("ja-JP");
+}
+
+function formatDisplayNumber(value, digits = 2) {
+  return Number(value).toLocaleString("ja-JP", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits
+  });
+}
+
+function formatSignedNumber(value) {
+  const n = Math.floor(value);
+  const sign = n > 0 ? "+" : "";
+  return sign + n.toLocaleString("ja-JP");
+}
+
+function formatSignedPercent(value, digits = 2) {
+  const n = Number(value);
+  const sign = n > 0 ? "+" : "";
+  return sign + n.toFixed(digits) + "%";
+}
+
+function showError(msg) {
+  const el = document.getElementById("errorBanner");
+  el.textContent = `⚠️ ${msg}`;
+  el.style.display = "block";
+}
+
+function hideError() {
+  document.getElementById("errorBanner").style.display = "none";
+}
+
+function saveAndRender() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
 }
 
+function calcValuation(item) {
+  if (item.isStock) {
+    const rate = item.rate ?? currentUsdJpy;
+    return rate ? Math.floor(item.price * rate * item.holding) : null;
+  }
+  return Math.floor(item.price * item.holding / 10000);
+}
+
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  if (!isEditMode) expandedEditIndex = null;
+  document.body.classList.toggle("editing", isEditMode);
+  render();
+}
+
+function toggleCardEditor(index) {
+  if (!isEditMode) return;
+  expandedEditIndex = expandedEditIndex === index ? null : index;
+  render();
+}
+
+async function fetchAll() {
+  const btn = document.getElementById("updateBtn");
+  const icon = document.getElementById("updateIcon");
+  const label = document.getElementById("updateLabel");
+
+  btn.disabled = true;
+  icon.classList.add("loading-icon");
+  label.textContent = "updating";
+
+  hideError();
+  const errors = [];
+
+  await Promise.all(
+    data.map(async (item) => {
+      try {
+        const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
+        const json = await res.json();
+
+        if (json.status === "Success") {
+          item.price = json.price;
+          item.diff = json.diff ?? null;
+
+          if (json.rate) {
+            item.rate = json.rate;
+            currentUsdJpy = json.rate;
+            localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
+          }
+        } else {
+          errors.push(`${item.name}失敗`);
+        }
+      } catch (e) {
+        errors.push(`${item.name}エラー`);
+      }
+    })
+  );
+
+  btn.disabled = false;
+  icon.classList.remove("loading-icon");
+  label.textContent = "update";
+
+  if (errors.length > 0) {
+    showError(errors.join(" / "));
+  }
+
+  const now = new Date();
+  document.getElementById("lastUpdated").textContent =
+    `最終更新: ${now.toLocaleTimeString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })}`;
+
+  saveAndRender();
+}
+
+function updateItem(index, field, value) {
+  const parsed = parseFloat(value);
+  if (!isNaN(parsed)) {
+    data[index][field] = parsed;
+    saveAndRender();
+  }
+}
+
 function render() {
-  const list = document.getElementById('stockList');
-  let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
-  list.innerHTML = data.map((s, i) => {
-    const rate = s.isStock ? currentUsdJpy : 1;
-    const val = s.isStock ? Math.floor(s.price * rate * s.holding) : Math.floor(s.price * s.holding / 10000);
-    totalValue += val; totalCost += s.cost;
-    const hasDiff = s.diff !== null && !isNaN(s.diff);
-    const dVal = hasDiff ? Math.floor(val * (s.diff / 100)) : 0;
-    if (hasDiff) dayDiffSum += dVal;
-    const profit = val - s.cost;
-    const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : '0.00';
-    if (!s.isNisa) taxableProfit += profit;
+  document.body.classList.toggle("editing", isEditMode);
+  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
+
+  const list = document.getElementById("stockList");
+
+  let totalValue = 0;
+  let totalCost = 0;
+  let dayDiffSum = 0;
+  let taxableProfit = 0;
+
+  list.innerHTML = data.map((item, index) => {
+    const valuation = calcValuation(item) || 0;
+    totalValue += valuation;
+    totalCost += item.cost;
+
+    const hasDiff = item.diff !== null;
+    const diffRate = hasDiff ? parseFloat(item.diff) : 0;
+    const dayDiffValue = hasDiff ? Math.floor(valuation * (diffRate / 100)) : 0;
+    if (hasDiff) dayDiffSum += dayDiffValue;
+
+    const profit = valuation - item.cost;
+    const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
+
+    if (!item.isNisa) taxableProfit += profit;
+
+    const brandColor = BRAND_COLORS[item.code] || "#3a3a3c";
+    const prevClass = dayDiffValue >= 0 ? "pos" : "neg";
+    const profitClass = profit >= 0 ? "pos" : "neg";
+
+    const fxRate = item.isStock ? (item.rate ?? currentUsdJpy) : null;
+    const isEditorOpen = isEditMode && expandedEditIndex === index;
+
     return `
-      <div class="stock-card" style="border-left: 5px solid ${BRAND_COLORS[s.code] || '#3a3a3c'}">
-        <div class="stock-header"><span class="stock-name">${s.name}</span><span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span></div>
-        <div class="stock-main"><span class="price-display numeric">¥${val.toLocaleString()}</span>
-          <div class="perf-display">
-            <div class="${dVal >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? formatSigned(dVal) : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'}">Total: ${formatSigned(profit)} (${profitRate}%)</div>
+      <section class="stock-card ${isEditorOpen ? "editor-open" : ""}" style="--brand:${brandColor}">
+        <div class="card-top">
+          <div class="card-top-left">
+            <div class="stock-name">${item.name}</div>
+            <div class="stock-code numeric">${item.code}</div>
+          </div>
+          <div class="card-top-right">
+            <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
+            ${isEditMode ? `
+              <button class="edit-chip ${isEditorOpen ? "active" : ""}" onclick="toggleCardEditor(${index})">
+                ${isEditorOpen ? "閉じる" : "入力"}
+              </button>
+            ` : ""}
           </div>
         </div>
-        <div class="view-meta">
-          <div class="meta-row"><span class="meta-label">${s.isStock ? 'Price($)' : 'NAV'}</span>
-            <input class="ios-input numeric" type="number" step="any" value="${s.price}" onchange="data[${i}].price=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();"></div>
-          <div class="meta-row"><span class="meta-label">Qty / Cost(¥)</span>
-            <div style="display:flex; gap:8px;">
-              <input class="ios-input numeric" style="width:45%;" type="number" step="any" value="${s.holding}" onchange="data[${i}].holding=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();">
-              <input class="ios-input numeric" style="width:45%;" type="number" value="${s.cost}" onchange="data[${i}].cost=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();">
+
+        <div class="card-main">
+          <div class="value-wrap">
+            <div class="value-label">Valuation</div>
+            <div class="value-main numeric">${formatYen(valuation)}</div>
+          </div>
+
+          <div class="performance-wrap">
+            <div class="performance-line ${prevClass} numeric">
+              Prev: ${hasDiff ? `${formatSignedNumber(dayDiffValue)} (${formatSignedPercent(diffRate)})` : "---"}
+            </div>
+            <div class="performance-line ${profitClass} numeric">
+              Total: ${formatSignedNumber(profit)} (${formatSignedPercent(profitRate)})
             </div>
           </div>
         </div>
-      </div>`;
-  }).join('');
-  document.getElementById('totalDisplay').textContent = formatYen(totalValue);
-  document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
-  const anyDiff = data.some(s => s.diff !== null);
-  const dayRate = totalValue > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100).toFixed(2) : '0.00';
-  const dayEl = document.getElementById('totalDayDiff');
-  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${dayRate}%)` : 'Prev: ---';
-  dayEl.className = 'numeric ' + (dayDiffSum >= 0 ? 'pos' : 'neg');
-  const profEl = document.getElementById('totalProfitAll');
-  profEl.textContent = `Total: ${formatSigned(totalValue - totalCost)} (${(totalCost > 0 ? ((totalValue - totalCost) / totalCost * 100).toFixed(2) : '0.00')}%)`;
-  profEl.className = 'numeric ' + (totalValue >= totalCost ? 'pos' : 'neg');
+
+        <div class="meta-grid">
+          <div class="meta-cell">
+            <div class="meta-label">${item.isStock ? "Price $" : "NAV"}</div>
+            <div class="meta-value numeric">${formatDisplayNumber(item.price, item.isStock ? 4 : 2)}</div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-label">Qty</div>
+            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}">
+              ${formatDisplayNumber(item.holding, 5)}
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-label">Cost</div>
+            <div class="meta-value numeric">¥${Math.floor(item.cost).toLocaleString("ja-JP")}</div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-label">FX</div>
+            <div class="meta-value numeric">${fxRate ? "¥" + fxRate.toFixed(2) : "-"}</div>
+          </div>
+        </div>
+
+        <div class="edit-panel">
+          <div class="input-grid">
+            <div>
+              <label class="field-label">${item.isStock ? "Price $" : "NAV"}</label>
+              <input
+                class="ios-input numeric"
+                type="number"
+                step="any"
+                inputmode="decimal"
+                value="${item.price}"
+                onchange="updateItem(${index}, 'price', this.value)"
+              />
+            </div>
+
+            <div>
+              <label class="field-label">Qty</label>
+              <input
+                class="ios-input numeric ${item.holding === 0 ? "warn" : ""}"
+                type="number"
+                step="any"
+                inputmode="decimal"
+                value="${item.holding}"
+                onchange="updateItem(${index}, 'holding', this.value)"
+              />
+            </div>
+
+            <div>
+              <label class="field-label">Cost</label>
+              <input
+                class="ios-input numeric"
+                type="number"
+                step="any"
+                inputmode="decimal"
+                value="${item.cost}"
+                onchange="updateItem(${index}, 'cost', this.value)"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }).join("");
+
+  document.getElementById("totalDisplay").textContent = formatYen(totalValue);
+  document.getElementById("fxRateDisplay").textContent =
+    `USD/JPY: ${currentUsdJpy ? "¥" + currentUsdJpy.toFixed(2) : "---"}`;
+
+  const anyDiff = data.some(item => item.diff !== null);
+  const prevTotalValue = totalValue - dayDiffSum;
+  const totalDayRate = (anyDiff && prevTotalValue > 0)
+    ? (dayDiffSum / prevTotalValue * 100)
+    : 0;
+
+  const dayEl = document.getElementById("totalDayDiff");
+  dayEl.textContent = anyDiff
+    ? `${formatSignedNumber(dayDiffSum)} (${formatSignedPercent(totalDayRate)})`
+    : "---";
+  dayEl.className = "stat-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
+
+  const overallProfit = totalValue - totalCost;
+  const overallProfitRate = totalCost > 0
+    ? (overallProfit / totalCost * 100)
+    : 0;
+
+  const profitEl = document.getElementById("totalProfitAll");
+  profitEl.textContent = `${formatSignedNumber(overallProfit)} (${formatSignedPercent(overallProfitRate)})`;
+  profitEl.className = "stat-value numeric " + (overallProfit >= 0 ? "pos" : "neg");
+
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById('payoutDisplay').textContent = formatYen(totalValue - estTax);
-  document.getElementById('taxNote').textContent = `(Tax: ${estTax > 0 ? formatSigned(estTax * -1) : '¥0'})`;
-  document.getElementById('progRate').textContent = `(${Math.min((totalValue / 10000000) * 100, 100).toFixed(2)}%)`;
+  document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
+  document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString("ja-JP")}`;
+
+  const progress = Math.min((totalValue / 10000000) * 100, 100);
+  document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
+  document.getElementById("progressBar").style.width = progress + "%";
 }
+
 render();
 </script>
 </body>
