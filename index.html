@@ -95,8 +95,53 @@ body {
 }
 
 /* Bottom Bar */
-.bottom-bar { position: fixed; left: 0; right: 0; bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: center; pointer-events: none; }
-.update-btn { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 20px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #000; font-size: 15px; font-weight: 800; border: none; backdrop-filter: blur(20px); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+}
+
+.update-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: rgba(44,44,46,0.95);
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: transform 0.12s ease, opacity 0.12s ease;
+  -webkit-user-select: none;
+}
+
+.update-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.update-icon {
+  font-size: 16px;
+  line-height: 1;
+  display: inline-block;
+  color: var(--accent);
+}
+
+.update-label {
+  color: var(--text-main);
+}
 
 .account-badge {
   font-size: 9px;
@@ -115,7 +160,6 @@ body {
 
 <body>
   <div class="container">
-
     <div class="section-title">MONEY LOG</div>
     <div id="summaryCards" class="list-container"></div>
 
@@ -125,7 +169,8 @@ body {
 
   <div class="bottom-bar">
     <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span id="updateIcon">↻</span> <span>update</span>
+      <span id="updateIcon" class="update-icon">↻</span>
+      <span class="update-label">update</span>
     </button>
   </div>
 
@@ -174,8 +219,11 @@ function finishEdit(index, field, value) {
 
 async function fetchAll() {
   const icon = document.getElementById("updateIcon");
-  icon.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 1000, iterations: Infinity });
-  
+  const anim = icon.animate(
+    [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+    { duration: 900, iterations: Infinity, easing: 'linear' }
+  );
+
   await Promise.all(data.map(async (item) => {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
@@ -190,9 +238,10 @@ async function fetchAll() {
       }
     } catch (e) {}
   }));
+
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
-  icon.getAnimations().forEach(a => a.cancel());
+  anim.cancel();
 }
 
 function render() {
@@ -252,7 +301,7 @@ function render() {
     const hasDiff = item.diff !== null;
     const dayDiffValue = hasDiff ? Math.floor(val * (parseFloat(item.diff) / 100)) : 0;
     const brand = BRAND_COLORS[item.code] || "#3a3a3c";
-    
+
     const renderInline = (field, val, display) => {
       if (editingCell.index === index && editingCell.field === field) {
         return `<input id="input-${index}-${field}" class="inline-input" type="number" step="any" value="${val}" onblur="finishEdit(${index}, '${field}', this.value)" onkeydown="if(event.key==='Enter') this.blur()">`;
