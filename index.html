@@ -14,13 +14,17 @@
   --bg: #000000;
   --surface-1: #1c1c1e;
   --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
   --text-main: #ffffff;
   --text-sub: #8e8e93;
   --text-soft: #636366;
   --line: rgba(255,255,255,0.07);
+  --line-strong: rgba(255,255,255,0.12);
   --accent: #0a84ff;
+  --accent-soft: rgba(10,132,255,0.16);
   --pos: #30d158;
   --neg: #ff453a;
+  --warn: #ffd60a;
   --shadow-soft: 0 8px 24px rgba(0,0,0,0.22);
 }
 
@@ -33,7 +37,7 @@ html, body {
   margin: 0;
   background: var(--bg);
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
 }
 
 body {
@@ -50,62 +54,61 @@ body {
 .app-title { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.7px; }
 .app-subtitle { margin-top: 3px; color: var(--text-sub); font-size: 12px; font-weight: 600; }
 
-/* Summary Card */
+/* Summary */
 .summary-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.014) 100%), var(--surface-1);
   border: 1px solid var(--line);
   border-radius: 22px;
   padding: 14px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035), var(--shadow-soft);
   margin-bottom: 12px;
 }
 
-.summary-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.summary-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .summary-kicker { color: var(--text-sub); font-size: 11px; font-weight: 700; }
-.summary-badge { height: 24px; padding: 0 9px; border-radius: 999px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.07); font-size: 11px; font-weight: 700; display: flex; align-items: center; }
+.summary-badge { display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 999px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.07); font-size: 11px; font-weight: 700; }
 
 .total-display { font-size: 32px; font-weight: 800; letter-spacing: -0.9px; margin: 0; }
 .goal-meta { text-align: right; }
 .goal-meta-value { font-size: 14px; font-weight: 800; }
 
-.progress-track { height: 7px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin: 10px 0; }
-.progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ffffff 0%, #cdcdcd 100%); transition: width 0.5s ease; }
+.progress-track { height: 7px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ffffff 0%, #cdcdcd 100%); transition: width 0.5s ease; }
 
 .summary-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .stat-box { padding: 9px 10px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.055); }
 .stat-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
 .stat-value { font-size: 12px; font-weight: 800; }
 
-/* List */
+/* Section Title */
 .section-title { margin: 14px 2px 10px; font-size: 17px; font-weight: 800; }
+
+/* List */
 .stock-list { display: grid; gap: 10px; }
 .stock-card {
   position: relative;
+  overflow: hidden;
   border-radius: 18px;
   padding: 12px;
-  background: var(--surface-1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.032) 0%, rgba(255,255,255,0.012) 100%), var(--surface-1);
   border: 1px solid var(--line);
-  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), var(--shadow-soft);
 }
 .stock-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--brand); }
 
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 9px; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .stock-name { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-.account-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,0.06); }
+.account-badge { height: 24px; padding: 0 9px; border-radius: 999px; background: rgba(255,255,255,0.06); font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; }
 
-.value-main { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.card-main { margin-top: 9px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
+.value-main { font-size: 24px; font-weight: 800; letter-spacing: -0.65px; }
+.performance-line { font-size: 11px; font-weight: 800; line-height: 1.3; text-align: right; }
 
-.meta-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding-top: 9px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
+.meta-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
 .meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
-.meta-value { color: var(--text-main); font-size: 12px; font-weight: 800; }
+.meta-value { font-size: 12px; font-weight: 800; }
 
-/* In-place Input */
+/* In-place Edit Input */
 .inline-input {
   width: 100%;
   background: var(--surface-2);
@@ -115,14 +118,13 @@ body {
   font-size: 12px;
   font-weight: 800;
   border-radius: 4px;
-  padding: 2px 4px;
+  padding: 1px 2px;
   outline: none;
-  text-align: left;
 }
 
 /* Bottom Bar */
 .bottom-bar { position: fixed; left: 0; right: 0; bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: center; pointer-events: none; }
-.update-btn { pointer-events: auto; display: flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #000; font-size: 15px; font-weight: 800; border: none; backdrop-filter: blur(20px); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+.update-btn { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 20px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #000; font-size: 15px; font-weight: 800; border: none; backdrop-filter: blur(20px); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
 
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
@@ -139,11 +141,11 @@ body {
     <section class="summary-card">
       <div class="summary-top">
         <div class="summary-kicker">Project 10M</div>
-        <div id="fxRateDisplay" class="summary-badge numeric">---</div>
+        <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
       </div>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
         <div>
-          <div style="color:var(--text-sub); font-size:11px; font-weight:700;">Total Assets</div>
+          <div style="color:var(--text-sub); font-size:11px; font-weight:700; margin-bottom:4px;">Total Assets</div>
           <div id="totalDisplay" class="total-display numeric">¥0</div>
         </div>
         <div class="goal-meta">
@@ -156,7 +158,7 @@ body {
         <div class="stat-box"><div class="stat-label">Total Profit</div><div id="totalProfitAll" class="stat-value numeric">---</div></div>
         <div class="stat-box"><div class="stat-label">Net (Est.)</div><div id="payoutDisplay" class="stat-value numeric">¥0</div></div>
       </div>
-      <div id="taxNote" style="text-align:center; color:var(--text-soft); font-size:10px; margin-top:10px;" class="numeric">Tax: ¥0</div>
+      <div id="taxNote" style="text-align:center; color:var(--text-soft); font-size:10px; margin-top:8px;" class="numeric">Tax: ¥0</div>
     </section>
 
     <div class="section-title">Portfolio</div>
@@ -165,7 +167,7 @@ body {
 
   <div class="bottom-bar">
     <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span>↻</span> <span>update</span>
+      <span id="updateIcon">↻</span> <span>update</span>
     </button>
   </div>
 
@@ -180,16 +182,14 @@ const INITIAL_DATA = [
 ];
 
 const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
+
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_DATA;
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
-
-// インプレース編集中のインデックスを管理
 let editingCell = { index: null, field: null };
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  render();
-}
+function formatYen(v) { return "¥" + Math.floor(v).toLocaleString(); }
+function formatSigned(v) { return (v >= 0 ? "+" : "") + Math.floor(v).toLocaleString(); }
+function formatPct(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
 
 function calcValuation(item) {
   if (item.isStock) {
@@ -199,9 +199,26 @@ function calcValuation(item) {
   return Math.floor(item.price * item.holding / 10000);
 }
 
+function startEdit(index, field) {
+  editingCell = { index, field };
+  render();
+  const input = document.getElementById(`input-${index}-${field}`);
+  if (input) { input.focus(); input.select(); }
+}
+
+function finishEdit(index, field, value) {
+  const num = parseFloat(value);
+  if (!isNaN(num)) data[index][field] = num;
+  editingCell = { index: null, field: null };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  render();
+}
+
 async function fetchAll() {
-  const btn = document.getElementById("updateBtn");
-  btn.disabled = true;
+  const icon = document.getElementById("updateIcon");
+  icon.style.display = "inline-block";
+  icon.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 1000, iterations: Infinity });
+  
   await Promise.all(data.map(async (item) => {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
@@ -216,25 +233,9 @@ async function fetchAll() {
       }
     } catch (e) {}
   }));
-  btn.disabled = false;
-  save();
-}
-
-function startEdit(index, field) {
-  editingCell = { index, field };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
-  const input = document.getElementById(`input-${index}-${field}`);
-  if (input) {
-    input.focus();
-    input.select();
-  }
-}
-
-function finishEdit(index, field, value) {
-  const num = parseFloat(value);
-  if (!isNaN(num)) data[index][field] = num;
-  editingCell = { index: null, field: null };
-  save();
+  icon.getAnimations().forEach(a => a.cancel());
 }
 
 function render() {
@@ -242,55 +243,74 @@ function render() {
   let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
 
   list.innerHTML = data.map((item, index) => {
-    const valuation = calcValuation(item) || 0;
-    totalValue += valuation;
+    const val = calcValuation(item) || 0;
+    totalValue += val;
     totalCost += item.cost;
-    if (item.diff !== null) dayDiffSum += Math.floor(valuation * (parseFloat(item.diff) / 100));
-    if (!item.isNisa) taxableProfit += (valuation - item.cost);
+    const profit = val - item.cost;
+    const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
+    const hasDiff = item.diff !== null;
+    const dayDiffValue = hasDiff ? Math.floor(val * (parseFloat(item.diff) / 100)) : 0;
+    if (hasDiff) dayDiffSum += dayDiffValue;
+    if (!item.isNisa) taxableProfit += profit;
 
-    const brandColor = BRAND_COLORS[item.code] || "#3a3a3c";
+    const brand = BRAND_COLORS[item.code] || "#3a3a3c";
     
-    // QtyとCostの表示ロジック（編集中はinputを出す）
-    const renderField = (field, value, displayValue) => {
+    const renderInline = (field, val, display) => {
       if (editingCell.index === index && editingCell.field === field) {
-        return `<input id="input-${index}-${field}" class="inline-input" type="number" step="any" value="${value}" onblur="finishEdit(${index}, '${field}', this.value)" onkeydown="if(event.key==='Enter') this.blur()">`;
+        return `<input id="input-${index}-${field}" class="inline-input" type="number" step="any" value="${val}" onblur="finishEdit(${index}, '${field}', this.value)" onkeydown="if(event.key==='Enter') this.blur()">`;
       }
-      return `<div onclick="startEdit(${index}, '${field}')">${displayValue}</div>`;
+      return `<div onclick="startEdit(${index}, '${field}')">${display}</div>`;
     };
 
     return `
-      <section class="stock-card" style="--brand:${brandColor}">
+      <section class="stock-card" style="--brand:${brand}">
         <div class="card-top">
-          <div>
-            <div class="stock-name">${item.name}</div>
+          <div style="min-width:0; flex:1;">
+            <div class="stock-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
             <div style="color:var(--text-sub); font-size:10px;" class="numeric">${item.code}</div>
           </div>
           <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
         </div>
-        <div class="value-main numeric">¥${valuation.toLocaleString()}</div>
+        <div class="card-main">
+          <div class="value-main numeric">${formatYen(val)}</div>
+          <div class="performance-wrap">
+            <div class="performance-line numeric ${dayDiffValue >= 0 ? "pos" : "neg"}">
+              Prev: ${hasDiff ? formatSigned(dayDiffValue) : "---"}
+            </div>
+            <div class="performance-line numeric ${profit >= 0 ? "pos" : "neg"}">
+              Total: ${formatPct(profitRate)}
+            </div>
+          </div>
+        </div>
         <div class="meta-grid">
           <div><div class="meta-label">Price</div><div class="meta-value numeric">${item.price.toLocaleString()}</div></div>
-          <div><div class="meta-label">Qty</div><div class="meta-value numeric">${renderField('holding', item.holding, item.holding.toLocaleString())}</div></div>
-          <div><div class="meta-label">Cost</div><div class="meta-value numeric">${renderField('cost', item.cost, '¥' + item.cost.toLocaleString())}</div></div>
+          <div><div class="meta-label">Qty</div><div class="meta-value numeric">${renderInline('holding', item.holding, item.holding.toLocaleString())}</div></div>
+          <div><div class="meta-label">Cost</div><div class="meta-value numeric">${renderInline('cost', item.cost, formatYen(item.cost))}</div></div>
           <div><div class="meta-label">FX</div><div class="meta-value numeric">${item.isStock && currentUsdJpy ? '¥'+currentUsdJpy.toFixed(1) : '-'}</div></div>
         </div>
       </section>
     `;
   }).join("");
 
-  document.getElementById("totalDisplay").textContent = "¥" + totalValue.toLocaleString();
+  document.getElementById("totalDisplay").textContent = formatYen(totalValue);
   document.getElementById("fxRateDisplay").textContent = "USD/JPY: " + (currentUsdJpy ? "¥" + currentUsdJpy.toFixed(2) : "---");
+  
   const progress = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
   document.getElementById("progressBar").style.width = progress + "%";
-  
-  const profit = totalValue - totalCost;
+
+  const totalProfit = totalValue - totalCost;
+  const totalProfitRate = totalCost > 0 ? (totalProfit / totalCost * 100) : 0;
   const profitEl = document.getElementById("totalProfitAll");
-  profitEl.textContent = (profit >= 0 ? "+" : "") + profit.toLocaleString();
-  profitEl.className = "stat-value numeric " + (profit >= 0 ? "pos" : "neg");
-  
+  profitEl.textContent = formatPct(totalProfitRate);
+  profitEl.className = "stat-value numeric " + (totalProfit >= 0 ? "pos" : "neg");
+
+  const diffEl = document.getElementById("totalDayDiff");
+  diffEl.textContent = formatSigned(dayDiffSum);
+  diffEl.className = "stat-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
+
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById("payoutDisplay").textContent = "¥" + (totalValue - estTax).toLocaleString();
+  document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
   document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString()}`;
 }
 
