@@ -3,268 +3,162 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>MONEY LOG v3.9 Final Robust</title>
+<title>MONEY LOG v3.9 Fixed</title>
 <style>
 :root {
-  --bg-color: #000000; 
-  --card-bg: #1c1c1e; 
-  --text-main: #ffffff; 
-  --text-sub: #8e8e93; 
-  --input-bg: #2c2c2e; 
-  --input-border: #3a3a3c;
-  --accent: #0a84ff;
-  --pos-color: #32d74b; 
-  --neg-color: #ff453a; 
+  --bg: #000000; --card: #1c1c1e; --sub: #2c2c2e;
+  --text: #ffffff; --text-sub: #8e8e93;
+  --pos: #32d74b; --neg: #ff453a; --accent: #0a84ff;
 }
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; line-height: 1.2; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; line-height: 1.2; }
 body { padding: calc(15px + env(safe-area-inset-top)) 12px calc(100px + env(safe-area-inset-bottom)); }
-
 .container { max-width: 420px; margin: 0 auto; }
 .numeric { font-variant-numeric: tabular-nums; }
-
-/* Header */
 .app-header { padding: 4px 4px 14px; }
-.app-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; text-transform: uppercase; }
-
-/* Summary Card */
-.summary-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--card-bg) 100%);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  padding: 18px;
-  margin-bottom: 15px;
-  border: 1px solid var(--input-border);
-}
+.app-title { font-size: 20px; font-weight: 800; text-transform: uppercase; }
+.summary-card { background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--card) 100%); border-radius: 24px; padding: 18px; margin-bottom: 15px; border: 1px solid #3a3a3c; }
 .summary-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
-
-.main-display-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
+.main-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
 .total-val { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
 .summary-perf { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
-
-/* NET Row */
-.net-row { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--input-border); }
+.net-row { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #3a3a3c; }
 .net-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
-.net-val-wrap { text-align: right; }
-.net-main { font-size: 14px; font-weight: 800; }
-.net-tax { font-size: 10px; color: var(--text-main); font-weight: 700; margin-left: 6px; }
-
-/* Portfolio Section */
-.section-title { margin: 12px 4px 8px; font-size: 17px; font-weight: 800; color: var(--text-sub); }
-.stock-card { 
-  background: var(--card-bg); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid var(--input-border); position: relative;
-}
+.net-val { font-size: 14px; font-weight: 800; }
+.net-tax { font-size: 10px; color: var(--text); font-weight: 700; margin-left: 6px; }
+.stock-card { background: var(--card); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid #3a3a3c; position: relative; }
 .stock-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .stock-name { font-weight: 800; font-size: 14px; }
 .nisa-tag { font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: #3a3a3c; }
-
 .stock-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-.price-display { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.price-display { font-size: 22px; font-weight: 800; }
 .perf-display { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
-
-/* Inline Edit Field */
 .view-meta { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .meta-row { display: flex; flex-direction: column; justify-content: center; padding: 4px 0; }
-.meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
-
-.ios-input { 
-  width: 100%; background: transparent; border: none; color: #ffffff;
-  padding: 2px 0; font-size: 13px; font-weight: 700; outline: none; border-radius: 4px;
-  -webkit-appearance: none; transition: background 0.2s;
-}
-.ios-input:focus { background: var(--input-bg); padding-left: 4px; border-bottom: 1px solid var(--accent); }
-
-/* Bottom Bar */
-.btn-fixed-wrap { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; z-index: 100; }
-.btn-update {
-  pointer-events: auto; background: #ffffff; color: #000; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; cursor: pointer;
-}
+.meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; }
+.ios-input { width: 100%; background: transparent; border: none; color: #fff; padding: 2px 0; font-size: 13px; font-weight: 700; outline: none; }
+.ios-input:focus { background: var(--sub); border-radius: 4px; padding-left: 4px; }
+.btn-wrap { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+.btn-update { pointer-events: auto; background: #fff; color: #000; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
 .btn-update:active { transform: scale(0.96); }
-.btn-update:disabled { opacity: 0.5; pointer-events: none; }
-
-.pos { color: var(--pos-color); }
-.neg { color: var(--neg-color); }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-.loading-icon { display: inline-block; animation: spin 1s linear infinite; }
+.loading { animation: spin 1s linear infinite; display: inline-block; }
+.pos { color: var(--pos); } .neg { color: var(--neg); }
 </style>
 </head>
 <body>
-
 <div class="container">
   <header class="app-header"><div class="app-title">MONEY LOG</div></header>
-
   <div class="summary-card">
     <div class="summary-top">
       <div>Project 10M <span id="progRate">(0.00%)</span></div>
       <div id="fxRateDisplay">USD/JPY: ---</div>
     </div>
-    <div class="summary-label">Total Assets</div>
-    <div class="main-display-row">
+    <div style="font-size:10px; color:var(--text-sub); font-weight:700; margin-bottom:5px;">TOTAL ASSETS</div>
+    <div class="main-row">
       <span id="totalDisplay" class="total-val numeric">¥0</span>
       <div class="summary-perf">
-        <div id="totalDayDiff" class="numeric">Prev: ---</div>
-        <div id="totalProfitAll" class="numeric" style="margin-top:4px;">Total: ---</div>
+        <div id="totalDayDiff" class="numeric">---</div>
+        <div id="totalProfitAll" class="numeric" style="margin-top:4px;">---</div>
       </div>
     </div>
     <div class="net-row">
       <div class="net-label">NET (EST.)</div>
-      <div class="net-val-wrap">
-        <span class="net-main numeric" id="payoutDisplay">¥0</span>
+      <div style="text-align:right;">
+        <span class="net-val numeric" id="payoutDisplay">¥0</span>
         <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
       </div>
     </div>
   </div>
-
   <div id="stockList"></div>
   <div id="lastUpdated" style="font-size:10px; color:var(--text-sub); text-align:center; margin-top:10px;"></div>
 </div>
-
-<div class="btn-fixed-wrap">
-  <button id="updateBtn" class="btn-update" onclick="fetchAll()">
-    <span id="updateIcon">↻</span> update
-  </button>
-</div>
-
+<div class="btn-wrap"><button id="updateBtn" class="btn-update" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button></div>
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_v3.9"; // 確実に動作したロジックを読み込むためキーをリセット推奨
+const STORAGE_KEY = "money_log_v3_ios_edit";
+const BRAND_COLORS = { "2931123A": "#8B0000", "02311251": "#D4AF37", "PAYP": "#ff3b30" };
 
-const ITEM_DEFAULTS = { diff: null, rate: null };
-function migrateData(raw) {
-  if (!Array.isArray(raw)) return null;
-  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
-}
-
-const INITIAL_DATA = [
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
   { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
+let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || 150.00;
 
-let data = (() => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return migrateData(raw) || INITIAL_DATA;
-  } catch (e) { return INITIAL_DATA; }
-})();
-
-const BRAND_COLORS = { "2931123A": "#8B0000", "02311251": "#D4AF37", "PAYP": "#ff3b30" };
-
-let currentUsdJpy = (() => {
-  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
-  return saved ? parseFloat(saved) : 150.00;
-})();
+function formatYen(v) { return "¥" + Math.floor(v || 0).toLocaleString("ja-JP"); }
+function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v || 0).toLocaleString("ja-JP"); }
 
 async function fetchAll() {
-  const btn = document.getElementById('updateBtn');
   const icon = document.getElementById('updateIcon');
-  btn.disabled = true; icon.classList.add('loading-icon');
-  
+  icon.classList.add('loading');
   await Promise.all(data.map(async (s) => {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
       const json = await res.json();
       if (json.status === "Success" && json.price) {
-        s.price = json.price;
-        s.diff = json.diff ?? s.diff;
-        if (json.rate) {
-          s.rate = json.rate; currentUsdJpy = json.rate;
-          localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
-        }
+        s.price = parseFloat(json.price);
+        // diffが文字列で来ても数値化。取れなければ現状維持
+        if (json.diff !== undefined) s.diff = parseFloat(String(json.diff).replace(/[+%]/g, ''));
+        if (json.rate) { currentUsdJpy = parseFloat(json.rate); localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy); }
       }
     } catch (e) { console.error(s.name + " fetch error"); }
   }));
-  
-  btn.disabled = false; icon.classList.remove('loading-icon');
-  const now = new Date();
-  document.getElementById('lastUpdated').textContent = `最終更新: ${now.toLocaleTimeString()}`;
-  saveAndRender();
-}
-
-function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); render(); }
-
-function calcValuation(s) {
-  if (s.isStock) {
-    const rate = s.rate ?? currentUsdJpy;
-    return rate ? Math.floor(s.price * rate * s.holding) : 0;
-  }
-  return Math.floor(s.price * s.holding / 10000);
+  icon.classList.remove('loading');
+  document.getElementById('lastUpdated').textContent = `最終更新: ${new Date().toLocaleTimeString()}`;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  render();
 }
 
 function render() {
   const list = document.getElementById('stockList');
   let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
-
   list.innerHTML = data.map((s, i) => {
-    const val = calcValuation(s) || 0;
+    const rate = s.isStock ? currentUsdJpy : 1;
+    const val = s.isStock ? Math.floor(s.price * rate * s.holding) : Math.floor(s.price * s.holding / 10000);
     totalValue += val; totalCost += s.cost;
-    const hasDiff = s.diff !== null;
-    const dVal = hasDiff ? Math.floor(val * (parseFloat(s.diff) / 100)) : 0;
+    const hasDiff = s.diff !== null && !isNaN(s.diff);
+    const dVal = hasDiff ? Math.floor(val * (s.diff / 100)) : 0;
     if (hasDiff) dayDiffSum += dVal;
     const profit = val - s.cost;
     const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : '0.00';
     if (!s.isNisa) taxableProfit += profit;
-    const brandColor = BRAND_COLORS[s.code] || '#3a3a3c';
-
     return `
-      <div class="stock-card" style="border-left: 5px solid ${brandColor}">
-        <div class="stock-header">
-          <span class="stock-name">${s.name}</span>
-          <span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span>
-        </div>
-        <div class="stock-main">
-          <span class="price-display numeric">¥${val.toLocaleString()}</span>
+      <div class="stock-card" style="border-left: 5px solid ${BRAND_COLORS[s.code] || '#3a3a3c'}">
+        <div class="stock-header"><span class="stock-name">${s.name}</span><span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span></div>
+        <div class="stock-main"><span class="price-display numeric">¥${val.toLocaleString()}</span>
           <div class="perf-display">
-            <div class="${dVal >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? (dVal >= 0 ? '+' : '') + dVal.toLocaleString() : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'}">Total: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${profitRate}%)</div>
+            <div class="${dVal >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? formatSigned(dVal) : '---'}</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'}">Total: ${formatSigned(profit)} (${profitRate}%)</div>
           </div>
         </div>
         <div class="view-meta">
           <div class="meta-row"><span class="meta-label">${s.isStock ? 'Price($)' : 'NAV'}</span>
-            <input class="ios-input numeric" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)"></div>
+            <input class="ios-input numeric" type="number" step="any" value="${s.price}" onchange="data[${i}].price=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();"></div>
           <div class="meta-row"><span class="meta-label">Qty / Cost(¥)</span>
             <div style="display:flex; gap:8px;">
-              <input class="ios-input numeric" style="width:45%;" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
-              <input class="ios-input numeric" style="width:45%;" type="number" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
+              <input class="ios-input numeric" style="width:45%;" type="number" step="any" value="${s.holding}" onchange="data[${i}].holding=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();">
+              <input class="ios-input numeric" style="width:45%;" type="number" value="${s.cost}" onchange="data[${i}].cost=parseFloat(this.value);localStorage.setItem(STORAGE_KEY,JSON.stringify(data));render();">
             </div>
           </div>
         </div>
       </div>`;
   }).join('');
-
-  document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
+  document.getElementById('totalDisplay').textContent = formatYen(totalValue);
   document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
-  
   const anyDiff = data.some(s => s.diff !== null);
-  const prevTotalValue = totalValue - dayDiffSum;
-  const totalDayRate = (anyDiff && prevTotalValue > 0) ? (dayDiffSum / prevTotalValue * 100).toFixed(2) : '0.00';
-  
+  const dayRate = totalValue > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100).toFixed(2) : '0.00';
   const dayEl = document.getElementById('totalDayDiff');
-  dayEl.textContent = anyDiff ? `Prev: ${(dayDiffSum >= 0 ? '+' : '')}${dayDiffSum.toLocaleString()} (${totalDayRate}%)` : 'Prev: ---';
+  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${dayRate}%)` : 'Prev: ---';
   dayEl.className = 'numeric ' + (dayDiffSum >= 0 ? 'pos' : 'neg');
-
-  const overallProfit = totalValue - totalCost;
-  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100).toFixed(2) : '0.00';
-  
   const profEl = document.getElementById('totalProfitAll');
-  profEl.textContent = `Total: ${(overallProfit >= 0 ? '+' : '')}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
-  profEl.className = 'numeric ' + (overallProfit >= 0 ? 'pos' : 'neg');
-
+  profEl.textContent = `Total: ${formatSigned(totalValue - totalCost)} (${(totalCost > 0 ? ((totalValue - totalCost) / totalCost * 100).toFixed(2) : '0.00')}%)`;
+  profEl.className = 'numeric ' + (totalValue >= totalCost ? 'pos' : 'neg');
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById('payoutDisplay').textContent = `¥${(totalValue - estTax).toLocaleString()}`;
-  document.getElementById('taxNote').textContent = `(Tax: -¥${estTax.toLocaleString()})`;
-
-  const prog = Math.min((totalValue / 10000000) * 100, 100);
-  document.getElementById('progRate').textContent = `(${prog.toFixed(2)}%)`;
+  document.getElementById('payoutDisplay').textContent = formatYen(totalValue - estTax);
+  document.getElementById('taxNote').textContent = `(Tax: ${estTax > 0 ? formatSigned(estTax * -1) : '¥0'})`;
+  document.getElementById('progRate').textContent = `(${Math.min((totalValue / 10000000) * 100, 100).toFixed(2)}%)`;
 }
-
-function updateItem(i, field, val) {
-  const parsed = parseFloat(val);
-  if (!isNaN(parsed)) { data[i][field] = parsed; saveAndRender(); }
-}
-
 render();
 </script>
 </body>
