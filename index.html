@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.1 Compact Edit</title>
+<title>MONEY LOG v3.2 Compact Edit</title>
 
 <style>
 :root {
@@ -27,19 +27,24 @@
 html, body { margin: 0; background: var(--bg); color: var(--text-main); font-family: -apple-system, sans-serif; }
 
 body {
-  padding: calc(10px + env(safe-area-inset-top)) 12px calc(90px + env(safe-area-inset-bottom));
+  padding: calc(15px + env(safe-area-inset-top)) 12px calc(90px + env(safe-area-inset-bottom));
   line-height: 1.2;
 }
 
 .container { max-width: 430px; margin: 0 auto; }
 .numeric { font-variant-numeric: tabular-nums; }
 
-/* Header - Compact */
-.app-header { padding: 4px 4px 10px; }
-.app-title { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
-.app-subtitle { font-size: 11px; color: var(--text-sub); }
+/* Header - 大きく強調 */
+.app-header { padding: 4px 4px 14px; text-align: left; }
+.app-title {
+  font-size: 20px; /* 資産の代わりにMONEY LOGを強調 */
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+  color: var(--text-main);
+}
 
-/* Summary - Condensed */
+/* Summary - Condensed & Progressive Bar Removed */
 .summary-card {
   background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--surface-1) 100%);
   border: 1px solid var(--line);
@@ -48,26 +53,27 @@ body {
   margin-bottom: 12px;
 }
 
-.main-display-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+.summary-label { font-size: 10px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.main-display-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
 .total-display { font-size: 28px; font-weight: 800; }
-.summary-performance { text-align: right; font-size: 11px; font-weight: 700; }
+.summary-performance { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
 
-.progress-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; margin-bottom: 12px; overflow: hidden; }
-.progress-fill { height: 100%; background: #fff; transition: width 0.5s ease; }
-
+/* NET (Tax) - 赤枠スタイルに統一 */
 .net-card {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 12px; background: var(--surface-2); border-radius: 14px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding: 10px 14px; background: var(--surface-2); border-radius: 16px;
 }
-.net-card-value { font-size: 15px; font-weight: 700; }
+.net-card-label { font-size: 10px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 3px; }
+.net-card-value { font-size: 17px; font-weight: 700; }
+.net-card-tax { font-size: 11px; color: var(--neg); font-weight: 700; text-align: right; }
 
-/* Portfolio Section - Information Dense */
+/* Portfolio Section */
 .section-title { margin: 12px 4px 8px; font-size: 17px; font-weight: 800; color: var(--text-sub); }
 
 .stock-card {
   position: relative;
   border-radius: 18px;
-  padding: 12px 14px; /* 余白を大幅カット */
+  padding: 12px 14px;
   background: var(--surface-1);
   border: 1px solid var(--line);
   margin-bottom: 10px;
@@ -84,16 +90,16 @@ body {
 
 .stock-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .stock-value { font-size: 22px; font-weight: 800; }
-.stock-performance { text-align: right; font-size: 11px; font-weight: 700; }
+.stock-performance { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
 
-/* Edit Rows - Vertical reduction */
+/* Edit Rows */
 .view-meta { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .meta-row { display: flex; flex-direction: column; justify-content: center; padding: 4px 0; }
 .meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
 
 .ios-direct-input {
   background: transparent; border: none; color: var(--text-main); font-family: inherit;
-  font-size: 13px; font-weight: 700; text-align: left; /* 入力欄を左寄せにしてラベルとの距離を詰める */
+  font-size: 13px; font-weight: 700; text-align: left;
   width: 100%; padding: 2px 0; outline: none; border-radius: 4px;
 }
 .ios-direct-input:focus { background: var(--surface-3); padding-left: 4px; }
@@ -115,26 +121,25 @@ body {
 <body>
   <div class="container">
     <header class="app-header">
-      <h1 class="app-title">資産</h1>
-      <div class="app-subtitle">MONEY LOG v3.1 Condensed</div>
+      <div class="app-title">MONEY LOG</div>
     </header>
 
     <section class="summary-card">
+      <div class="summary-label">Total Assets</div>
       <div class="main-display-row">
         <div class="total-display numeric" id="totalDisplay">¥0</div>
         <div class="summary-performance">
-          <div id="totalDayDiff" class="numeric">---</div>
-          <div id="totalProfitAll" class="numeric" style="margin-top: 4px;">---</div>
+          <div id="totalDayDiff" class="numeric pos">---</div>
+          <div id="totalProfitAll" class="numeric pos" style="margin-top: 4px;">---</div>
         </div>
       </div>
-      <div class="progress-meta">
-        <span style="font-size: 10px;">Project 10M</span>
-        <span id="progRate" class="numeric" style="font-size: 10px;">(0.00%)</span>
-      </div>
-      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      
       <div class="net-card">
-        <span style="font-size: 10px; color: var(--text-sub); font-weight: 700;">NET (EST.)</span>
-        <div class="net-card-value numeric" id="payoutDisplay">¥0</div>
+        <div>
+          <div class="net-card-label">NET (EST.)</div>
+          <div class="net-card-value numeric" id="payoutDisplay">¥0</div>
+        </div>
+        <div id="taxNote" class="net-card-tax numeric">Tax: ¥0</div>
       </div>
     </section>
 
@@ -241,9 +246,8 @@ function render() {
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  const progress = Math.min((totalValue / 10000000) * 100, 100);
-  document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
-  document.getElementById("progressBar").style.width = progress + "%";
+  // 税金も表示
+  document.getElementById("taxNote").textContent = estTax > 0 ? `Tax: ${formatSigned(estTax * -1)}` : `Tax: ¥0`;
 }
 render();
 </script>
