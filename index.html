@@ -135,9 +135,8 @@ const INITIAL_DATA = [
 
 const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
-localStorage.removeItem(STORAGE_KEY);
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_DATA;
 let data = INITIAL_DATA;
-
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 let editingCell = { index: null, field: null };
 
