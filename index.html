@@ -45,7 +45,16 @@ body {
 .container { max-width: 430px; margin: 0 auto; }
 .numeric { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 
-.section-title { margin: 24px 2px 10px; font-size: 17px; font-weight: 800; }
+/* Header Layout */
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 24px 2px 10px;
+}
+.section-title { font-size: 17px; font-weight: 800; margin: 0; }
+.last-sync { font-size: 11px; font-weight: 600; color: var(--text-soft); }
+
 .list-container { display: grid; gap: 10px; }
 
 .stock-card {
@@ -156,10 +165,16 @@ body {
 
 <body>
   <div class="container">
-    <div class="section-title">MONEY LOG</div>
+    <div class="header-row">
+      <div class="section-title">MONEY LOG</div>
+      <div id="lastSyncDisplay" class="last-sync">Last Sync: --:--</div>
+    </div>
+    
     <div id="summaryCards" class="list-container"></div>
 
-    <div class="section-title">Portfolio</div>
+    <div class="header-row">
+      <div class="section-title">Portfolio</div>
+    </div>
     <div id="stockList" class="list-container"></div>
   </div>
 
@@ -184,6 +199,7 @@ const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#f
 
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_DATA;
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
+let lastSyncTime = localStorage.getItem(STORAGE_KEY + "_sync") || "--:--";
 let editingCell = { index: null, field: null };
 
 function formatYen(v) { return "¥" + Math.floor(v).toLocaleString(); }
@@ -235,7 +251,12 @@ async function fetchAll() {
     } catch (e) {}
   }));
 
+  // 時刻を更新して保存
+  const now = new Date();
+  lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+  localStorage.setItem(STORAGE_KEY + "_sync", lastSyncTime);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  
   render();
   anim.cancel();
 }
@@ -243,6 +264,10 @@ async function fetchAll() {
 function render() {
   const list = document.getElementById("stockList");
   const summary = document.getElementById("summaryCards");
+  const syncDisplay = document.getElementById("lastSyncDisplay");
+  
+  syncDisplay.innerText = "Last Sync: " + lastSyncTime;
+
   let totalValue = 0, totalCost = 0, dayDiffSum = 0;
   let taxableValue = 0, taxableCost = 0, taxableProfit = 0;
 
