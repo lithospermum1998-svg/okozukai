@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
@@ -7,7 +8,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG Compact iOS</title>
+<title>MONEY LOG v3.1 Direct Edit</title>
 
 <style>
 :root {
@@ -15,6 +16,7 @@
   --surface-1: #1c1c1e;
   --surface-2: #2c2c2e;
   --surface-3: #3a3a3c;
+  --surface-4: #48484a;
 
   --text-main: #ffffff;
   --text-sub: #8e8e93;
@@ -30,8 +32,12 @@
   --neg: #ff453a;
   --warn: #ffd60a;
 
-  --shadow-soft: 0 8px 24px rgba(0,0,0,0.22);
-  --shadow-float: 0 10px 26px rgba(0,0,0,0.32);
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 12px;
+
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
 }
 
 * {
@@ -49,10 +55,10 @@ html, body {
 body {
   min-height: 100vh;
   padding:
-    calc(8px + env(safe-area-inset-top))
-    12px
-    calc(92px + env(safe-area-inset-bottom));
-  line-height: 1.18;
+    calc(10px + env(safe-area-inset-top))
+    14px
+    calc(110px + env(safe-area-inset-bottom));
+  line-height: 1.2;
 }
 
 .container {
@@ -67,698 +73,313 @@ body {
 
 /* Header */
 .app-header {
-  padding: 4px 2px 10px;
-}
-
-.nav-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.title-wrap {
-  min-width: 0;
+  padding: 6px 4px 14px;
 }
 
 .app-title {
-  margin: 0;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 800;
-  letter-spacing: -0.7px;
+  letter-spacing: -0.8px;
+  margin: 0;
 }
 
 .app-subtitle {
-  margin-top: 3px;
-  color: var(--text-sub);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 2px;
-}
-
-.header-btn {
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.05);
-  color: var(--accent);
-  height: 32px;
-  padding: 0 13px;
-  border-radius: 999px;
+  margin-top: 4px;
   font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: transform 0.14s ease, opacity 0.18s ease, background-color 0.18s ease;
-}
-
-.header-btn:active {
-  transform: scale(0.97);
-}
-
-body.editing .header-btn {
-  background: rgba(10,132,255,0.16);
-  border-color: rgba(10,132,255,0.25);
-  color: #7cc1ff;
-}
-
-.editing-hint {
-  display: none;
-  margin-top: 8px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(10,132,255,0.11);
-  border: 1px solid rgba(10,132,255,0.18);
-  color: #8fc7ff;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-body.editing .editing-hint {
-  display: block;
-}
-
-/* Error */
-.error-banner {
-  display: none;
-  margin-bottom: 10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255, 69, 58, 0.14);
-  border: 1px solid rgba(255, 69, 58, 0.22);
-  color: #ff9b94;
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-}
-
-/* Summary */
-.summary-card {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.014) 100%),
-    var(--surface-1);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  padding: 14px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.035),
-    var(--shadow-soft);
-  margin-bottom: 12px;
-}
-
-.summary-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.summary-kicker {
   color: var(--text-sub);
-  font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
-.summary-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.055);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: var(--text-main);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.summary-main {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.total-block {
-  min-width: 0;
+/* Summary Card */
+.summary-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 24px 18px 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-soft);
+  margin-bottom: 16px;
 }
 
 .summary-label {
   color: var(--text-sub);
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
+}
+
+.main-display-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 12px;
 }
 
 .total-display {
-  margin: 0;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 800;
-  letter-spacing: -0.9px;
+  letter-spacing: -0.8px;
 }
 
-.goal-meta {
+.summary-performance {
   text-align: right;
-  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
-.goal-meta-label {
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
   color: var(--text-sub);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  margin-bottom: 4px;
 }
 
-.goal-meta-value {
+.progress-track {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ffffff 0%, #d0d0d0 100%);
+  transition: width 0.55s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Net Card — row layout */
+.net-card {
+  padding: 0;
+}
+
+.net-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 38px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.net-row:first-child {
+  border-top: none;
+}
+
+.net-row-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.net-row-value {
   font-size: 14px;
   font-weight: 800;
 }
 
-.progress-track {
-  height: 7px;
-  background: rgba(255,255,255,0.08);
+.net-row-value.main {
+  font-size: 14px;
+}
+
+/* Last sync badge */
+.sync-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.07);
   border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.progress-fill {
-  width: 0%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #ffffff 0%, #cdcdcd 100%);
-  transition: width 0.5s cubic-bezier(.2,.8,.2,1);
-}
-
-.summary-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.stat-box {
-  min-width: 0;
-  padding: 9px 10px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.055);
-}
-
-.stat-label {
-  color: var(--text-sub);
-  font-size: 9px;
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 700;
-  margin-bottom: 5px;
-  letter-spacing: 0.35px;
-  text-transform: uppercase;
-}
-
-.stat-value {
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.25;
-}
-
-.last-updated {
-  margin-top: 10px;
   color: var(--text-soft);
-  text-align: center;
-  font-size: 10px;
-  font-weight: 600;
 }
 
-/* Section */
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-soft);
+  flex-shrink: 0;
+}
+
+.sync-dot.active {
+  background: var(--pos);
+}
+
+/* Portfolio Section */
 .section-title {
-  margin: 14px 2px 10px;
-  font-size: 17px;
+  margin: 18px 4px 12px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: -0.25px;
+  letter-spacing: -0.3px;
 }
 
-/* List */
 .stock-list {
   display: grid;
-  gap: 10px;
+  gap: 14px;
 }
 
 .stock-card {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
-  padding: 12px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.032) 0%, rgba(255,255,255,0.012) 100%),
-    var(--surface-1);
+  border-radius: 22px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%), var(--surface-1);
   border: 1px solid var(--line);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.03),
-    var(--shadow-soft);
+  margin-bottom: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035), var(--shadow-soft);
 }
 
 .stock-card::before {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
   background: var(--brand, #3a3a3c);
 }
 
-.card-top {
+.stock-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.card-top-left {
-  min-width: 0;
-  flex: 1;
-}
-
-.stock-name {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.15px;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.stock-code {
-  color: var(--text-sub);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.card-top-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.account-badge,
-.edit-chip {
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
+.stock-name { font-size: 16px; font-weight: 800; letter-spacing: -0.2px; }
+.stock-code { font-size: 11px; color: var(--text-sub); font-weight: 700; }
 .account-badge {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: var(--text-main);
+  height: 26px; padding: 0 10px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); font-size: 11px; font-weight: 800;
+  display: flex; align-items: center;
 }
 
-.edit-chip {
-  border: 1px solid rgba(10,132,255,0.25);
-  background: rgba(10,132,255,0.12);
-  color: #7cc1ff;
-  cursor: pointer;
-}
-
-.edit-chip.active {
-  background: rgba(10,132,255,0.22);
-  color: #b5dcff;
-}
-
-.card-main {
-  margin-top: 9px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: end;
-}
-
-.value-wrap {
-  min-width: 0;
-}
-
-.value-label {
-  color: var(--text-sub);
-  font-size: 10px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.value-main {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.65px;
-}
-
-.performance-wrap {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.performance-line {
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-.performance-line + .performance-line {
-  margin-top: 4px;
-}
-
-.meta-grid {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  padding-top: 9px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.meta-cell {
-  min-width: 0;
-}
-
-.meta-label {
-  color: var(--text-sub);
-  font-size: 9px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-
-.meta-value {
-  color: var(--text-main);
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.edit-panel {
-  display: none;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.stock-card.editor-open .edit-panel {
-  display: block;
-}
-
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.1fr;
-  gap: 8px;
-}
-
-.field-label {
-  display: block;
-  margin-bottom: 5px;
-  padding-left: 1px;
-  color: var(--text-sub);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.25px;
-  text-transform: uppercase;
-}
-
-.ios-input {
-  width: 100%;
-  height: 38px;
-  padding: 0 10px;
-  border-radius: 11px;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: var(--surface-2);
-  color: var(--text-main);
-  font-size: 13px;
-  font-weight: 800;
-  text-align: right;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-  transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
-}
-
-.ios-input:focus {
-  border-color: rgba(10,132,255,0.78);
-  box-shadow: 0 0 0 4px rgba(10,132,255,0.14);
-  background: #303033;
-}
-
-.ios-input.warn {
-  border-color: rgba(255,69,58,0.35);
-  background: rgba(255,69,58,0.11);
-}
-
-.ios-input::-webkit-outer-spin-button,
-.ios-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Bottom action */
-.bottom-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(12px + env(safe-area-inset-bottom));
+.stock-main {
   display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 100;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 12px;
 }
 
+.stock-value { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; }
+.stock-performance { text-align: right; font-size: 12px; font-weight: 800; line-height: 1.35; }
+
+/* Inline Edit Field */
+.view-meta { display: grid; gap: 8px; }
+.meta-row {
+  display: flex; justify-content: space-between; align-items: center;
+  min-height: 38px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.meta-row:first-child { border-top: none; }
+.meta-label { color: var(--text-sub); font-size: 12px; font-weight: 700; }
+
+.ios-direct-input {
+  background: transparent; border: none; color: var(--text-main);
+  font-family: inherit; font-size: 14px; font-weight: 800;
+  text-align: right; width: 160px; padding: 4px 0; outline: none;
+  transition: background 0.18s; border-radius: 6px; -webkit-appearance: none;
+}
+.ios-direct-input:focus { background: var(--surface-3); padding: 4px 8px; box-shadow: 0 0 0 1px var(--accent); }
+
+/* Bottom Bar */
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom));
+  display: flex; justify-content: center; pointer-events: none; z-index: 100;
+}
 .update-btn {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 126px;
-  height: 50px;
-  padding: 0 20px;
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.9);
-  color: #000000;
-  font-size: 15px;
-  font-weight: 800;
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  box-shadow:
-    0 10px 24px rgba(0,0,0,0.33),
-    inset 0 1px 0 rgba(255,255,255,0.62);
-  cursor: pointer;
-  transition: transform 0.14s ease, opacity 0.18s ease;
+  pointer-events: auto; height: 54px; padding: 0 22px; border-radius: 999px;
+  background: rgba(255,255,255,0.88); color: #000; font-size: 16px; font-weight: 800;
+  backdrop-filter: blur(22px); box-shadow: 0 10px 28px rgba(0,0,0,0.34); border: none;
 }
 
-.update-btn:active {
-  transform: scale(0.97);
-}
-
-.update-btn:disabled {
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.update-icon {
-  display: inline-block;
-  font-size: 15px;
-}
-
-/* Utility */
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
-.warn-text { color: var(--warn); }
-
-.loading-icon {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 380px) {
-  .summary-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .meta-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .value-main {
-    font-size: 22px;
-  }
-
-  .total-display {
-    font-size: 29px;
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-icon { animation: spin 1s linear infinite; display: inline-block; }
 </style>
+
 </head>
 
 <body>
   <div class="container">
     <header class="app-header">
-      <div class="nav-row">
-        <div class="title-wrap">
-          <h1 class="app-title">資産</h1>
-          <div class="app-subtitle">MONEY LOG</div>
-        </div>
-        <div class="header-actions">
-          <button id="editModeBtn" class="header-btn" onclick="toggleEditMode()">編集</button>
-        </div>
-      </div>
-      <div class="editing-hint">編集モード中です。必要な銘柄だけ「入力」を開いて修正できます。</div>
+      <h1 class="app-title">Assets</h1>
+      <div class="app-subtitle">MONEY LOG</div>
     </header>
 
-    <div id="errorBanner" class="error-banner"></div>
+```
+<div id="errorBanner"></div>
 
-    <section class="summary-card">
-      <div class="summary-top">
-        <div class="summary-kicker">Project 10M</div>
-        <div id="fxRateDisplay" class="summary-badge numeric">USD/JPY: ---</div>
-      </div>
+<section class="summary-card">
+  <div class="summary-label">Total Assets</div>
 
-      <div class="summary-main">
-        <div class="total-block">
-          <div class="summary-label">Total Assets</div>
-          <div id="totalDisplay" class="total-display numeric">¥0</div>
-        </div>
-        <div class="goal-meta">
-          <div class="goal-meta-label">Goal</div>
-          <div id="progRate" class="goal-meta-value numeric">(0.00%)</div>
-        </div>
-      </div>
+  <div class="main-display-row">
+    <div class="total-display numeric" id="totalDisplay">¥0</div>
+    <div class="summary-performance">
+      <div id="totalDayDiff" class="numeric">---</div>
+      <div id="totalProfitAll" class="numeric" style="margin-top: 6px;">---</div>
+    </div>
+  </div>
 
-      <div class="progress-track">
-        <div id="progressBar" class="progress-fill"></div>
-      </div>
+  <div class="progress-meta">
+    <span>Project 10M</span>
+    <span id="progRate" class="numeric">(0.00%)</span>
+  </div>
+  <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
 
-      <div class="summary-stats">
-        <div class="stat-box">
-          <div class="stat-label">Previous</div>
-          <div id="totalDayDiff" class="stat-value numeric">---</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Total Profit</div>
-          <div id="totalProfitAll" class="stat-value numeric">---</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Net (Est.)</div>
-          <div id="payoutDisplay" class="stat-value numeric">¥0</div>
-        </div>
-      </div>
+  <div class="net-card">
+    <div class="net-row">
+      <div class="net-row-label">Net (Est.)</div>
+      <div class="net-row-value main numeric" id="payoutDisplay">¥0</div>
+    </div>
+    <div class="net-row">
+      <div class="net-row-label">Tax</div>
+      <div class="net-row-value numeric" id="taxNote" style="color:var(--text-sub);">¥0</div>
+    </div>
+  </div>
 
-      <div id="taxNote" class="last-updated numeric" style="margin-top:8px;">Tax: ¥0</div>
-      <div id="lastUpdated" class="last-updated">最終更新: --:--:--</div>
-    </section>
+  <div class="sync-row">
+    <div class="sync-badge">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="lastUpdated">Last sync: --:--:--</span>
+    </div>
+  </div>
+</section>
 
-    <div class="section-title">Portfolio</div>
-    <div id="stockList" class="stock-list"></div>
+<div class="section-title">Portfolio</div>
+<div id="stockList" class="stock-list"></div>
+```
+
   </div>
 
   <div class="bottom-bar">
     <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span id="updateIcon" class="update-icon">↻</span>
-      <span id="updateLabel">update</span>
+      <span id="updateIcon">↻</span> update
     </button>
   </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_compact_ios";
+const STORAGE_KEY = "money_log_v3_ios_edit";
 
-const ITEM_DEFAULTS = {
-  diff: null,
-  rate: null
-};
-
-const INITIAL_DATA = [
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
-  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: true, diff: null },
+  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: false, diff: null },
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
 
-const BRAND_COLORS = {
-  "2931123A": "#8b0000",
-  "02311251": "#d4af37",
-  "PAYP": "#ff3b30"
-};
+let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 
-let isEditMode = false;
-let expandedEditIndex = null;
-
-function migrateData(raw) {
-  if (!Array.isArray(raw)) return null;
-  return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
-}
-
-let data = (() => {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return migrateData(raw) || INITIAL_DATA;
-  } catch (e) {
-    return INITIAL_DATA;
-  }
-})();
-
-let currentUsdJpy = (() => {
-  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
-  return saved ? parseFloat(saved) : null;
-})();
-
-function formatYen(value) {
-  return "¥" + Math.floor(value).toLocaleString("ja-JP");
-}
-
-function formatDisplayNumber(value, digits = 2) {
-  return Number(value).toLocaleString("ja-JP", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: digits
-  });
-}
-
-function formatSignedNumber(value) {
-  const n = Math.floor(value);
-  const sign = n > 0 ? "+" : "";
-  return sign + n.toLocaleString("ja-JP");
-}
-
-function formatSignedPercent(value, digits = 2) {
-  const n = Number(value);
-  const sign = n > 0 ? "+" : "";
-  return sign + n.toFixed(digits) + "%";
-}
-
-function showError(msg) {
-  const el = document.getElementById("errorBanner");
-  el.textContent = `⚠️ ${msg}`;
-  el.style.display = "block";
-}
-
-function hideError() {
-  document.getElementById("errorBanner").style.display = "none";
-}
+function formatYen(v) { return "¥" + Math.floor(v).toLocaleString("ja-JP"); }
+function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v).toLocaleString("ja-JP"); }
+function formatPercent(v) { return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; }
 
 function saveAndRender() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -768,77 +389,9 @@ function saveAndRender() {
 function calcValuation(item) {
   if (item.isStock) {
     const rate = item.rate ?? currentUsdJpy;
-    return rate ? Math.floor(item.price * rate * item.holding) : null;
+    return rate ? Math.floor(item.price * rate * item.holding) : 0;
   }
   return Math.floor(item.price * item.holding / 10000);
-}
-
-function toggleEditMode() {
-  isEditMode = !isEditMode;
-  if (!isEditMode) expandedEditIndex = null;
-  document.body.classList.toggle("editing", isEditMode);
-  render();
-}
-
-function toggleCardEditor(index) {
-  if (!isEditMode) return;
-  expandedEditIndex = expandedEditIndex === index ? null : index;
-  render();
-}
-
-async function fetchAll() {
-  const btn = document.getElementById("updateBtn");
-  const icon = document.getElementById("updateIcon");
-  const label = document.getElementById("updateLabel");
-
-  btn.disabled = true;
-  icon.classList.add("loading-icon");
-  label.textContent = "updating";
-
-  hideError();
-  const errors = [];
-
-  await Promise.all(
-    data.map(async (item) => {
-      try {
-        const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
-        const json = await res.json();
-
-        if (json.status === "Success") {
-          item.price = json.price;
-          item.diff = json.diff ?? null;
-
-          if (json.rate) {
-            item.rate = json.rate;
-            currentUsdJpy = json.rate;
-            localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
-          }
-        } else {
-          errors.push(`${item.name}失敗`);
-        }
-      } catch (e) {
-        errors.push(`${item.name}エラー`);
-      }
-    })
-  );
-
-  btn.disabled = false;
-  icon.classList.remove("loading-icon");
-  label.textContent = "update";
-
-  if (errors.length > 0) {
-    showError(errors.join(" / "));
-  }
-
-  const now = new Date();
-  document.getElementById("lastUpdated").textContent =
-    `最終更新: ${now.toLocaleTimeString("ja-JP", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    })}`;
-
-  saveAndRender();
 }
 
 function updateItem(index, field, value) {
@@ -849,171 +402,90 @@ function updateItem(index, field, value) {
   }
 }
 
+async function fetchAll() {
+  const icon = document.getElementById("updateIcon");
+  icon.classList.add("loading-icon");
+  await Promise.all(data.map(async (item) => {
+    try {
+      const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
+      const json = await res.json();
+      if (json.status === "Success") {
+        item.price = json.price;
+        item.diff = json.diff ?? null;
+        if (json.rate) {
+          currentUsdJpy = json.rate;
+          localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy);
+        }
+      }
+    } catch (e) { console.error(e); }
+  }));
+  icon.classList.remove("loading-icon");
+  document.getElementById("lastUpdated").textContent = `Last sync: ${new Date().toLocaleTimeString()}`;
+  document.getElementById("syncDot").classList.add("active");
+  saveAndRender();
+}
+
 function render() {
-  document.body.classList.toggle("editing", isEditMode);
-  document.getElementById("editModeBtn").textContent = isEditMode ? "完了" : "編集";
-
   const list = document.getElementById("stockList");
-
-  let totalValue = 0;
-  let totalCost = 0;
-  let dayDiffSum = 0;
-  let taxableProfit = 0;
+  let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
 
   list.innerHTML = data.map((item, index) => {
-    const valuation = calcValuation(item) || 0;
-    totalValue += valuation;
-    totalCost += item.cost;
-
+    const valuation = calcValuation(item);
+    totalValue += valuation; totalCost += item.cost;
     const hasDiff = item.diff !== null;
-    const diffRate = hasDiff ? parseFloat(item.diff) : 0;
-    const dayDiffValue = hasDiff ? Math.floor(valuation * (diffRate / 100)) : 0;
+    const dayDiffValue = hasDiff ? Math.floor(valuation * (item.diff / 100)) : 0;
     if (hasDiff) dayDiffSum += dayDiffValue;
-
     const profit = valuation - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
-
     if (!item.isNisa) taxableProfit += profit;
 
-    const brandColor = BRAND_COLORS[item.code] || "#3a3a3c";
-    const prevClass = dayDiffValue >= 0 ? "pos" : "neg";
-    const profitClass = profit >= 0 ? "pos" : "neg";
-
-    const fxRate = item.isStock ? (item.rate ?? currentUsdJpy) : null;
-    const isEditorOpen = isEditMode && expandedEditIndex === index;
+    const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
     return `
-      <section class="stock-card ${isEditorOpen ? "editor-open" : ""}" style="--brand:${brandColor}">
-        <div class="card-top">
-          <div class="card-top-left">
-            <div class="stock-name">${item.name}</div>
-            <div class="stock-code numeric">${item.code}</div>
-          </div>
-          <div class="card-top-right">
-            <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
-            ${isEditMode ? `
-              <button class="edit-chip ${isEditorOpen ? "active" : ""}" onclick="toggleCardEditor(${index})">
-                ${isEditorOpen ? "閉じる" : "入力"}
-              </button>
-            ` : ""}
+      <section class="stock-card" style="--brand:${BRAND_COLORS[item.code] || '#3a3a3c'}">
+        <div class="stock-header">
+          <div><div class="stock-name">${item.name}</div><div class="stock-code numeric">${item.code}</div></div>
+          <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
+        </div>
+        <div class="stock-main">
+          <div class="stock-value numeric">${formatYen(valuation)}</div>
+          <div class="stock-performance">
+            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'} numeric">Prev: ${hasDiff ? formatSigned(dayDiffValue) + ' (' + formatPercent(item.diff) + ')' : '---'}</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'} numeric" style="margin-top:6px;">Total: ${formatSigned(profit)} (${formatPercent(profitRate)})</div>
           </div>
         </div>
-
-        <div class="card-main">
-          <div class="value-wrap">
-            <div class="value-label">Valuation</div>
-            <div class="value-main numeric">${formatYen(valuation)}</div>
-          </div>
-
-          <div class="performance-wrap">
-            <div class="performance-line ${prevClass} numeric">
-              Prev: ${hasDiff ? `${formatSignedNumber(dayDiffValue)} (${formatSignedPercent(diffRate)})` : "---"}
-            </div>
-            <div class="performance-line ${profitClass} numeric">
-              Total: ${formatSignedNumber(profit)} (${formatSignedPercent(profitRate)})
-            </div>
-          </div>
+        <div class="view-meta">
+          <div class="meta-row"><div class="meta-label">${item.isStock ? "Price ($)" : "NAV"}</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">Qty</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">Cost</div><input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)"></div>
+          <div class="meta-row"><div class="meta-label">FX</div><div class="numeric" style="font-weight:800; font-size:14px; text-align:right;">${item.isStock ? (currentUsdJpy ? '¥' + currentUsdJpy.toFixed(2) : '---') : '-'}</div></div>
         </div>
-
-        <div class="meta-grid">
-          <div class="meta-cell">
-            <div class="meta-label">${item.isStock ? "Price $" : "NAV"}</div>
-            <div class="meta-value numeric">${formatDisplayNumber(item.price, item.isStock ? 4 : 2)}</div>
-          </div>
-          <div class="meta-cell">
-            <div class="meta-label">Qty</div>
-            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}">
-              ${formatDisplayNumber(item.holding, 5)}
-            </div>
-          </div>
-          <div class="meta-cell">
-            <div class="meta-label">Cost</div>
-            <div class="meta-value numeric">¥${Math.floor(item.cost).toLocaleString("ja-JP")}</div>
-          </div>
-          <div class="meta-cell">
-            <div class="meta-label">FX</div>
-            <div class="meta-value numeric">${fxRate ? "¥" + fxRate.toFixed(2) : "-"}</div>
-          </div>
-        </div>
-
-        <div class="edit-panel">
-          <div class="input-grid">
-            <div>
-              <label class="field-label">${item.isStock ? "Price $" : "NAV"}</label>
-              <input
-                class="ios-input numeric"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.price}"
-                onchange="updateItem(${index}, 'price', this.value)"
-              />
-            </div>
-
-            <div>
-              <label class="field-label">Qty</label>
-              <input
-                class="ios-input numeric ${item.holding === 0 ? "warn" : ""}"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.holding}"
-                onchange="updateItem(${index}, 'holding', this.value)"
-              />
-            </div>
-
-            <div>
-              <label class="field-label">Cost</label>
-              <input
-                class="ios-input numeric"
-                type="number"
-                step="any"
-                inputmode="decimal"
-                value="${item.cost}"
-                onchange="updateItem(${index}, 'cost', this.value)"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
+      </section>`;
   }).join("");
 
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
-  document.getElementById("fxRateDisplay").textContent =
-    `USD/JPY: ${currentUsdJpy ? "¥" + currentUsdJpy.toFixed(2) : "---"}`;
 
   const anyDiff = data.some(item => item.diff !== null);
-  const prevTotalValue = totalValue - dayDiffSum;
-  const totalDayRate = (anyDiff && prevTotalValue > 0)
-    ? (dayDiffSum / prevTotalValue * 100)
-    : 0;
-
   const dayEl = document.getElementById("totalDayDiff");
-  dayEl.textContent = anyDiff
-    ? `${formatSignedNumber(dayDiffSum)} (${formatSignedPercent(totalDayRate)})`
-    : "---";
-  dayEl.className = "stat-value numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
-
-  const overallProfit = totalValue - totalCost;
-  const overallProfitRate = totalCost > 0
-    ? (overallProfit / totalCost * 100)
-    : 0;
+  const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
+  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${formatPercent(dayRate)})` : "---";
+  dayEl.className = (dayDiffSum >= 0 ? "pos" : "neg") + " numeric";
 
   const profitEl = document.getElementById("totalProfitAll");
-  profitEl.textContent = `${formatSignedNumber(overallProfit)} (${formatSignedPercent(overallProfitRate)})`;
-  profitEl.className = "stat-value numeric " + (overallProfit >= 0 ? "pos" : "neg");
+  const overallProfit = totalValue - totalCost;
+  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
+  profitEl.textContent = `Total: ${formatSigned(overallProfit)} (${formatPercent(overallProfitRate)})`;
+  profitEl.className = (overallProfit >= 0 ? "pos" : "neg") + " numeric";
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = `Tax: ¥${estTax.toLocaleString("ja-JP")}`;
-
+  document.getElementById("taxNote").textContent = `¥${estTax.toLocaleString()}`;
   const progress = Math.min((totalValue / 10000000) * 100, 100);
   document.getElementById("progRate").textContent = `(${progress.toFixed(2)}%)`;
   document.getElementById("progressBar").style.width = progress + "%";
 }
-
 render();
 </script>
+
 </body>
 </html>
