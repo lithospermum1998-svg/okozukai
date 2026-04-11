@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.4 Compact Direct</title>
+<title>MONEY LOG v3.5 Direct Edit</title>
 
 <style>
 :root {
@@ -36,12 +36,7 @@ body {
 
 /* Header */
 .app-header { padding: 4px 4px 14px; }
-.app-title {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  text-transform: uppercase;
-}
+.app-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; text-transform: uppercase; }
 
 /* Summary Card */
 .summary-card {
@@ -57,7 +52,7 @@ body {
 .total-display { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
 .summary-performance { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
 
-/* NET Style - 白文字・カッコ付き・右揃え */
+/* NET Style - 1行・白文字・カッコ付き・右揃え */
 .net-row {
   display: flex;
   justify-content: space-between;
@@ -116,7 +111,7 @@ body {
 .pos { color: var(--pos); }
 .neg { color: var(--neg); }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading { animation: spin 1s linear infinite; display: inline-block; }
+.loading-icon { animation: spin 1s linear infinite; display: inline-block; }
 </style>
 </head>
 
@@ -131,8 +126,8 @@ body {
       <div class="main-display-row">
         <div class="total-display numeric" id="totalDisplay">¥0</div>
         <div class="summary-performance">
-          <div id="totalDayDiff" class="numeric pos">---</div>
-          <div id="totalProfitAll" class="numeric pos" style="margin-top: 4px;">---</div>
+          <div id="totalDayDiff" class="numeric">---</div>
+          <div id="totalProfitAll" class="numeric" style="margin-top: 4px;">---</div>
         </div>
       </div>
       
@@ -150,12 +145,14 @@ body {
   </div>
 
   <div class="bottom-bar">
-    <button class="update-btn" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button>
+    <button id="updateBtn" class="update-btn" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button>
   </div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
 const STORAGE_KEY = "money_log_v3_ios_edit";
+
+const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
@@ -165,44 +162,55 @@ let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
 
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || 150.00;
 
-function formatYen(v) { return "¥" + Math.floor(v).toLocaleString(); }
-function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v).toLocaleString(); }
+function formatYen(v) { return "¥" + Math.floor(v).toLocaleString("ja-JP"); }
+function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v).toLocaleString("ja-JP"); }
+function formatPercent(v) { return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; }
 
 function updateItem(index, field, value) {
-  data[index][field] = parseFloat(value) || 0;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  render();
+  const parsed = parseFloat(value);
+  if (!isNaN(parsed)) {
+    data[index][field] = parsed;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    render();
+  }
 }
 
 async function fetchAll() {
   const icon = document.getElementById("updateIcon");
-  icon.classList.add("loading");
+  icon.classList.add("loading-icon");
+  
   await Promise.all(data.map(async (item) => {
     try {
       const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
       const json = await res.json();
-      if (json.status === "Success") {
+      if (json && json.status === "Success") {
         item.price = json.price;
-        item.diff = json.diff ?? null;
-        if (json.rate) { currentUsdJpy = json.rate; localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy); }
+        item.diff = json.diff !== undefined ? json.diff : null;
+        if (json.rate) {
+          currentUsdJpy = json.rate;
+          localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy);
+        }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Update failed for " + item.name, e); }
   }));
-  icon.classList.remove("loading");
+
+  icon.classList.remove("loading-icon");
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
 }
 
 function render() {
   const list = document.getElementById("stockList");
   let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
-  const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
 
   list.innerHTML = data.map((item, index) => {
     const valuation = item.isStock ? (item.price * (item.rate ?? currentUsdJpy) * item.holding) : (item.price * item.holding / 10000);
     totalValue += valuation; totalCost += item.cost;
-    const hasDiff = item.diff !== null;
+    
+    const hasDiff = item.diff !== null && !isNaN(item.diff);
     const dayDiffValue = hasDiff ? Math.floor(valuation * (item.diff / 100)) : 0;
     if (hasDiff) dayDiffSum += dayDiffValue;
+    
     const profit = valuation - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     if (!item.isNisa) taxableProfit += profit;
@@ -217,7 +225,7 @@ function render() {
           <div class="stock-value numeric">${formatYen(valuation)}</div>
           <div class="stock-performance">
             <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? formatSigned(dayDiffValue) : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'}">Total: ${formatSigned(profit)} (${profitRate.toFixed(1)}%)</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'}" style="margin-top:4px;">Total: ${formatSigned(profit)} (${profitRate.toFixed(1)}%)</div>
           </div>
         </div>
         <div class="view-meta">
@@ -237,20 +245,24 @@ function render() {
   }).join("");
 
   document.getElementById("totalDisplay").textContent = formatYen(totalValue);
+  
+  const anyDiff = data.some(item => item.diff !== null && !isNaN(item.diff));
   const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
-  document.getElementById("totalDayDiff").textContent = `Prev: ${formatSigned(dayDiffSum)} (${dayRate.toFixed(2)}%)`;
-  document.getElementById("totalDayDiff").className = (dayDiffSum >= 0 ? "pos" : "neg");
+  const dayEl = document.getElementById("totalDayDiff");
+  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${dayRate.toFixed(2)}%)` : "---";
+  dayEl.className = "numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
   
   const overallProfit = totalValue - totalCost;
   const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
-  document.getElementById("totalProfitAll").textContent = `Total: ${formatSigned(overallProfit)} (${overallProfitRate.toFixed(2)}%)`;
-  document.getElementById("totalProfitAll").className = (overallProfit >= 0 ? "pos" : "neg");
+  const profEl = document.getElementById("totalProfitAll");
+  profEl.textContent = `Total: ${formatSigned(overallProfit)} (${overallProfitRate.toFixed(2)}%)`;
+  profEl.className = "numeric " + (overallProfit >= 0 ? "pos" : "neg");
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  // TAX表記をカッコ付きに変更
-  document.getElementById("taxNote").textContent = estTax > 0 ? `(Tax: ${formatSigned(estTax * -1)})` : `(Tax: ¥0)`;
+  document.getElementById("taxNote").textContent = `(Tax: ${estTax > 0 ? formatSigned(estTax * -1) : '¥0'})`;
 }
+
 render();
 </script>
 </body>
