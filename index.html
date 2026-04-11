@@ -45,7 +45,6 @@ body {
 .container { max-width: 430px; margin: 0 auto; }
 .numeric { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 
-/* Header Layout */
 .header-row {
   display: flex;
   justify-content: space-between;
@@ -251,7 +250,6 @@ async function fetchAll() {
     } catch (e) {}
   }));
 
-  // 時刻を更新して保存
   const now = new Date();
   lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
   localStorage.setItem(STORAGE_KEY + "_sync", lastSyncTime);
@@ -285,10 +283,11 @@ function render() {
     }
   });
 
-  const overallProfit = taxableValue - taxableCost;
-  const overallProfitRate = taxableCost > 0 ? (overallProfit / taxableCost * 100) : 0;
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   const netValue = totalValue - estTax;
+  // Net Gain: 税引き後の評価額 - 投資元本
+  const netGain = netValue - totalCost;
+  const netGainRate = totalCost > 0 ? (netGain / totalCost * 100) : 0;
 
   summary.innerHTML = `
     <section class="stock-card" style="--brand:#ffffff">
@@ -299,7 +298,7 @@ function render() {
         <div class="value-main numeric">${formatYen(totalValue)}</div>
         <div class="performance-wrap">
           <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">Prev: ${formatSigned(dayDiffSum)}</div>
-          <div class="performance-line numeric ${overallProfit >= 0 ? "pos" : "neg"}">Total: ${formatPct(overallProfitRate)}</div>
+          <div class="performance-line numeric ${netGain >= 0 ? "pos" : "neg"}">Total: ${formatPct(netGainRate)}</div>
         </div>
       </div>
       <div class="summary-meta-grid">
@@ -316,8 +315,8 @@ function render() {
           <div class="meta-value numeric">${formatYen(totalCost)}</div>
         </div>
         <div>
-          <div class="meta-label">PROFIT</div>
-          <div class="meta-value numeric ${overallProfit >= 0 ? 'pos' : 'neg'}">${formatSigned(overallProfit)}</div>
+          <div class="meta-label">NET GAIN</div>
+          <div class="meta-value numeric ${netGain >= 0 ? 'pos' : 'neg'}">${formatSigned(netGain)}</div>
         </div>
       </div>
     </section>
