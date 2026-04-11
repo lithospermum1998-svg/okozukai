@@ -781,7 +781,11 @@ function toggleEditMode() {
 }
 
 function toggleCardEditor(index) {
-  if (!isEditMode) return;
+  // 編集モードでない場合に数字が叩かれたら、モードを自動ONにする
+  if (!isEditMode) {
+    isEditMode = true;
+    document.body.classList.add("editing");
+  }
   expandedEditIndex = expandedEditIndex === index ? null : index;
   render();
 }
@@ -902,7 +906,7 @@ function render() {
         <div class="card-main">
           <div class="value-wrap">
             <div class="value-label">Valuation</div>
-            <div class="value-main numeric">${formatYen(valuation)}</div>
+            <div class="value-main numeric" onclick="toggleCardEditor(${index})">${formatYen(valuation)}</div>
           </div>
 
           <div class="performance-wrap">
@@ -922,13 +926,15 @@ function render() {
           </div>
           <div class="meta-cell">
             <div class="meta-label">Qty</div>
-            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}">
+            <div class="meta-value numeric ${item.holding === 0 ? "warn-text" : ""}" onclick="toggleCardEditor(${index})">
               ${formatDisplayNumber(item.holding, 5)}
             </div>
           </div>
           <div class="meta-cell">
             <div class="meta-label">Cost</div>
-            <div class="meta-value numeric">¥${Math.floor(item.cost).toLocaleString("ja-JP")}</div>
+            <div class="meta-value numeric" onclick="toggleCardEditor(${index})">
+              ¥${Math.floor(item.cost).toLocaleString("ja-JP")}
+            </div>
           </div>
           <div class="meta-cell">
             <div class="meta-label">FX</div>
