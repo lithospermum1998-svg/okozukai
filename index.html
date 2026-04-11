@@ -2,163 +2,136 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
-/>
-<meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.9 Final</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>MONEY LOG v3.9 Final Robust</title>
 <style>
 :root {
-  --bg: #000000;
-  --surface-1: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-3: #3a3a3c;
-  --text-main: #ffffff;
-  --text-sub: #8e8e93;
-  --line: rgba(255,255,255,0.07);
+  --bg-color: #000000; 
+  --card-bg: #1c1c1e; 
+  --text-main: #ffffff; 
+  --text-sub: #8e8e93; 
+  --input-bg: #2c2c2e; 
+  --input-border: #3a3a3c;
   --accent: #0a84ff;
-  --pos: #30d158;
-  --neg: #ff453a;
+  --pos-color: #32d74b; 
+  --neg-color: #ff453a; 
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg); color: var(--text-main); font-family: -apple-system, sans-serif; }
+html, body { margin: 0; background: var(--bg-color); color: var(--text-main); font-family: -apple-system, sans-serif; line-height: 1.2; }
+body { padding: calc(15px + env(safe-area-inset-top)) 12px calc(100px + env(safe-area-inset-bottom)); }
 
-body {
-  padding: calc(15px + env(safe-area-inset-top)) 12px calc(90px + env(safe-area-inset-bottom));
-  line-height: 1.2;
-}
-
-.container { max-width: 430px; margin: 0 auto; }
+.container { max-width: 420px; margin: 0 auto; }
 .numeric { font-variant-numeric: tabular-nums; }
 
 /* Header */
 .app-header { padding: 4px 4px 14px; }
-.app-title {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  text-transform: uppercase;
-}
+.app-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; text-transform: uppercase; }
 
 /* Summary Card */
 .summary-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--surface-1) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, var(--card-bg) 100%);
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 18px;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  border: 1px solid var(--input-border);
 }
+.summary-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
 
-.summary-label { font-size: 10px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
 .main-display-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
-.total-display { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
-.summary-performance { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
+.total-val { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
+.summary-perf { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
 
-/* NET Row - 赤枠スタイルに完全統一 */
-.net-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 2px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
+/* NET Row */
+.net-row { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--input-border); }
 .net-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
-.net-value-wrap { text-align: right; }
-.net-value { font-size: 14px; font-weight: 800; }
+.net-val-wrap { text-align: right; }
+.net-main { font-size: 14px; font-weight: 800; }
 .net-tax { font-size: 10px; color: var(--text-main); font-weight: 700; margin-left: 6px; }
 
 /* Portfolio Section */
 .section-title { margin: 12px 4px 8px; font-size: 17px; font-weight: 800; color: var(--text-sub); }
-
-.stock-card {
-  position: relative;
-  border-radius: 18px;
-  padding: 12px 14px;
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  margin-bottom: 10px;
+.stock-card { 
+  background: var(--card-bg); border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; border: 1px solid var(--input-border); position: relative;
 }
-
-.stock-card::before {
-  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px;
-  width: 4px; border-radius: 0 2px 2px 0; background: var(--brand, #3a3a3c);
-}
-
 .stock-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.stock-name { font-size: 14px; font-weight: 700; }
-.account-badge { font-size: 9px; font-weight: 800; color: var(--text-sub); background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; }
+.stock-name { font-weight: 800; font-size: 14px; }
+.nisa-tag { font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: #3a3a3c; }
 
-.stock-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.stock-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-.stock-performance { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
+.stock-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+.price-display { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.perf-display { text-align: right; font-size: 11px; font-weight: 700; line-height: 1.4; }
 
+/* Inline Edit Field */
 .view-meta { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .meta-row { display: flex; flex-direction: column; justify-content: center; padding: 4px 0; }
 .meta-label { font-size: 9px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
 
-.ios-direct-input {
-  background: transparent; border: none; color: var(--text-main); font-family: inherit;
-  font-size: 13px; font-weight: 700; text-align: left;
-  width: 100%; padding: 2px 0; outline: none; border-radius: 4px;
+.ios-input { 
+  width: 100%; background: transparent; border: none; color: #ffffff;
+  padding: 2px 0; font-size: 13px; font-weight: 700; outline: none; border-radius: 4px;
+  -webkit-appearance: none; transition: background 0.2s;
 }
-.ios-direct-input:focus { background: var(--surface-3); padding-left: 4px; }
+.ios-input:focus { background: var(--input-bg); padding-left: 4px; border-bottom: 1px solid var(--accent); }
 
 /* Bottom Bar */
-.bottom-bar { position: fixed; left: 0; right: 0; bottom: 20px; display: flex; justify-content: center; pointer-events: none; }
-.update-btn {
-  pointer-events: auto; height: 44px; padding: 0 20px; border-radius: 99px;
-  background: #fff; color: #000; font-size: 14px; font-weight: 800; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+.btn-fixed-wrap { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; z-index: 100; }
+.btn-update {
+  pointer-events: auto; background: #ffffff; color: #000; border: none; padding: 14px 32px; border-radius: 40px; font-size: 16px; font-weight: 700;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; cursor: pointer;
 }
+.btn-update:active { transform: scale(0.96); }
+.btn-update:disabled { opacity: 0.5; pointer-events: none; }
 
-.pos { color: var(--pos); }
-.neg { color: var(--neg); }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading { animation: spin 1s linear infinite; display: inline-block; }
+.pos { color: var(--pos-color); }
+.neg { color: var(--neg-color); }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.loading-icon { display: inline-block; animation: spin 1s linear infinite; }
 </style>
 </head>
-
 <body>
-  <div class="container">
-    <header class="app-header">
-      <div class="app-title">MONEY LOG</div>
-    </header>
 
-    <section class="summary-card">
-      <div class="summary-label">Total Assets</div>
-      <div class="main-display-row">
-        <div class="total-display numeric" id="totalDisplay">¥0</div>
-        <div class="summary-performance">
-          <div id="totalDayDiff" class="numeric">---</div>
-          <div id="totalProfitAll" class="numeric" style="margin-top: 4px;">---</div>
-        </div>
-      </div>
-      
-      <div class="net-row">
-        <div class="net-label">NET (EST.)</div>
-        <div class="net-value-wrap">
-          <span class="net-value numeric" id="payoutDisplay">¥0</span>
-          <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
-        </div>
-      </div>
-    </section>
+<div class="container">
+  <header class="app-header"><div class="app-title">MONEY LOG</div></header>
 
-    <div class="section-title">Portfolio</div>
-    <div id="stockList"></div>
+  <div class="summary-card">
+    <div class="summary-top">
+      <div>Project 10M <span id="progRate">(0.00%)</span></div>
+      <div id="fxRateDisplay">USD/JPY: ---</div>
+    </div>
+    <div class="summary-label">Total Assets</div>
+    <div class="main-display-row">
+      <span id="totalDisplay" class="total-val numeric">¥0</span>
+      <div class="summary-perf">
+        <div id="totalDayDiff" class="numeric">Prev: ---</div>
+        <div id="totalProfitAll" class="numeric" style="margin-top:4px;">Total: ---</div>
+      </div>
+    </div>
+    <div class="net-row">
+      <div class="net-label">NET (EST.)</div>
+      <div class="net-val-wrap">
+        <span class="net-main numeric" id="payoutDisplay">¥0</span>
+        <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
+      </div>
+    </div>
   </div>
 
-  <div class="bottom-bar">
-    <button class="update-btn" onclick="fetchAll()"><span id="updateIcon">↻</span> update</button>
-  </div>
+  <div id="stockList"></div>
+  <div id="lastUpdated" style="font-size:10px; color:var(--text-sub); text-align:center; margin-top:10px;"></div>
+</div>
+
+<div class="btn-fixed-wrap">
+  <button id="updateBtn" class="btn-update" onclick="fetchAll()">
+    <span id="updateIcon">↻</span> update
+  </button>
+</div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyNWxHLVUfBd2_sYdZ-0AuoZkBElRCyNrJN36B08y8QO3wUqy7IVAb_WjqO4umUvb7a/exec";
-const STORAGE_KEY = "money_log_v3_ios_edit";
+const STORAGE_KEY = "money_log_v3.9"; // 確実に動作したロジックを読み込むためキーをリセット推奨
 
 const ITEM_DEFAULTS = { diff: null, rate: null };
-
 function migrateData(raw) {
   if (!Array.isArray(raw)) return null;
   return raw.map(item => ({ ...ITEM_DEFAULTS, ...item }));
@@ -170,8 +143,6 @@ const INITIAL_DATA = [
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
 
-const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
-
 let data = (() => {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -179,118 +150,119 @@ let data = (() => {
   } catch (e) { return INITIAL_DATA; }
 })();
 
-let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || 150.00;
+const BRAND_COLORS = { "2931123A": "#8B0000", "02311251": "#D4AF37", "PAYP": "#ff3b30" };
 
-function formatYen(v) { return "¥" + Math.floor(v).toLocaleString("ja-JP"); }
-function formatSigned(v) { return (v > 0 ? "+" : "") + Math.floor(v).toLocaleString("ja-JP"); }
-function formatPercent(v) { return (v > 0 ? "+" : "") + v.toFixed(2) + "%"; }
-
-function saveAndRender() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  render();
-}
-
-function calcValuation(item) {
-  if (item.isStock) {
-    const rate = item.rate ?? currentUsdJpy;
-    return rate ? Math.floor(item.price * rate * item.holding) : 0;
-  }
-  return Math.floor(item.price * item.holding / 10000);
-}
-
-function updateItem(index, field, value) {
-  const parsed = parseFloat(value);
-  if (!isNaN(parsed)) {
-    data[index][field] = parsed;
-    saveAndRender();
-  }
-}
+let currentUsdJpy = (() => {
+  const saved = localStorage.getItem(STORAGE_KEY + "_usd");
+  return saved ? parseFloat(saved) : 150.00;
+})();
 
 async function fetchAll() {
-  const icon = document.getElementById("updateIcon");
-  icon.classList.add("loading");
+  const btn = document.getElementById('updateBtn');
+  const icon = document.getElementById('updateIcon');
+  btn.disabled = true; icon.classList.add('loading-icon');
   
-  await Promise.all(data.map(async (item) => {
+  await Promise.all(data.map(async (s) => {
     try {
-      const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
+      const res = await fetch(`${GAS_API_URL}?code=${s.code}`);
       const json = await res.json();
-      if (json && json.status === "Success") {
-        item.price = json.price;
-        item.diff = json.diff ?? null;
+      if (json.status === "Success" && json.price) {
+        s.price = json.price;
+        s.diff = json.diff ?? s.diff;
         if (json.rate) {
-          currentUsdJpy = json.rate;
-          localStorage.setItem(STORAGE_KEY + "_usd", currentUsdJpy);
+          s.rate = json.rate; currentUsdJpy = json.rate;
+          localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
         }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(s.name + " fetch error"); }
   }));
-
-  icon.classList.remove("loading");
+  
+  btn.disabled = false; icon.classList.remove('loading-icon');
+  const now = new Date();
+  document.getElementById('lastUpdated').textContent = `最終更新: ${now.toLocaleTimeString()}`;
   saveAndRender();
 }
 
+function saveAndRender() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); render(); }
+
+function calcValuation(s) {
+  if (s.isStock) {
+    const rate = s.rate ?? currentUsdJpy;
+    return rate ? Math.floor(s.price * rate * s.holding) : 0;
+  }
+  return Math.floor(s.price * s.holding / 10000);
+}
+
 function render() {
-  const list = document.getElementById("stockList");
+  const list = document.getElementById('stockList');
   let totalValue = 0, totalCost = 0, dayDiffSum = 0, taxableProfit = 0;
 
-  list.innerHTML = data.map((item, index) => {
-    const valuation = calcValuation(item);
-    totalValue += valuation; totalCost += item.cost;
-    
-    const hasDiff = item.diff !== null;
-    const dayDiffValue = hasDiff ? Math.floor(valuation * (item.diff / 100)) : 0;
-    if (hasDiff) dayDiffSum += dayDiffValue;
-    
-    const profit = valuation - item.cost;
-    const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
-    if (!item.isNisa) taxableProfit += profit;
+  list.innerHTML = data.map((s, i) => {
+    const val = calcValuation(s) || 0;
+    totalValue += val; totalCost += s.cost;
+    const hasDiff = s.diff !== null;
+    const dVal = hasDiff ? Math.floor(val * (parseFloat(s.diff) / 100)) : 0;
+    if (hasDiff) dayDiffSum += dVal;
+    const profit = val - s.cost;
+    const profitRate = s.cost > 0 ? (profit / s.cost * 100).toFixed(2) : '0.00';
+    if (!s.isNisa) taxableProfit += profit;
+    const brandColor = BRAND_COLORS[s.code] || '#3a3a3c';
 
     return `
-      <section class="stock-card" style="--brand:${BRAND_COLORS[item.code] || '#3a3a3c'}">
+      <div class="stock-card" style="border-left: 5px solid ${brandColor}">
         <div class="stock-header">
-          <div class="stock-name">${item.name}</div>
-          <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
+          <span class="stock-name">${s.name}</span>
+          <span class="nisa-tag">${s.isNisa ? 'NISA' : '特定'}</span>
         </div>
         <div class="stock-main">
-          <div class="stock-value numeric">${formatYen(valuation)}</div>
-          <div class="stock-performance">
-            <div class="${dayDiffValue >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? formatSigned(dayDiffValue) : '---'}</div>
-            <div class="${profit >= 0 ? 'pos' : 'neg'}" style="margin-top:4px;">Total: ${formatSigned(profit)} (${profitRate.toFixed(1)}%)</div>
+          <span class="price-display numeric">¥${val.toLocaleString()}</span>
+          <div class="perf-display">
+            <div class="${dVal >= 0 ? 'pos' : 'neg'}">Prev: ${hasDiff ? (dVal >= 0 ? '+' : '') + dVal.toLocaleString() : '---'}</div>
+            <div class="${profit >= 0 ? 'pos' : 'neg'}">Total: ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${profitRate}%)</div>
           </div>
         </div>
         <div class="view-meta">
-          <div class="meta-row">
-            <div class="meta-label">${item.isStock ? 'Price($)' : 'NAV'}</div>
-            <input class="ios-direct-input numeric" type="number" step="any" inputmode="decimal" value="${item.price}" onchange="updateItem(${index}, 'price', this.value)">
-          </div>
-          <div class="meta-row">
-            <div class="meta-label">Qty / Cost(¥)</div>
+          <div class="meta-row"><span class="meta-label">${s.isStock ? 'Price($)' : 'NAV'}</span>
+            <input class="ios-input numeric" type="number" step="any" value="${s.price}" onchange="updateItem(${i},'price',this.value)"></div>
+          <div class="meta-row"><span class="meta-label">Qty / Cost(¥)</span>
             <div style="display:flex; gap:8px;">
-              <input class="ios-direct-input numeric" style="width:45%;" type="number" step="any" inputmode="decimal" value="${item.holding}" onchange="updateItem(${index}, 'holding', this.value)">
-              <input class="ios-direct-input numeric" style="width:45%;" type="number" step="any" inputmode="decimal" value="${item.cost}" onchange="updateItem(${index}, 'cost', this.value)">
+              <input class="ios-input numeric" style="width:45%;" type="number" step="any" value="${s.holding}" onchange="updateItem(${i},'holding',this.value)">
+              <input class="ios-input numeric" style="width:45%;" type="number" value="${s.cost}" onchange="updateItem(${i},'cost',this.value)">
             </div>
           </div>
         </div>
-      </section>`;
-  }).join("");
+      </div>`;
+  }).join('');
 
-  document.getElementById("totalDisplay").textContent = formatYen(totalValue);
+  document.getElementById('totalDisplay').textContent = `¥${totalValue.toLocaleString()}`;
+  document.getElementById('fxRateDisplay').textContent = `USD/JPY: ¥${currentUsdJpy.toFixed(2)}`;
   
-  const anyDiff = data.some(item => item.diff !== null);
-  const dayRate = (totalValue - dayDiffSum) > 0 ? (dayDiffSum / (totalValue - dayDiffSum) * 100) : 0;
-  const dayEl = document.getElementById("totalDayDiff");
-  dayEl.textContent = anyDiff ? `Prev: ${formatSigned(dayDiffSum)} (${dayRate.toFixed(2)}%)` : "---";
-  dayEl.className = "numeric " + (dayDiffSum >= 0 ? "pos" : "neg");
+  const anyDiff = data.some(s => s.diff !== null);
+  const prevTotalValue = totalValue - dayDiffSum;
+  const totalDayRate = (anyDiff && prevTotalValue > 0) ? (dayDiffSum / prevTotalValue * 100).toFixed(2) : '0.00';
   
+  const dayEl = document.getElementById('totalDayDiff');
+  dayEl.textContent = anyDiff ? `Prev: ${(dayDiffSum >= 0 ? '+' : '')}${dayDiffSum.toLocaleString()} (${totalDayRate}%)` : 'Prev: ---';
+  dayEl.className = 'numeric ' + (dayDiffSum >= 0 ? 'pos' : 'neg');
+
   const overallProfit = totalValue - totalCost;
-  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100) : 0;
-  const profEl = document.getElementById("totalProfitAll");
-  profEl.textContent = `Total: ${formatSigned(overallProfit)} (${overallProfitRate.toFixed(2)}%)`;
-  profEl.className = "numeric " + (overallProfit >= 0 ? "pos" : "neg");
+  const overallProfitRate = totalCost > 0 ? (overallProfit / totalCost * 100).toFixed(2) : '0.00';
+  
+  const profEl = document.getElementById('totalProfitAll');
+  profEl.textContent = `Total: ${(overallProfit >= 0 ? '+' : '')}${overallProfit.toLocaleString()} (${overallProfitRate}%)`;
+  profEl.className = 'numeric ' + (overallProfit >= 0 ? 'pos' : 'neg');
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
-  document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = `(Tax: ${estTax > 0 ? formatSigned(estTax * -1) : '¥0'})`;
+  document.getElementById('payoutDisplay').textContent = `¥${(totalValue - estTax).toLocaleString()}`;
+  document.getElementById('taxNote').textContent = `(Tax: -¥${estTax.toLocaleString()})`;
+
+  const prog = Math.min((totalValue / 10000000) * 100, 100);
+  document.getElementById('progRate').textContent = `(${prog.toFixed(2)}%)`;
+}
+
+function updateItem(i, field, val) {
+  const parsed = parseFloat(val);
+  if (!isNaN(parsed)) { data[i][field] = parsed; saveAndRender(); }
 }
 
 render();
