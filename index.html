@@ -7,7 +7,7 @@
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
 <meta name="theme-color" content="#000000" />
-<title>MONEY LOG v3.3 Compact Direct</title>
+<title>MONEY LOG v3.4 Compact Direct</title>
 
 <style>
 :root {
@@ -57,7 +57,7 @@ body {
 .total-display { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
 .summary-performance { text-align: right; font-size: 11px; font-weight: 800; line-height: 1.4; }
 
-/* NET Style - 1行・右揃え・上線 */
+/* NET Style - 白文字・カッコ付き・右揃え */
 .net-row {
   display: flex;
   justify-content: space-between;
@@ -68,7 +68,7 @@ body {
 .net-label { font-size: 12px; color: var(--text-sub); font-weight: 700; }
 .net-value-wrap { text-align: right; }
 .net-value { font-size: 14px; font-weight: 800; }
-.net-tax { font-size: 10px; color: var(--neg); font-weight: 700; margin-left: 6px; }
+.net-tax { font-size: 10px; color: var(--text-main); font-weight: 700; margin-left: 6px; }
 
 /* Portfolio Section */
 .section-title { margin: 12px 4px 8px; font-size: 17px; font-weight: 800; color: var(--text-sub); }
@@ -140,7 +140,7 @@ body {
         <div class="net-label">NET (EST.)</div>
         <div class="net-value-wrap">
           <span class="net-value numeric" id="payoutDisplay">¥0</span>
-          <span id="taxNote" class="net-tax numeric">Tax: ¥0</span>
+          <span id="taxNote" class="net-tax numeric">(Tax: ¥0)</span>
         </div>
       </div>
     </section>
@@ -248,7 +248,8 @@ function render() {
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   document.getElementById("payoutDisplay").textContent = formatYen(totalValue - estTax);
-  document.getElementById("taxNote").textContent = estTax > 0 ? `Tax: ${formatSigned(estTax * -1)}` : `Tax: ¥0`;
+  // TAX表記をカッコ付きに変更
+  document.getElementById("taxNote").textContent = estTax > 0 ? `(Tax: ${formatSigned(estTax * -1)})` : `(Tax: ¥0)`;
 }
 render();
 </script>
