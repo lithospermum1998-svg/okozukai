@@ -85,8 +85,8 @@ body {
   border-top: 1px solid rgba(255,255,255,0.06); 
 }
 
-.meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
-.meta-value { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; text-align: right; }
+.meta-value { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
 
 .inline-input {
   width: 100%;
@@ -99,6 +99,7 @@ body {
   border-radius: 4px;
   padding: 1px 2px;
   outline: none;
+  text-align: right;
 }
 
 .bottom-bar {
@@ -285,7 +286,6 @@ function render() {
 
   const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
   const netValue = totalValue - estTax;
-  // Net Gain: 税引き後の評価額 - 投資元本
   const netGain = netValue - totalCost;
   const netGainRate = totalCost > 0 ? (netGain / totalCost * 100) : 0;
 
