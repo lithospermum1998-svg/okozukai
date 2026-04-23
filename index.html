@@ -17,21 +17,16 @@
   --bg: #050608;
   --bg-2: #0b0d12;
   --surface-1: rgba(24, 26, 31, 0.88);
-  --surface-2: rgba(36, 39, 46, 0.92);
-  --surface-3: rgba(255,255,255,0.045);
+  --surface-2: #2c2c2e;
   --text-main: #f5f7fb;
   --text-sub: #9aa0ad;
   --text-soft: #6e7482;
   --line: rgba(255,255,255,0.08);
-  --line-strong: rgba(255,255,255,0.12);
   --accent: #4da3ff;
-  --accent-soft: rgba(77, 163, 255, 0.16);
   --pos: #4ade80;
   --neg: #ff5d73;
   --shadow-soft: 0 12px 36px rgba(0,0,0,0.34);
-  --shadow-deep: 0 20px 40px rgba(0,0,0,0.34);
   --radius-card: 22px;
-  --radius-small: 12px;
 }
 
 * {
@@ -44,9 +39,7 @@ html, body {
   min-height: 100%;
   color: var(--text-main);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-  background:
-    radial-gradient(1200px 500px at 50% -10%, rgba(77,163,255,0.11) 0%, rgba(77,163,255,0.03) 28%, transparent 60%),
-    linear-gradient(180deg, #0b0d12 0%, #060709 42%, #020304 100%);
+  background: linear-gradient(180deg, #08090c 0%, #050608 45%, #020304 100%);
 }
 
 body {
@@ -62,29 +55,7 @@ body {
 
 body::before,
 body::after {
-  content: "";
-  position: fixed;
-  pointer-events: none;
-  inset: auto;
-  z-index: 0;
-  filter: blur(70px);
-  opacity: 0.35;
-}
-
-body::before {
-  width: 180px;
-  height: 180px;
-  top: 90px;
-  left: -40px;
-  background: rgba(77, 163, 255, 0.16);
-}
-
-body::after {
-  width: 220px;
-  height: 220px;
-  top: 260px;
-  right: -70px;
-  background: rgba(255,255,255,0.06);
+  display: none;
 }
 
 .container {
@@ -136,22 +107,21 @@ body::after {
   min-height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
-  color: var(--text-sub);
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-soft);
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
 }
 
 .sync-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.02);
+  background: rgba(255,255,255,0.22);
 }
 
 .section-row {
@@ -180,12 +150,12 @@ body::after {
   border-radius: var(--radius-card);
   padding: 14px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%),
     var(--surface-1);
   border: 1px solid var(--line);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    inset 0 -1px 0 rgba(255,255,255,0.015),
+    inset 0 1px 0 rgba(255,255,255,0.045),
+    inset 0 -1px 0 rgba(255,255,255,0.012),
     var(--shadow-soft);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
@@ -196,8 +166,13 @@ body::after {
   position: absolute;
   inset: 0 auto 0 0;
   width: 4px;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--brand, #4b5563) 100%, white 12%) 0%, var(--brand, #4b5563) 65%, rgba(255,255,255,0.18) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.18) 0%,
+    var(--brand, #4b5563) 18%,
+    var(--brand, #4b5563) 82%,
+    rgba(255,255,255,0.10) 100%
+  );
   opacity: 0.95;
 }
 
@@ -207,19 +182,19 @@ body::after {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%);
+    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.05), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.018), transparent 45%);
 }
 
 .summary-card {
   padding: 16px 14px 14px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.075) 0%, rgba(255,255,255,0.024) 100%),
-    linear-gradient(180deg, rgba(77,163,255,0.045) 0%, rgba(77,163,255,0.01) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.018) 100%),
+    linear-gradient(180deg, rgba(77,163,255,0.028) 0%, rgba(77,163,255,0.008) 100%),
     var(--surface-1);
-  border-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.09);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.05),
     0 18px 44px rgba(0,0,0,0.36);
 }
 
@@ -332,43 +307,17 @@ body::after {
 
 .inline-input {
   width: 100%;
-  min-height: 28px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(77,163,255,0.42);
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
   color: var(--text-main);
   font-family: inherit;
   font-size: 12px;
-  font-weight: 850;
-  border-radius: 10px;
-  padding: 4px 8px;
+  font-weight: 800;
+  border-radius: 4px;
+  padding: 1px 2px;
   outline: none;
   text-align: right;
-  box-shadow: 0 0 0 4px rgba(77,163,255,0.08);
-}
-
-.editable-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  min-height: 28px;
-  padding: 3px 8px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: rgba(255,255,255,0.035);
-  color: var(--text-main);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 850;
-  text-align: right;
-  cursor: pointer;
-  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
-}
-
-.editable-chip:active {
-  transform: scale(0.985);
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.12);
+  box-shadow: none;
 }
 
 .account-badge {
@@ -495,13 +444,6 @@ body::after {
   transform: translateX(-50%) translateY(0);
 }
 
-.empty-note {
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-soft);
-}
-
 @media (max-width: 360px) {
   .value-main { font-size: 24px; }
   .summary-card .value-main { font-size: 27px; }
@@ -606,6 +548,10 @@ function formatPlain(v, digits = 0) {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
   });
+}
+
+function trimTrailingZeros(str) {
+  return str.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
 }
 
 function calcValuation(item) {
@@ -740,9 +686,6 @@ function render() {
   let totalValue = 0;
   let totalCost = 0;
   let dayDiffSum = 0;
-
-  let taxableValue = 0;
-  let taxableCost = 0;
   let taxableProfit = 0;
 
   data.forEach(item => {
@@ -757,8 +700,6 @@ function render() {
     }
 
     if (!item.isNisa) {
-      taxableValue += val;
-      taxableCost += item.cost;
       const itemProfit = val - item.cost;
       if (itemProfit > 0) taxableProfit += itemProfit;
     }
@@ -768,6 +709,9 @@ function render() {
   const netValue = totalValue - estTax;
   const netGain = netValue - totalCost;
   const netGainRate = totalCost > 0 ? (netGain / totalCost * 100) : 0;
+
+  const dayDiffPrefix = dayDiffSum === 0 ? "" : (dayDiffSum > 0 ? "+" : "-");
+  const dayDiffDisplay = formatSigned(Math.abs(dayDiffSum)).replace(/^\+/, dayDiffPrefix);
 
   summary.innerHTML = `
     <section class="stock-card summary-card" style="--brand:#ffffff">
@@ -782,7 +726,7 @@ function render() {
         <div class="value-main numeric">${formatYen(totalValue)}</div>
         <div class="performance-wrap">
           <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">
-            Day&nbsp; ${dayDiffSum >= 0 ? "▲" : "▼"} ${formatSigned(Math.abs(dayDiffSum)).replace(/^[+]/, dayDiffSum >= 0 ? "+" : "-")}
+            Day&nbsp; ${dayDiffSum >= 0 ? "▲" : "▼"} ${dayDiffDisplay}
           </div>
           <div class="performance-line numeric ${netGain >= 0 ? "pos" : "neg"}">
             Total&nbsp; ${formatPct(netGainRate)}
@@ -833,12 +777,17 @@ function render() {
           >
         `;
       }
-      return `
-        <button class="editable-chip" type="button" onclick="startEdit(${index}, '${field}')">
-          ${display}
-        </button>
-      `;
+      return `<div onclick="startEdit(${index}, '${field}')">${display}</div>`;
     };
+
+    const holdingDisplay = trimTrailingZeros(
+      formatPlain(item.holding, item.holding % 1 === 0 ? 0 : 5)
+    );
+
+    const itemDayPrefix = dayDiffValue === null || dayDiffValue === 0 ? "" : (dayDiffValue > 0 ? "+" : "-");
+    const itemDayDisplay = dayDiffValue === null
+      ? "---"
+      : formatSigned(Math.abs(dayDiffValue)).replace(/^\+/, itemDayPrefix);
 
     return `
       <section class="stock-card" style="--brand:${brand}">
@@ -854,7 +803,7 @@ function render() {
           <div class="value-main numeric">${formatYen(val)}</div>
           <div class="performance-wrap">
             <div class="performance-line numeric ${dayDiffValue === null ? "neutral" : (dayDiffValue >= 0 ? "pos" : "neg")}">
-              Day&nbsp; ${dayDiffValue === null ? "---" : `${dayDiffValue >= 0 ? "▲" : "▼"} ${formatSigned(Math.abs(dayDiffValue)).replace(/^[+]/, dayDiffValue >= 0 ? "+" : "-")}`}
+              Day&nbsp; ${dayDiffValue === null ? "---" : `${dayDiffValue >= 0 ? "▲" : "▼"} ${itemDayDisplay}`}
             </div>
             <div class="performance-line numeric ${profit >= 0 ? "pos" : "neg"}">
               Total&nbsp; ${formatPct(profitRate)}
@@ -869,7 +818,7 @@ function render() {
           </div>
           <div class="meta-item">
             <div class="meta-label">Qty</div>
-            <div class="meta-value numeric">${renderInline("holding", item.holding, formatPlain(item.holding, item.holding % 1 === 0 ? 0 : 5).replace(/\.?0+$/, ""))}</div>
+            <div class="meta-value numeric">${renderInline("holding", item.holding, holdingDisplay)}</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">Cost</div>
