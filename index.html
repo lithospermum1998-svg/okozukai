@@ -189,6 +189,16 @@ body::after {
   -webkit-backdrop-filter: blur(24px) saturate(140%);
 }
 
+.stock-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%);
+}
+
 .summary-card {
   padding: 16px 14px 14px;
   background:
@@ -496,12 +506,6 @@ const INITIAL_DATA = [
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
 
-const BRAND_COLORS = {
-  "2931123A": "#8b0000",
-  "02311251": "#d4af37",
-  "PAYP": "#ff3b30"
-};
-
 function safeLoadJSON(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -709,7 +713,7 @@ function render() {
   const dayDiffDisplay = formatSigned(Math.abs(dayDiffSum)).replace(/^\+/, dayDiffPrefix);
 
   summary.innerHTML = `
-    <section class="stock-card summary-card" style="--brand:#ffffff">
+    <section class="stock-card summary-card">
       <div class="card-top">
         <div class="card-title-block">
           <div class="card-label">Total Assets</div>
@@ -756,7 +760,6 @@ function render() {
     const profit = val - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
     const dayDiffValue = item.diff !== null ? val * (parseFloat(item.diff) / 100) : null;
-    const brand = BRAND_COLORS[item.code] || "#3a3a3c";
 
     const renderInline = (field, val, display) => {
       if (editingCell.index === index && editingCell.field === field) {
@@ -785,7 +788,7 @@ function render() {
       : formatSigned(Math.abs(dayDiffValue)).replace(/^\+/, itemDayPrefix);
 
     return `
-      <section class="stock-card" style="--brand:${brand}">
+      <section class="stock-card">
         <div class="card-top">
           <div class="card-title-block">
             <div class="card-label">${escapeHtml(item.name)}</div>
