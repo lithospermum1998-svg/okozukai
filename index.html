@@ -14,17 +14,24 @@
 
 <style>
 :root {
-  --bg: #000000;
-  --surface-1: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --text-main: #ffffff;
-  --text-sub: #8e8e93;
-  --text-soft: #636366;
-  --line: rgba(255,255,255,0.07);
-  --accent: #0a84ff;
-  --pos: #30d158;
-  --neg: #ff453a;
-  --shadow-soft: 0 8px 24px rgba(0,0,0,0.22);
+  --bg: #050608;
+  --bg-2: #0b0d12;
+  --surface-1: rgba(24, 26, 31, 0.88);
+  --surface-2: rgba(36, 39, 46, 0.92);
+  --surface-3: rgba(255,255,255,0.045);
+  --text-main: #f5f7fb;
+  --text-sub: #9aa0ad;
+  --text-soft: #6e7482;
+  --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.12);
+  --accent: #4da3ff;
+  --accent-soft: rgba(77, 163, 255, 0.16);
+  --pos: #4ade80;
+  --neg: #ff5d73;
+  --shadow-soft: 0 12px 36px rgba(0,0,0,0.34);
+  --shadow-deep: 0 20px 40px rgba(0,0,0,0.34);
+  --radius-card: 22px;
+  --radius-small: 12px;
 }
 
 * {
@@ -34,149 +41,501 @@
 
 html, body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100%;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(77,163,255,0.11) 0%, rgba(77,163,255,0.03) 28%, transparent 60%),
+    linear-gradient(180deg, #0b0d12 0%, #060709 42%, #020304 100%);
 }
 
 body {
   min-height: 100vh;
-  padding: calc(8px + env(safe-area-inset-top)) 12px calc(92px + env(safe-area-inset-bottom));
+  padding:
+    calc(12px + env(safe-area-inset-top))
+    14px
+    calc(106px + env(safe-area-inset-bottom));
   line-height: 1.18;
+  position: relative;
+  overflow-x: hidden;
 }
 
-.container { max-width: 430px; margin: 0 auto; }
-.numeric { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  inset: auto;
+  z-index: 0;
+  filter: blur(70px);
+  opacity: 0.35;
+}
 
-.header-row {
+body::before {
+  width: 180px;
+  height: 180px;
+  top: 90px;
+  left: -40px;
+  background: rgba(77, 163, 255, 0.16);
+}
+
+body::after {
+  width: 220px;
+  height: 220px;
+  top: 260px;
+  right: -70px;
+  background: rgba(255,255,255,0.06);
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.top-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 18px 2px 14px;
+}
+
+.app-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  margin: 0;
+  color: #fbfcff;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.app-sub {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-sub);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.02);
+}
+
+.section-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin: 24px 2px 10px;
+  margin: 22px 2px 12px;
 }
-.section-title { font-size: 17px; font-weight: 800; margin: 0; }
-.last-sync { font-size: 11px; font-weight: 600; color: var(--text-soft); }
 
-.list-container { display: grid; gap: 10px; }
+.section-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #f7f8fb;
+  letter-spacing: 0.02em;
+}
+
+.list-container {
+  display: grid;
+  gap: 12px;
+}
 
 .stock-card {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
-  padding: 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.032) 0%, rgba(255,255,255,0.012) 100%), var(--surface-1);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%),
+    var(--surface-1);
   border: 1px solid var(--line);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), var(--shadow-soft);
-}
-.stock-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--brand, #3a3a3c); }
-
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.card-label { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-.card-sub-label { color: var(--text-sub); font-size: 10px; font-weight: 700; }
-
-.card-main { margin-top: 9px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
-.value-main { font-size: 24px; font-weight: 800; letter-spacing: -0.65px; }
-.performance-line { font-size: 11px; font-weight: 800; line-height: 1.3; text-align: right; }
-
-.meta-grid { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
-.summary-meta-grid { 
-  margin-top: 10px; 
-  display: grid; 
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 8px; 
-  padding-top: 9px; 
-  border-top: 1px solid rgba(255,255,255,0.06); 
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(255,255,255,0.015),
+    var(--shadow-soft);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
 }
 
-.meta-label { color: var(--text-sub); font-size: 9px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; text-align: left; }
-.meta-value { font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+.stock-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--brand, #4b5563) 100%, white 12%) 0%, var(--brand, #4b5563) 65%, rgba(255,255,255,0.18) 100%);
+  opacity: 0.95;
+}
+
+.stock-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%);
+}
+
+.summary-card {
+  padding: 16px 14px 14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.075) 0%, rgba(255,255,255,0.024) 100%),
+    linear-gradient(180deg, rgba(77,163,255,0.045) 0%, rgba(77,163,255,0.01) 100%),
+    var(--surface-1);
+  border-color: rgba(255,255,255,0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 44px rgba(0,0,0,0.36);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-title-block {
+  min-width: 0;
+  flex: 1;
+}
+
+.card-label {
+  font-size: 15px;
+  font-weight: 850;
+  margin-bottom: 4px;
+  color: #fbfcff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.card-sub-label {
+  color: var(--text-sub);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-main {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+  position: relative;
+  z-index: 1;
+}
+
+.value-main {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.7px;
+  color: #fbfcff;
+  text-shadow: 0 2px 10px rgba(255,255,255,0.02);
+}
+
+.summary-card .value-main {
+  font-size: 30px;
+  letter-spacing: -0.9px;
+}
+
+.performance-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.performance-line {
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.25;
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+.meta-grid,
+.summary-meta-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  z-index: 1;
+}
+
+.meta-item {
+  min-width: 0;
+}
+
+.meta-label {
+  color: var(--text-sub);
+  font-size: 9px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+
+.meta-value {
+  font-size: 12px;
+  font-weight: 850;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+  color: #f5f7fb;
+}
 
 .inline-input {
   width: 100%;
-  background: var(--surface-2);
-  border: 1px solid var(--accent);
+  min-height: 28px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(77,163,255,0.42);
   color: var(--text-main);
   font-family: inherit;
   font-size: 12px;
-  font-weight: 800;
-  border-radius: 4px;
-  padding: 1px 2px;
+  font-weight: 850;
+  border-radius: 10px;
+  padding: 4px 8px;
   outline: none;
   text-align: right;
+  box-shadow: 0 0 0 4px rgba(77,163,255,0.08);
+}
+
+.editable-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 28px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-main);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+  text-align: right;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.editable-chip:active {
+  transform: scale(0.985);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.account-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 800;
+  color: #c4cad6;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 4px 8px;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.pos {
+  color: var(--pos);
+}
+
+.neg {
+  color: var(--neg);
+}
+
+.neutral {
+  color: var(--text-sub);
 }
 
 .bottom-bar {
   position: fixed;
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  padding:
+    8px
+    14px
+    calc(16px + env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  z-index: 20;
+  background: linear-gradient(to top, rgba(1,2,4,0.82) 0%, rgba(1,2,4,0.38) 45%, transparent 100%);
 }
 
 .update-btn {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  height: 46px;
-  padding: 0 24px;
+  justify-content: center;
+  gap: 8px;
+  min-width: 156px;
+  height: 50px;
+  padding: 0 22px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.1);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.06) 100%),
+    rgba(255,255,255,0.05);
   color: var(--text-main);
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
-  border: 1px solid rgba(255,255,255,0.18);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  border: 1px solid rgba(255,255,255,0.14);
   backdrop-filter: blur(30px) saturate(180%);
   -webkit-backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
-  transition: transform 0.1s ease, background 0.1s ease;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.34),
+    inset 0 1px 0 rgba(255,255,255,0.11);
+  transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease;
   -webkit-user-select: none;
+  user-select: none;
   cursor: pointer;
 }
 
 .update-btn:active {
-  transform: scale(0.94);
-  background: rgba(255,255,255,0.16);
+  transform: scale(0.96);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 100%),
+    rgba(255,255,255,0.06);
+}
+
+.update-btn:disabled {
+  opacity: 0.68;
+  cursor: default;
 }
 
 .update-icon {
   font-size: 16px;
   line-height: 1;
   display: inline-block;
-  color: var(--text-main);
 }
 
-.account-badge {
-  font-size: 9px;
+.update-label {
+  display: inline-block;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+  min-width: 110px;
+  text-align: center;
+  padding: 11px 14px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%),
+    rgba(18,20,24,0.86);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #f5f7fb;
+  font-size: 12px;
+  font-weight: 800;
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.empty-note {
+  margin-top: 6px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-soft);
-  border: 1px solid var(--text-soft);
-  border-radius: 4px;
-  padding: 1px 5px;
-  white-space: nowrap;
 }
 
-.pos { color: var(--pos); }
-.neg { color: var(--neg); }
-</style>
+@media (max-width: 360px) {
+  .value-main { font-size: 24px; }
+  .summary-card .value-main { font-size: 27px; }
+  .meta-value { font-size: 11px; }
+  .update-btn { min-width: 144px; }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
 </head>
 
 <body>
   <div class="container">
-    <div class="header-row">
-      <div class="section-title">MONEY LOG</div>
-      <div id="lastSyncDisplay" class="last-sync">Last Sync: --:--</div>
+    <div class="top-head">
+      <div class="app-title-wrap">
+        <h1 class="app-title">MONEY LOG</h1>
+        <div class="app-sub">PERSONAL PORTFOLIO</div>
+      </div>
+      <div class="sync-pill">
+        <span class="sync-dot"></span>
+        <span id="lastSyncDisplay">Last Sync: --:--</span>
+      </div>
     </div>
-    
+
     <div id="summaryCards" class="list-container"></div>
 
-    <div class="header-row">
-      <div class="section-title">Portfolio</div>
+    <div class="section-row">
+      <h2 class="section-title">Portfolio</h2>
     </div>
     <div id="stockList" class="list-container"></div>
   </div>
@@ -184,9 +543,11 @@ body {
   <div class="bottom-bar">
     <button id="updateBtn" class="update-btn" onclick="fetchAll()">
       <span id="updateIcon" class="update-icon">↻</span>
-      <span>update</span>
+      <span id="updateLabel" class="update-label">update</span>
     </button>
   </div>
+
+  <div id="toast" class="toast">Saved</div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
@@ -198,86 +559,202 @@ const INITIAL_DATA = [
   { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
 ];
 
-const BRAND_COLORS = { "2931123A": "#8b0000", "02311251": "#d4af37", "PAYP": "#ff3b30" };
+const BRAND_COLORS = {
+  "2931123A": "#8b0000",
+  "02311251": "#d4af37",
+  "PAYP": "#ff3b30"
+};
 
-let data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL_DATA;
+function safeLoadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+let data = safeLoadJSON(STORAGE_KEY, INITIAL_DATA);
 let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
 let lastSyncTime = localStorage.getItem(STORAGE_KEY + "_sync") || "--:--";
 let editingCell = { index: null, field: null };
+let isUpdating = false;
 
-function formatYen(v) { return "¥" + Math.floor(v).toLocaleString(); }
-function formatSigned(v) { return (v >= 0 ? "+" : "") + Math.floor(v).toLocaleString(); }
-function formatPct(v) { return (v >= 0 ? "+" : "") + v.toFixed(2) + "%"; }
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function formatYen(v) {
+  if (v === null || !isFinite(v)) return "---";
+  return "¥" + Math.round(v).toLocaleString();
+}
+
+function formatSigned(v) {
+  if (v === null || !isFinite(v)) return "---";
+  const rounded = Math.round(v);
+  return (rounded >= 0 ? "+" : "") + rounded.toLocaleString();
+}
+
+function formatPct(v) {
+  if (v === null || !isFinite(v)) return "---";
+  return (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
+}
+
+function formatPlain(v, digits = 0) {
+  if (v === null || !isFinite(v)) return "---";
+  return Number(v).toLocaleString(undefined, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  });
+}
 
 function calcValuation(item) {
   if (item.isStock) {
     const rate = item.rate ?? currentUsdJpy;
-    return rate ? Math.floor(item.price * rate * item.holding) : null;
+    return rate ? item.price * rate * item.holding : null;
   }
-  return Math.floor(item.price * item.holding / 10000);
+  return item.price * item.holding / 10000;
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1300);
 }
 
 function startEdit(index, field) {
   editingCell = { index, field };
   render();
-  const input = document.getElementById(`input-${index}-${field}`);
-  if (input) { input.focus(); input.select(); }
+
+  requestAnimationFrame(() => {
+    const input = document.getElementById(`input-${index}-${field}`);
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  });
 }
 
 function finishEdit(index, field, value) {
   const num = parseFloat(value);
-  if (!isNaN(num)) data[index][field] = num;
+  if (!Number.isNaN(num) && Number.isFinite(num)) {
+    data[index][field] = num;
+    saveData();
+    showToast("Saved");
+  }
   editingCell = { index: null, field: null };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   render();
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 async function fetchAll() {
+  if (isUpdating) return;
+  isUpdating = true;
+
+  const btn = document.getElementById("updateBtn");
   const icon = document.getElementById("updateIcon");
+  const label = document.getElementById("updateLabel");
+
+  btn.disabled = true;
+  label.textContent = "updating";
+
   const anim = icon.animate(
-    [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
-    { duration: 900, iterations: Infinity, easing: 'linear' }
+    [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
+    { duration: 900, iterations: Infinity, easing: "linear" }
   );
 
-  await Promise.all(data.map(async (item) => {
-    try {
-      const res = await fetch(`${GAS_API_URL}?code=${item.code}`);
-      const json = await res.json();
-      if (json.status === "Success") {
-        item.price = json.price;
-        item.diff = json.diff ?? null;
-        if (json.rate) {
-          currentUsdJpy = json.rate;
-          localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
-        }
-      }
-    } catch (e) {}
-  }));
+  let successCount = 0;
+  let failCount = 0;
 
-  const now = new Date();
-  lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
-  localStorage.setItem(STORAGE_KEY + "_sync", lastSyncTime);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  
+  await Promise.all(
+    data.map(async (item) => {
+      try {
+        const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(item.code)}`, { cache: "no-store" });
+        const json = await res.json();
+
+        if (json.status === "Success") {
+          item.price = json.price;
+          item.diff = json.diff ?? null;
+
+          if (json.rate) {
+            currentUsdJpy = json.rate;
+            localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
+          }
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (e) {
+        failCount++;
+      }
+    })
+  );
+
+  if (successCount > 0) {
+    const now = new Date();
+    lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+    localStorage.setItem(STORAGE_KEY + "_sync", lastSyncTime);
+    saveData();
+  }
+
   render();
   anim.cancel();
+
+  if (successCount > 0 && failCount === 0) {
+    label.textContent = "updated";
+    showToast("Updated");
+  } else if (successCount > 0 && failCount > 0) {
+    label.textContent = "partial";
+    showToast(`${failCount} item failed`);
+  } else {
+    label.textContent = "failed";
+    showToast("Update failed");
+  }
+
+  setTimeout(() => {
+    label.textContent = "update";
+    btn.disabled = false;
+    isUpdating = false;
+  }, 1100);
 }
 
 function render() {
   const list = document.getElementById("stockList");
   const summary = document.getElementById("summaryCards");
   const syncDisplay = document.getElementById("lastSyncDisplay");
-  
-  syncDisplay.innerText = "Last Sync: " + lastSyncTime;
 
-  let totalValue = 0, totalCost = 0, dayDiffSum = 0;
-  let taxableValue = 0, taxableCost = 0, taxableProfit = 0;
+  syncDisplay.textContent = "Last Sync: " + lastSyncTime;
+
+  let totalValue = 0;
+  let totalCost = 0;
+  let dayDiffSum = 0;
+
+  let taxableValue = 0;
+  let taxableCost = 0;
+  let taxableProfit = 0;
 
   data.forEach(item => {
-    const val = calcValuation(item) || 0;
+    const rawVal = calcValuation(item);
+    const val = rawVal || 0;
+
     totalValue += val;
     totalCost += item.cost;
-    if (item.diff !== null) dayDiffSum += Math.floor(val * (parseFloat(item.diff) / 100));
+
+    if (item.diff !== null && isFinite(item.diff)) {
+      dayDiffSum += val * (parseFloat(item.diff) / 100);
+    }
 
     if (!item.isNisa) {
       taxableValue += val;
@@ -287,83 +764,121 @@ function render() {
     }
   });
 
-  const estTax = taxableProfit > 0 ? Math.floor(taxableProfit * 0.20315) : 0;
+  const estTax = taxableProfit > 0 ? taxableProfit * 0.20315 : 0;
   const netValue = totalValue - estTax;
   const netGain = netValue - totalCost;
   const netGainRate = totalCost > 0 ? (netGain / totalCost * 100) : 0;
 
   summary.innerHTML = `
-    <section class="stock-card" style="--brand:#ffffff">
+    <section class="stock-card summary-card" style="--brand:#ffffff">
       <div class="card-top">
-        <div><div class="card-label">Total Assets</div><div class="card-sub-label">SUMMARY</div></div>
+        <div class="card-title-block">
+          <div class="card-label">Total Assets</div>
+          <div class="card-sub-label">Summary</div>
+        </div>
       </div>
+
       <div class="card-main">
         <div class="value-main numeric">${formatYen(totalValue)}</div>
         <div class="performance-wrap">
-          <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">Prev: ${formatSigned(dayDiffSum)}</div>
-          <div class="performance-line numeric ${netGain >= 0 ? "pos" : "neg"}">Total: ${formatPct(netGainRate)}</div>
+          <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">
+            Day&nbsp; ${dayDiffSum >= 0 ? "▲" : "▼"} ${formatSigned(Math.abs(dayDiffSum)).replace(/^[+]/, dayDiffSum >= 0 ? "+" : "-")}
+          </div>
+          <div class="performance-line numeric ${netGain >= 0 ? "pos" : "neg"}">
+            Total&nbsp; ${formatPct(netGainRate)}
+          </div>
         </div>
       </div>
+
       <div class="summary-meta-grid">
-        <div>
-          <div class="meta-label">NET(Est.)</div>
+        <div class="meta-item">
+          <div class="meta-label">After Tax</div>
           <div class="meta-value numeric">${formatYen(netValue)}</div>
         </div>
-        <div>
-          <div class="meta-label">TAX</div>
+        <div class="meta-item">
+          <div class="meta-label">Est. Tax</div>
           <div class="meta-value numeric">${formatYen(estTax)}</div>
         </div>
-        <div>
-          <div class="meta-label">COST</div>
+        <div class="meta-item">
+          <div class="meta-label">Invested</div>
           <div class="meta-value numeric">${formatYen(totalCost)}</div>
         </div>
-        <div>
-          <div class="meta-label">NET GAIN</div>
-          <div class="meta-value numeric ${netGain >= 0 ? 'pos' : 'neg'}">${formatSigned(netGain)}</div>
+        <div class="meta-item">
+          <div class="meta-label">Net Gain</div>
+          <div class="meta-value numeric ${netGain >= 0 ? "pos" : "neg"}">${formatSigned(netGain)}</div>
         </div>
       </div>
     </section>
   `;
 
   list.innerHTML = data.map((item, index) => {
-    const val = calcValuation(item) || 0;
+    const rawVal = calcValuation(item);
+    const val = rawVal || 0;
     const profit = val - item.cost;
     const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
-    const dayDiffValue = item.diff !== null ? Math.floor(val * (parseFloat(item.diff) / 100)) : 0;
+    const dayDiffValue = item.diff !== null ? val * (parseFloat(item.diff) / 100) : null;
     const brand = BRAND_COLORS[item.code] || "#3a3a3c";
 
     const renderInline = (field, val, display) => {
       if (editingCell.index === index && editingCell.field === field) {
-        return `<input id="input-${index}-${field}" class="inline-input" type="number" step="any" value="${val}" onblur="finishEdit(${index}, '${field}', this.value)" onkeydown="if(event.key==='Enter') this.blur()">`;
+        return `
+          <input
+            id="input-${index}-${field}"
+            class="inline-input"
+            type="number"
+            step="any"
+            value="${escapeHtml(val)}"
+            onblur="finishEdit(${index}, '${field}', this.value)"
+            onkeydown="if(event.key==='Enter') this.blur()"
+          >
+        `;
       }
-      return `<div onclick="startEdit(${index}, '${field}')">${display}</div>`;
+      return `
+        <button class="editable-chip" type="button" onclick="startEdit(${index}, '${field}')">
+          ${display}
+        </button>
+      `;
     };
 
     return `
       <section class="stock-card" style="--brand:${brand}">
         <div class="card-top">
-          <div style="min-width:0; flex:1;">
-            <div class="card-label" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
-            <div class="card-sub-label numeric">${item.code}</div>
+          <div class="card-title-block">
+            <div class="card-label">${escapeHtml(item.name)}</div>
+            <div class="card-sub-label numeric">${escapeHtml(item.code)}</div>
           </div>
           <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
         </div>
+
         <div class="card-main">
           <div class="value-main numeric">${formatYen(val)}</div>
           <div class="performance-wrap">
-            <div class="performance-line numeric ${dayDiffValue >= 0 ? "pos" : "neg"}">
-              Prev: ${item.diff !== null ? formatSigned(dayDiffValue) : "---"}
+            <div class="performance-line numeric ${dayDiffValue === null ? "neutral" : (dayDiffValue >= 0 ? "pos" : "neg")}">
+              Day&nbsp; ${dayDiffValue === null ? "---" : `${dayDiffValue >= 0 ? "▲" : "▼"} ${formatSigned(Math.abs(dayDiffValue)).replace(/^[+]/, dayDiffValue >= 0 ? "+" : "-")}`}
             </div>
             <div class="performance-line numeric ${profit >= 0 ? "pos" : "neg"}">
-              Total: ${formatPct(profitRate)}
+              Total&nbsp; ${formatPct(profitRate)}
             </div>
           </div>
         </div>
+
         <div class="meta-grid">
-          <div><div class="meta-label">Price</div><div class="meta-value numeric">${item.price.toLocaleString()}</div></div>
-          <div><div class="meta-label">Qty</div><div class="meta-value numeric">${renderInline('holding', item.holding, item.holding.toLocaleString())}</div></div>
-          <div><div class="meta-label">Cost</div><div class="meta-value numeric">${renderInline('cost', item.cost, formatYen(item.cost))}</div></div>
-          <div><div class="meta-label">FX</div><div class="meta-value numeric">${item.isStock && currentUsdJpy ? '¥'+currentUsdJpy.toFixed(1) : '-'}</div></div>
+          <div class="meta-item">
+            <div class="meta-label">${item.isStock ? "USD" : "NAV"}</div>
+            <div class="meta-value numeric">${item.isStock ? formatPlain(item.price, 2) : formatPlain(item.price, 0)}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Qty</div>
+            <div class="meta-value numeric">${renderInline("holding", item.holding, formatPlain(item.holding, item.holding % 1 === 0 ? 0 : 5).replace(/\.?0+$/, ""))}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Cost</div>
+            <div class="meta-value numeric">${renderInline("cost", item.cost, formatYen(item.cost))}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">FX</div>
+            <div class="meta-value numeric">${item.isStock && currentUsdJpy ? "¥" + currentUsdJpy.toFixed(1) : "-"}</div>
+          </div>
         </div>
       </section>
     `;
@@ -372,6 +887,5 @@ function render() {
 
 render();
 </script>
-
 </body>
 </html>
