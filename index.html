@@ -6,7 +6,10 @@
   name="viewport"
   content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
 />
-<meta name="theme-color" content="#000000" />
+<meta name="theme-color" content="#050608" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <title>MONEY LOG</title>
 
 <link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
@@ -15,17 +18,18 @@
 <style>
 :root {
   --bg: #050608;
-  --bg-2: #0b0d12;
   --surface-1: rgba(24, 26, 31, 0.88);
   --surface-2: #2c2c2e;
   --text-main: #f5f7fb;
   --text-sub: #9aa0ad;
   --text-soft: #6e7482;
   --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.12);
   --accent: #4da3ff;
   --pos: #4ade80;
   --neg: #ff5d73;
   --shadow-soft: 0 12px 36px rgba(0,0,0,0.34);
+  --shadow-deep: 0 20px 40px rgba(0,0,0,0.34);
   --radius-card: 22px;
 }
 
@@ -39,13 +43,15 @@ html, body {
   min-height: 100%;
   color: var(--text-main);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-  background: linear-gradient(180deg, #08090c 0%, #050608 45%, #020304 100%);
+  background:
+    linear-gradient(180deg, #050608 0%, #07090d 18%, #060709 48%, #020304 100%);
+  background-color: #050608;
 }
 
 body {
   min-height: 100vh;
   padding:
-    calc(12px + env(safe-area-inset-top))
+    calc(14px + env(safe-area-inset-top))
     14px
     calc(106px + env(safe-area-inset-bottom));
   line-height: 1.18;
@@ -55,7 +61,28 @@ body {
 
 body::before,
 body::after {
-  display: none;
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.16;
+}
+
+body::before {
+  width: 180px;
+  height: 180px;
+  top: 150px;
+  left: -50px;
+  background: rgba(77, 163, 255, 0.12);
+}
+
+body::after {
+  width: 220px;
+  height: 220px;
+  top: 320px;
+  right: -80px;
+  background: rgba(255,255,255,0.04);
 }
 
 .container {
@@ -107,21 +134,22 @@ body::after {
   min-height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
-  color: var(--text-soft);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-sub);
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
 .sync-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.34);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.02);
 }
 
 .section-row {
@@ -150,12 +178,12 @@ body::after {
   border-radius: var(--radius-card);
   padding: 14px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%),
     var(--surface-1);
   border: 1px solid var(--line);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.045),
-    inset 0 -1px 0 rgba(255,255,255,0.012),
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(255,255,255,0.015),
     var(--shadow-soft);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
@@ -166,13 +194,8 @@ body::after {
   position: absolute;
   inset: 0 auto 0 0;
   width: 4px;
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.18) 0%,
-    var(--brand, #4b5563) 18%,
-    var(--brand, #4b5563) 82%,
-    rgba(255,255,255,0.10) 100%
-  );
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18) 0%, var(--brand, #4b5563) 20%, var(--brand, #4b5563) 80%, rgba(255,255,255,0.10) 100%);
   opacity: 0.95;
 }
 
@@ -182,19 +205,19 @@ body::after {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.05), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,0.018), transparent 45%);
+    radial-gradient(500px 140px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%);
 }
 
 .summary-card {
   padding: 16px 14px 14px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.018) 100%),
-    linear-gradient(180deg, rgba(77,163,255,0.028) 0%, rgba(77,163,255,0.008) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.075) 0%, rgba(255,255,255,0.024) 100%),
+    linear-gradient(180deg, rgba(77,163,255,0.045) 0%, rgba(77,163,255,0.01) 100%),
     var(--surface-1);
-  border-color: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.1);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.06),
     0 18px 44px rgba(0,0,0,0.36);
 }
 
@@ -335,17 +358,9 @@ body::after {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.pos {
-  color: var(--pos);
-}
-
-.neg {
-  color: var(--neg);
-}
-
-.neutral {
-  color: var(--text-sub);
-}
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+.neutral { color: var(--text-sub); }
 
 .bottom-bar {
   position: fixed;
