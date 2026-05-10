@@ -586,16 +586,19 @@ body::after {
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const STORAGE_KEY = "money_log_compact_ios";
 
+// 銘柄リストからPayPayを削除しました
 const INITIAL_DATA = [
   { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
-  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: false, diff: null },
-  { name: "PayPay", code: "PAYP", price: 23.04, holding: 1.86131, cost: 4749, isStock: true, isNisa: false, rate: null, diff: null }
+  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: false, diff: null }
 ];
 
 function safeLoadJSON(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    // 保存データがある場合でも、銘柄数が合わない（削除された）場合は初期データを優先してリセット
+    return parsed.length === fallback.length ? parsed : fallback;
   } catch (e) {
     return fallback;
   }
