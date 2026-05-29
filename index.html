@@ -89,6 +89,21 @@ body {
   background: rgba(255,255,255,0.18);
 }
 
+/* バックアップ・復元ボタンのスタイル */
+.pill-btn {
+  cursor: pointer;
+  transition: color 0.1s;
+  padding: 0 2px;
+}
+.pill-btn:active {
+  color: var(--text-main);
+}
+.pill-sep {
+  color: rgba(255,255,255,0.12);
+  font-weight: 400;
+  user-select: none;
+}
+
 /* ── Main Card ── */
 .main-card {
   position: relative;
@@ -417,6 +432,10 @@ svg.chart-svg {
   <div class="sync-pill">
     <span class="sync-dot"></span>
     <span id="lastSyncDisplay">Last Sync: --:--</span>
+    <span class="pill-sep">|</span>
+    <span class="pill-btn" onclick="exportData()">Backup</span>
+    <span class="pill-sep">/</span>
+    <span class="pill-btn" onclick="importData()">Restore</span>
   </div>
 </div>
 
@@ -515,6 +534,36 @@ function showToast(msg) {
   _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
 }
 
+// ── Backup / Restore ──
+function exportData() {
+  const backup = {
+    stock: localStorage.getItem(SK),
+    hist: localStorage.getItem(SK + "_hist"),
+    sync: localStorage.getItem(SK + "_sync")
+  };
+  
+  navigator.clipboard.writeText(JSON.stringify(backup))
+    .then(() => showToast("Copied Backup Data"))
+    .catch(() => showToast("Copy failed"));
+}
+
+function importData() {
+  const str = prompt("バックアップデータを貼り付けてください:");
+  if (!str) return;
+  
+  try {
+    const backup = JSON.parse(str);
+    if (backup.stock) localStorage.setItem(SK, backup.stock);
+    if (backup.hist) localStorage.setItem(SK + "_hist", backup.hist);
+    if (backup.sync) localStorage.setItem(SK + "_sync", backup.sync);
+    
+    showToast("Restored! Reloading...");
+    setTimeout(() => location.reload(), 1000);
+  } catch (e) {
+    showToast("Invalid Data");
+  }
+}
+
 // ── Edit ──
 function startEdit(field) {
   editingField = field;
@@ -542,7 +591,6 @@ function recordTodayPnL() {
   const idx = history.findIndex(h => h.date === today);
   if (idx >= 0) history[idx].pnl = pnl;
   else history.push({ date: today, pnl });
-  // 最大180件
   if (history.length > 180) history = history.slice(-180);
   saveHistory();
 }
@@ -645,7 +693,6 @@ function render() {
             Day ${dayDiff === null ? "---" : fmtS(dayDiff)}
           </div>
           <div class="total-rate ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">${stock.diff !== null ? fmtP(parseFloat(stock.diff)) : '---'}</div>
-          <div class="total-rate ${rate >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</div>
         </div>
       </div>
 
@@ -720,7 +767,6 @@ async function fetchAll() {
       stock.diff = json.diff ?? null;
       save();
 
-      // 今日の損益を記録
       recordTodayPnL();
 
       const now = new Date();
