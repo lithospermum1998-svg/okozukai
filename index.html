@@ -48,36 +48,37 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 22px;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .app-title {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 900;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.20em;
   color: #fafbfc;
 }
 
 .app-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-soft);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  margin-top: 3px;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
 }
 
 .sync-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 11px;
+  padding: 5px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
-  color: var(--text-sub);
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-soft);
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.03em;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -85,7 +86,7 @@ body {
 .sync-dot {
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
 }
 
 /* ── Main Card ── */
@@ -93,49 +94,51 @@ body {
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.09);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 8%, transparent 22%),
-    linear-gradient(180deg, rgba(35,36,39,0.99) 0%, rgba(18,19,21,1) 100%);
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 10%, transparent 26%),
+    linear-gradient(180deg, rgba(32,33,36,0.99) 0%, rgba(16,17,19,1) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.016),
-    0 20px 50px rgba(0,0,0,0.45),
-    0 8px 20px rgba(0,0,0,0.30);
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(255,255,255,0.012),
+    0 24px 56px rgba(0,0,0,0.50),
+    0 8px 18px rgba(0,0,0,0.28);
 }
 
 /* ── Top section ── */
 .card-top {
-  padding: 20px 20px 0;
+  padding: 22px 22px 0;
 }
 
 .fund-name {
   font-size: 11px;
   font-weight: 800;
   color: var(--text-sub);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
+  letter-spacing: 0.07em;
+  margin-bottom: 3px;
 }
 
 .fund-code {
   font-size: 9px;
   color: var(--text-soft);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.10em;
 }
 
 .nisa-badge {
   display: inline-block;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
-  color: #b8ffd0;
-  border: 1px solid rgba(74,222,128,0.25);
+  color: #a7f3c8;
+  border: 1px solid rgba(74,222,128,0.20);
   border-radius: 999px;
-  padding: 3px 9px;
-  background: rgba(74,222,128,0.08);
+  padding: 2px 8px;
+  background: rgba(74,222,128,0.07);
   margin-left: 8px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 
 /* ── Valuation hero ── */
@@ -143,104 +146,98 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
 .val-main {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 900;
-  letter-spacing: -1.2px;
-  color: #f8f9fb;
+  letter-spacing: -1.5px;
+  color: #f9fafb;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
 .val-right {
   text-align: right;
+  padding-bottom: 3px;
 }
 
 .day-badge {
-  font-size: 12px;
-  font-weight: 850;
+  font-size: 13px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
-  line-height: 1.3;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .total-rate {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--text-sub);
-  margin-top: 3px;
+  margin-top: 5px;
+  opacity: 0.80;
 }
 
 /* ── P&L highlight ── */
 .pnl-row {
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  margin-top: 10px;
-  padding: 10px 0 14px;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px 0 16px;
   border-bottom: 1px solid var(--line);
 }
 
-.pnl-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-soft);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .pnl-value {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
+  line-height: 1;
 }
 
 .pnl-rate {
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  opacity: 0.75;
+  opacity: 0.70;
 }
 
 /* ── Chart ── */
 .chart-section {
-  padding: 14px 0 0;
+  padding: 16px 0 0;
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  margin-bottom: 8px;
+  padding: 0 22px;
+  margin-bottom: 10px;
 }
 
 .chart-title {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-soft);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
 .chart-period-tabs {
   display: flex;
-  gap: 4px;
+  gap: 3px;
 }
 
 .period-tab {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-soft);
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
   border: 1px solid transparent;
   background: transparent;
-  color: inherit;
   cursor: pointer;
   transition: all 0.15s;
   -webkit-user-select: none;
@@ -249,13 +246,13 @@ body {
 
 .period-tab.active {
   color: var(--text-main);
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.11);
+  background: rgba(255,255,255,0.055);
 }
 
 .chart-wrap {
   width: 100%;
-  height: 100px;
+  height: 96px;
   position: relative;
 }
 
@@ -270,47 +267,52 @@ svg.chart-svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100px;
+  height: 96px;
   font-size: 11px;
   color: var(--text-soft);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
 }
 
 /* ── Meta grid ── */
 .meta-section {
-  padding: 14px 20px 18px;
+  padding: 16px 22px 20px;
   border-top: 1px solid var(--line);
-  margin-top: 2px;
 }
 
 .meta-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
 }
 
-.meta-item {}
+.meta-item {
+  padding: 0 4px;
+}
+
+.meta-item:first-child { padding-left: 0; }
+.meta-item:last-child { padding-right: 0; }
 
 .meta-label {
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-soft);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .meta-value {
-  font-size: 13px;
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
-  color: #e6e8ec;
+  color: #dde0e6;
+  line-height: 1;
 }
 
 .meta-value.editable {
   cursor: pointer;
-  border-bottom: 1px dashed rgba(255,255,255,0.12);
+  border-bottom: 1px dashed rgba(255,255,255,0.10);
   display: inline-block;
 }
 
@@ -320,7 +322,7 @@ svg.chart-svg {
   border: 1px solid rgba(255,255,255,0.18);
   color: var(--text-main);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   border-radius: 5px;
   padding: 2px 4px;
@@ -631,15 +633,9 @@ function render() {
 
   document.getElementById("mainCard").innerHTML = `
     <div class="card-top">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <div class="fund-name">${stock.name}<span class="nisa-badge">NISA</span></div>
-          <div class="fund-code">${stock.code}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:10px;color:var(--text-soft);font-weight:800;letter-spacing:.06em;margin-bottom:3px">NAV</div>
-          <div style="font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;color:#dde">${fmtN(stock.price, 0)}</div>
-        </div>
+      <div>
+        <div class="fund-name">${stock.name}</div>
+        <div class="fund-code">${stock.code}</div>
       </div>
 
       <div class="valuation-row">
@@ -648,12 +644,12 @@ function render() {
           <div class="day-badge ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
             Day ${dayDiff === null ? "---" : fmtS(dayDiff)}
           </div>
-          <div class="total-rate ${rate >= 0 ? 'pos' : 'neg'}">${fmtP(rate)} total</div>
+          <div class="total-rate ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">${stock.diff !== null ? fmtP(parseFloat(stock.diff)) : '---'}</div>
+          <div class="total-rate ${rate >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</div>
         </div>
       </div>
 
       <div class="pnl-row">
-        <div class="pnl-label">含み損益</div>
         <div class="pnl-value ${pnl >= 0 ? 'pos' : 'neg'}">${fmtS(pnl)}</div>
         <div class="pnl-rate ${pnl >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</div>
       </div>
@@ -672,6 +668,10 @@ function render() {
 
     <div class="meta-section">
       <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">NAV</div>
+          <span class="meta-value">${fmtN(stock.price, 0)}</span>
+        </div>
         <div class="meta-item">
           <div class="meta-label">口数</div>
           ${inlineOrVal("holding", fmtN(stock.holding, 0))}
