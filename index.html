@@ -3,30 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#070707" />
+<meta name="theme-color" content="#000000" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<title>MONEY LOG</title>
+<title>MONEY LOG PRO</title>
 <link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <link rel="icon" type="image/png" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <style>
 :root {
-  --bg: #070707;
-  --surface: rgba(22,23,25,0.97);
-  --surface-2: #1e1f21;
-  --surface-3: #2a2b2e;
-  --text-main: #f3f4f6;
-  --text-sub: #9b9da3;
-  --text-soft: #555860;
-  --line: rgba(255,255,255,0.07);
-  --accent: #8f949e;
-  --pos: #4ade80;
-  --neg: #ff6478;
-  --chart-line: #6ee7b7;
-  --chart-fill-top: rgba(110,231,183,0.18);
-  --chart-fill-bot: rgba(110,231,183,0.01);
-  --radius: 26px;
+  --bg: #000000;
+  --text-main: #ffffff;
+  --text-sub: #88888e;
+  --text-soft: #3a3a3c;
+  --pos: #30d158;
+  --neg: #ff453a;
+  --pos-glow: rgba(48,209,88,0.15);
+  --neg-glow: rgba(255,69,58,0.15);
+  --accent: rgba(255,255,255,0.04);
+  --accent-border: rgba(255,255,255,0.08);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -34,216 +29,217 @@
 html, body {
   min-height: 100%;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-  background: #070707;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
-  padding: calc(20px + env(safe-area-inset-top)) 16px calc(110px + env(safe-area-inset-bottom));
-  overflow-x: hidden;
+  padding: calc(30px + env(safe-area-inset-top)) 24px calc(120px + env(safe-area-inset-bottom));
 }
 
-/* ── Header ── */
+/* 背景に溶け込む有機的な光のレイヤー */
+.ambient-glow {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100vw; height: 400px;
+  background: radial-gradient(circle at 50% 0%, var(--pos-glow) 0%, transparent 75%);
+  z-index: 0;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+body.is-neg-trend .ambient-glow {
+  background: radial-gradient(circle at 50% 0%, var(--neg-glow) 0%, transparent 75%);
+}
+
+.app-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header (超ミニマル＆スタイリッシュ) ── */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  margin-bottom: 40px;
 }
 
-.app-title {
-  font-size: 17px;
-  font-weight: 900;
-  letter-spacing: 0.20em;
-  color: #fafbfc;
-}
-
-.app-sub {
-  font-size: 9px;
-  color: var(--text-soft);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  margin-top: 4px;
-}
-
-.sync-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.07);
-  background: rgba(255,255,255,0.035);
-  color: var(--text-soft);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.sync-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.18);
-}
-
-.pill-btn {
-  cursor: pointer;
-  transition: color 0.1s;
-  padding: 0 2px;
-}
-.pill-btn:active {
-  color: var(--text-main);
-}
-.pill-sep {
-  color: rgba(255,255,255,0.12);
-  font-weight: 400;
-  user-select: none;
-}
-
-/* ── Main Card ── */
-.main-card {
-  position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.09);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 10%, transparent 26%),
-    linear-gradient(180deg, rgba(32,33,36,0.99) 0%, rgba(16,17,19,1) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.09),
-    inset 0 -1px 0 rgba(255,255,255,0.012),
-    0 24px 56px rgba(0,0,0,0.50),
-    0 8px 18px rgba(0,0,0,0.28);
-}
-
-/* ── Top section ── */
-.card-top {
-  padding: 22px 22px 0;
-}
-
-.fund-name {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--text-sub);
-  letter-spacing: 0.07em;
-  margin-bottom: 3px;
-}
-
-.fund-code {
-  font-size: 9px;
-  color: var(--text-soft);
-  font-weight: 600;
-  letter-spacing: 0.10em;
-}
-
-/* ── 改修：集約型の新デザイン評価額セクション ── */
-.hero-section {
-  margin-top: 16px;
-  margin-bottom: 6px;
-}
-
-.val-main {
-  font-size: 42px;
-  font-weight: 900;
-  letter-spacing: -1.5px;
-  color: #f9fafb;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-
-.stats-summary-box {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 14px 0 16px;
-  border-bottom: 1px solid var(--line);
-}
-
-.stat-block {
+.brand-zone {
   display: flex;
   flex-direction: column;
 }
 
-.stat-lbl {
-  font-size: 9px;
+.app-title {
+  font-size: 14px;
   font-weight: 800;
-  color: var(--text-soft);
-  letter-spacing: 0.06em;
-  margin-bottom: 4px;
+  letter-spacing: 0.25em;
+  color: #ffffff;
 }
 
-.stat-val {
-  font-size: 19px;
-  font-weight: 900;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-
-.stat-pct {
-  font-size: 12px;
+.app-sub {
+  font-size: 9px;
+  color: var(--text-sub);
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.80;
-  margin-top: 1px;
-}
-
-/* ── Chart ── */
-.chart-section {
-  padding: 16px 0 0;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 22px;
-  margin-bottom: 10px;
-}
-
-.chart-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-soft);
-  letter-spacing: 0.09em;
+  letter-spacing: 0.15em;
+  margin-top: 6px;
   text-transform: uppercase;
 }
 
-.chart-period-tabs {
+.system-actions {
   display: flex;
-  gap: 3px;
+  align-items: center;
+  gap: 12px;
+  background: var(--accent);
+  border: 1px solid var(--accent-border);
+  padding: 6px 14px;
+  border-radius: 999px;
 }
 
-.period-tab {
+.sys-btn {
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-soft);
-  padding: 3px 9px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  background: transparent;
+  color: var(--text-sub);
   cursor: pointer;
-  transition: all 0.15s;
-  -webkit-user-select: none;
+  transition: color 0.15s;
   user-select: none;
 }
+.sys-btn:active { color: var(--text-main); }
+.sys-sep { color: var(--text-soft); font-size: 10px; }
 
-.period-tab.active {
+/* ── Hero Section (圧倒的なタイポグラフィ) ── */
+.hero-block {
+  margin-bottom: 32px;
+}
+
+.status-badge-wrapper {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-sub);
+  transition: all 0.2s ease;
+}
+.status-badge.live-mode .dot {
+  width: 6px; height: 6px;
+  background: var(--pos);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--pos);
+}
+.status-badge.history-mode {
+  color: #e5e5ea;
+  background: rgba(255,255,255,0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.val-main {
+  font-size: 52px;
+  font-weight: 200;
+  letter-spacing: -2px;
   color: var(--text-main);
-  border-color: rgba(255,255,255,0.11);
-  background: rgba(255,255,255,0.055);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.0;
 }
 
-.chart-wrap {
+/* ── Stats Row ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.stat-per {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+/* ── Interactive Chart ── */
+.chart-container {
+  margin-bottom: 40px;
+}
+
+.chart-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chart-headline {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+}
+
+.period-selector {
+  display: flex;
+  background: var(--accent);
+  border: 1px solid var(--accent-border);
+  padding: 2px;
+  border-radius: 999px;
+}
+
+.p-tab {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sub);
+  padding: 4px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.p-tab.active {
+  color: var(--text-main);
+  background: rgba(255,255,255,0.12);
+}
+
+.canvas-wrapper {
   width: 100%;
-  height: 96px;
+  height: 140px;
   position: relative;
+  cursor: crosshair;
 }
 
-svg.chart-svg {
+svg.chart-canvas-svg {
   width: 100%;
   height: 100%;
   display: block;
@@ -254,170 +250,194 @@ svg.chart-svg {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 96px;
-  font-size: 11px;
-  color: var(--text-soft);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  height: 140px;
+  font-size: 12px;
+  color: var(--text-sub);
+  font-weight: 500;
 }
 
-/* ── Meta grid ── */
-.meta-section {
-  padding: 16px 22px 20px;
-  border-top: 1px solid var(--line);
-}
-
-.meta-grid {
+/* ── Meta Dashboard Grid ── */
+.dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--accent-border);
 }
 
-.meta-item {
-  padding: 0 4px;
+.dash-item {
+  background: var(--accent);
+  border: 1px solid var(--accent-border);
+  padding: 16px;
+  border-radius: 16px;
 }
 
-.meta-item:first-child { padding-left: 0; }
-.meta-item:last-child { padding-right: 0; }
-
-.meta-label {
+.dash-label {
   font-size: 9px;
   font-weight: 700;
-  color: var(--text-soft);
+  color: var(--text-sub);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.meta-value {
-  font-size: 12px;
-  font-weight: 800;
+.dash-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
   font-variant-numeric: tabular-nums;
-  color: #dde0e6;
-  line-height: 1;
 }
-
-.meta-value.editable {
-  cursor: pointer;
-  border-bottom: 1px dashed rgba(255,255,255,0.10);
+.dash-val.editable {
+  border-bottom: 1px dashed rgba(255,255,255,0.3);
   display: inline-block;
 }
 
-.inline-input {
+.dash-input {
   width: 100%;
-  background: var(--surface-3);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: var(--text-main);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 800;
-  border-radius: 5px;
-  padding: 2px 4px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 4px 6px;
   outline: none;
   font-variant-numeric: tabular-nums;
 }
 
-
-
-/* ── Bottom bar ── */
-.bottom-bar {
+/* ── Fixed Bottom Trigger ── */
+.bottom-dock {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
+  padding: 16px 24px calc(24px + env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
-  z-index: 20;
-  background: linear-gradient(to top, rgba(4,4,4,0.88) 0%, rgba(4,4,4,0.42) 50%, transparent 100%);
+  z-index: 10;
+  background: linear-gradient(to top, #000 60%, transparent);
   pointer-events: none;
 }
 
-.update-btn {
+.action-trigger {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-width: 158px;
-  height: 52px;
-  padding: 0 24px;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+  height: 54px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  color: var(--text-main);
+  background: #ffffff;
+  color: #000000;
   font-size: 14px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  border: 1px solid rgba(255,255,255,0.11);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 22px rgba(0,0,0,0.28);
-  backdrop-filter: blur(32px) saturate(150%);
-  -webkit-backdrop-filter: blur(32px) saturate(150%);
-  transition: transform 0.1s, opacity 0.15s;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 12px 32px rgba(255,255,255,0.15);
+  transition: transform 0.1s ease, opacity 0.2s;
   cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
 }
+.action-trigger:active { transform: scale(0.97); }
+.action-trigger:disabled { opacity: 0.4; }
 
-.update-btn:active { transform: scale(0.96); }
-.update-btn:disabled { opacity: 0.55; cursor: default; }
-
-.update-icon { font-size: 16px; }
+.trigger-spinner {
+  font-size: 16px;
+  display: inline-block;
+}
 
 /* ── Toast ── */
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(82px + env(safe-area-inset-bottom));
+  bottom: calc(96px + env(safe-area-inset-bottom));
   transform: translateX(-50%) translateY(10px);
   opacity: 0;
   pointer-events: none;
-  z-index: 30;
-  padding: 10px 16px;
+  z-index: 100;
+  padding: 12px 24px;
   border-radius: 999px;
-  background: rgba(30,32,36,0.95);
-  border: 1px solid rgba(255,255,255,0.10);
-  color: #f5f7fb;
+  background: rgba(255,255,255,0.95);
+  color: #000000;
   font-size: 12px;
-  font-weight: 800;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   transition: opacity 0.2s, transform 0.2s;
   white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.pos { color: var(--pos); }
-.neg { color: var(--neg); }
-.neutral { color: var(--text-sub); }
+/* ── Utilities ── */
+.pos { color: var(--pos) !important; }
+.neg { color: var(--neg) !important; }
+.neutral { color: var(--text-sub) !important; }
 
 @media (max-width: 360px) {
-  .val-main { font-size: 34px; }
-  .stat-val { font-size: 16px; }
-  .stat-pct { font-size: 11px; }
+  .val-main { font-size: 42px; }
+  .stat-num { font-size: 18px; }
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div>
-    <div class="app-title">MONEY LOG</div>
-    <div class="app-sub">SOX PORTFOLIO</div>
+<div class="ambient-glow" id="ambientGlow"></div>
+
+<div class="app-container">
+  <div class="header">
+    <div class="brand-zone">
+      <div class="app-title" id="fundNameDisplay">---</div>
+      <div class="app-sub" id="lastSyncDisplay">SYNC: --:--</div>
+    </div>
+    <div class="system-actions">
+      <span class="sys-btn" onclick="exportData()">Backup</span>
+      <span class="sys-sep">/</span>
+      <span class="sys-btn" onclick="importData()">Restore</span>
+    </div>
   </div>
-  <div class="sync-pill">
-    <span class="sync-dot"></span>
-    <span id="lastSyncDisplay">Last Sync: --:--</span>
-    <span class="pill-sep">|</span>
-    <span class="pill-btn" onclick="exportData()">Backup</span>
-    <span class="pill-sep">/</span>
-    <span class="pill-btn" onclick="importData()">Restore</span>
+
+  <div class="hero-block">
+    <div class="status-badge-wrapper">
+      <div id="statusBadge" class="status-badge live-mode">
+        <span class="dot"></span><span id="statusLabel">LIVE</span>
+      </div>
+    </div>
+    <div class="val-main" id="mainValDisplay">¥0</div>
   </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">DAY (前日比)</span>
+      <span class="stat-num" id="dayValDisplay">---</span>
+      <span class="stat-per" id="dayPctDisplay">---</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">TOTAL (通算損益)</span>
+      <span class="stat-num" id="totalValDisplay">---</span>
+      <span class="stat-per" id="totalPctDisplay">---</span>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-meta-row">
+      <span class="chart-headline">損益パフォーマンス</span>
+      <div class="period-selector">
+        <button class="p-tab" onclick="setPeriod('1M')">1M</button>
+        <button class="p-tab" onclick="setPeriod('3M')">3M</button>
+        <button class="p-tab" onclick="setPeriod('6M')">6M</button>
+        <button class="p-tab active" onclick="setPeriod('ALL')">ALL</button>
+      </div>
+    </div>
+    <div class="canvas-wrapper" id="canvasWrapper">
+      </div>
+  </div>
+
+  <div class="dashboard-grid" id="dashboardGrid">
+    </div>
 </div>
 
-<div class="main-card" id="mainCard"></div>
-
-<div class="bottom-bar">
-  <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-    <span id="updateIcon" class="update-icon">↻</span>
-    <span id="updateLabel">update</span>
+<div class="bottom-dock">
+  <button id="updateBtn" class="action-trigger" onclick="fetchAll()">
+    <span id="updateIcon" class="trigger-spinner">↻</span>
+    <span id="updateLabel">Update Dashboard</span>
   </button>
 </div>
 
@@ -438,129 +458,90 @@ const DEFAULT = {
   diff: null
 };
 
-function loadState() {
+let stock = (() => {
   try {
     const s = localStorage.getItem(SK);
     return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT };
   } catch { return { ...DEFAULT }; }
-}
+})();
 
-function loadHistory() {
+let history = (() => {
   try {
     const h = localStorage.getItem(SK + "_hist");
     return h ? JSON.parse(h) : [];
   } catch { return []; }
-}
+})();
 
-let stock = loadState();
-let history = loadHistory();
 let activePeriod = "ALL";
 let editingField = null;
 let isUpdating = false;
 let lastSyncTime = localStorage.getItem(SK + "_sync") || "--:--";
 
-function save() {
-  localStorage.setItem(SK, JSON.stringify(stock));
-}
+function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
+function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-function saveHistory() {
-  localStorage.setItem(SK + "_hist", JSON.stringify(history));
-}
+// ── Financial Math ──
+function getValuation(price = stock.price) { return price * stock.holding / 10000; }
+function getUnrealizedPnL(val) { return val - stock.cost; }
+function getUnrealizedRate(pnl) { return stock.cost > 0 ? (pnl / stock.cost * 100) : 0; }
+function getAvgCost() { return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0; }
 
-// ── Calcs ──
-function valuation() {
-  return stock.price * stock.holding / 10000;
-}
-
-function avgCostPerUnit() {
-  return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0;
-}
-
-function unrealizedPnL() {
-  return valuation() - stock.cost;
-}
-
-function unrealizedRate() {
-  return stock.cost > 0 ? (unrealizedPnL() / stock.cost * 100) : 0;
-}
-
-
-
-// ── Format ──
-const fmt = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
-const fmtS = v => {
+// ── Dynamic Formatter ──
+const fmtYen = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
+const fmtSign = v => {
   if (v === null || !isFinite(v)) return "---";
   const r = Math.round(v);
   return (r >= 0 ? "+" : "") + r.toLocaleString();
 };
-const fmtP = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
-const fmtN = (v, d=0) => v === null || !isFinite(v) ? "---" :
-  Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtPct = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
+const fmtNum = (v, d=0) => v === null || !isFinite(v) ? "---" : Number(v).toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d});
 
-// ── Toast ──
+// ── Toast Utility ──
 let _toastTimer;
 function showToast(msg) {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
+  t.textContent = msg; t.classList.add("show");
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
 }
 
-// ── Backup / Restore ──
+// ── Backup / Restore System ──
 function exportData() {
-  const backup = {
-    stock: localStorage.getItem(SK),
-    hist: localStorage.getItem(SK + "_hist"),
-    sync: localStorage.getItem(SK + "_sync")
-  };
-  
+  const backup = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist"), sync: localStorage.getItem(SK + "_sync") };
   navigator.clipboard.writeText(JSON.stringify(backup))
-    .then(() => showToast("Copied Backup Data"))
-    .catch(() => showToast("Copy failed"));
+    .then(() => showToast("Backup data copied to clipboard"))
+    .catch(() => showToast("Failed to copy"));
 }
-
 function importData() {
   const str = prompt("バックアップデータを貼り付けてください:");
   if (!str) return;
-  
   try {
     const backup = JSON.parse(str);
     if (backup.stock) localStorage.setItem(SK, backup.stock);
     if (backup.hist) localStorage.setItem(SK + "_hist", backup.hist);
     if (backup.sync) localStorage.setItem(SK + "_sync", backup.sync);
-    
-    showToast("Restored! Reloading...");
+    showToast("Restored perfectly. Reloading...");
     setTimeout(() => location.reload(), 1000);
-  } catch (e) {
-    showToast("Invalid Data");
-  }
+  } catch { showToast("Invalid backup token"); }
 }
 
-// ── Edit ──
+// ── Inline Editor ──
 function startEdit(field) {
-  editingField = field;
-  render();
+  editingField = field; render();
   requestAnimationFrame(() => {
     const el = document.getElementById("input-" + field);
     if (el) { el.focus(); el.select(); }
   });
 }
-
 function finishEdit(field, value) {
   const n = parseFloat(value);
-  if (!isNaN(n) && isFinite(n)) {
-    stock[field] = n;
-    save();
-    showToast("Saved");
-  }
-  editingField = null;
-  render();
+  if (!isNaN(n) && isFinite(n)) { stock[field] = n; save(); showToast("Saved changes"); }
+  editingField = null; render();
 }
 
 function recordTodayPnL() {
   const today = new Date().toISOString().slice(0, 10);
-  const pnl = Math.round(unrealizedPnL());
+  const pnl = Math.round(getUnrealizedPnL(getValuation()));
   const idx = history.findIndex(h => h.date === today);
   if (idx >= 0) history[idx].pnl = pnl;
   else history.push({ date: today, pnl });
@@ -568,23 +549,19 @@ function recordTodayPnL() {
   saveHistory();
 }
 
-// ── Period filter ──
 function getFilteredHistory() {
   if (!history.length) return [];
-  const now = new Date();
-  let cutoff = null;
-  if (activePeriod === "1M") {
-    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1);
-  } else if (activePeriod === "3M") {
-    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3);
-  } else if (activePeriod === "6M") {
-    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6);
-  }
+  const now = new Date(); let cutoff = null;
+  if (activePeriod === "1M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1); }
+  else if (activePeriod === "3M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3); }
+  else if (activePeriod === "6M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6); }
   const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
   return cutoff ? sorted.filter(h => new Date(h.date) >= cutoff) : sorted;
 }
 
-// ── Chart ──
+// ── Beautiful Interactive Chart Engine ──
+let chartPoints = []; 
+
 function buildChart() {
   const data = getFilteredHistory();
   if (data.length < 2) {
@@ -596,132 +573,178 @@ function buildChart() {
   const maxV = Math.max(...vals);
   const range = maxV - minV || 1;
 
-  const W = 400, H = 80, PAD = 6;
-  const pts = data.map((d, i) => {
-    const x = PAD + (i / (data.length - 1)) * (W - PAD * 2);
-    const y = PAD + (1 - (d.pnl - minV) / range) * (H - PAD * 2);
-    return [x, y];
+  const W = 500, H = 140, PAD_TOP = 10, PAD_BOT = 10;
+  chartPoints = data.map((d, i) => {
+    const x = (i / (data.length - 1)) * W;
+    const y = PAD_TOP + (1 - (d.pnl - minV) / range) * (H - PAD_TOP - PAD_BOT);
+    return { x, y, date: d.date, pnl: d.pnl };
   });
 
-  const pathD = pts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(" ");
-  const fillD = `${pathD} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`;
+  const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
+  const fillD = `${pathD} L${chartPoints[chartPoints.length-1].x},${H} L${chartPoints[0].x},${H} Z`;
 
   const lastPnl = vals[vals.length - 1];
-  const lineColor = lastPnl >= 0 ? "#6ee7b7" : "#ff6478";
-  const fillTop = lastPnl >= 0 ? "rgba(110,231,183,0.20)" : "rgba(255,100,120,0.20)";
-  const fillBot = lastPnl >= 0 ? "rgba(110,231,183,0.01)" : "rgba(255,100,120,0.01)";
-
-  const gradId = "cg" + Date.now();
+  const colorLine = lastPnl >= 0 ? "#30d158" : "#ff453a";
+  const colorTop = lastPnl >= 0 ? "rgba(48,209,88,0.25)" : "rgba(255,69,58,0.25)";
+  const gradId = "grad_" + Date.now();
 
   return `
-    <div class="chart-wrap">
-      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${fillTop}"/>
-            <stop offset="100%" stop-color="${fillBot}"/>
-          </linearGradient>
-        </defs>
-        <path d="${fillD}" fill="url(#${gradId})" />
-        <path d="${pathD}" fill="none" stroke="${lineColor}" stroke-width="1.5"
-          stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
+    <svg class="chart-canvas-svg" id="interactiveSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${colorTop}"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+      <path d="${fillD}" fill="url(#${gradId})" />
+      <path d="${pathD}" fill="none" stroke="${colorLine}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <line id="chartGuideLine" x1="0" y1="0" x2="0" y2="${H}" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-dasharray="4,4" style="display:none;" />
+      <circle id="chartGuideDot" r="5" fill="${colorLine}" stroke="#000" stroke-width="1.5" style="display:none;" />
+    </svg>
   `;
 }
 
-// ── Render ──
-function render() {
-  document.getElementById("lastSyncDisplay").textContent = "Last Sync: " + lastSyncTime;
+// チャートのホバー・スワイプ連動処理
+function initChartInteractions() {
+  const wrapper = document.getElementById("canvasWrapper");
+  const svg = document.getElementById("interactiveSvg");
+  if (!svg || chartPoints.length === 0) return;
 
-  const val = valuation();
-  const pnl = unrealizedPnL();
-  const rate = unrealizedRate();
-  const avg = avgCostPerUnit();
-  const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
+  const line = document.getElementById("chartGuideLine");
+  const dot = document.getElementById("chartGuideDot");
 
-  const inlineOrVal = (field, display) => {
-    if (editingField === field) {
-      return `<input id="input-${field}" class="inline-input" type="number" step="any"
-        value="${stock[field]}"
-        onblur="finishEdit('${field}', this.value)"
-        onkeydown="if(event.key==='Enter')this.blur()">`;
+  const handlePointer = (clientX) => {
+    const rect = wrapper.getBoundingClientRect();
+    const touchX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, touchX / rect.width));
+    
+    // 最も近いデータポイントを探索
+    const targetX = pct * 500; 
+    let closest = chartPoints[0];
+    let minDiff = Math.abs(chartPoints[0].x - targetX);
+    
+    for (let p of chartPoints) {
+      const diff = Math.abs(p.x - targetX);
+      if (diff < minDiff) { minDiff = diff; closest = p; }
     }
-    return `<span class="meta-value editable" onclick="startEdit('${field}')">${display}</span>`;
+
+    // ガイドを移動
+    line.setAttribute("x1", closest.x);
+    line.setAttribute("x2", closest.x);
+    dot.setAttribute("cx", closest.x);
+    dot.setAttribute("cy", closest.y);
+    line.style.display = "block";
+    dot.style.display = "block";
+
+    // 数値を過去のトリガー履歴に一時帰還（パラパラ表示）
+    updateDisplayValues(closest.pnl, closest.date);
   };
 
-  const periods = ["1M","3M","6M","ALL"];
+  const resetPointer = () => {
+    line.style.display = "none";
+    dot.style.display = "none";
+    renderLiveValues(); // 元の最新リアルタイム表示に戻す
+  };
 
-  document.getElementById("mainCard").innerHTML = `
-    <div class="card-top">
-      <div>
-        <div class="fund-name">${stock.name}</div>
-        <div class="fund-code">${stock.code}</div>
-      </div>
+  wrapper.addEventListener("mousemove", (e) => handlePointer(e.clientX));
+  wrapper.addEventListener("mouseleave", resetPointer);
+  wrapper.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX), {passive: true});
+  wrapper.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX), {passive: true});
+  wrapper.addEventListener("touchend", resetPointer);
+}
 
-      <div class="hero-section">
-        <div class="val-main">${fmt(val)}</div>
-      </div>
+// ── Core Render Pipeline ──
+function renderLiveValues() {
+  const val = getValuation();
+  const pnl = getUnrealizedPnL(val);
+  const rate = getUnrealizedRate(pnl);
+  const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
 
-      <div class="stats-summary-box">
-        <div class="stat-block">
-          <span class="stat-lbl">DAY (前日比)</span>
-          <span class="stat-val ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
-            ${dayDiff === null ? "---" : fmtS(dayDiff)}
-          </span>
-          <span class="stat-pct ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
-            ${stock.diff !== null ? fmtP(parseFloat(stock.diff)) : '---'}
-          </span>
-        </div>
-        
-        <div class="stat-block">
-          <span class="stat-lbl">TOTAL (通算損益)</span>
-          <span class="stat-val ${pnl >= 0 ? 'pos' : 'neg'}">${fmtS(pnl)}</span>
-          <span class="stat-pct ${pnl >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</span>
-        </div>
-      </div>
-    </div>
+  // トレンドカラーによる環境発光の切り替え
+  document.body.classList.toggle("is-neg-trend", pnl < 0);
 
-    <div class="chart-section">
-      <div class="chart-header">
-        <div class="chart-title">損益の推移</div>
-        <div class="chart-period-tabs">
-          ${periods.map(p => `<button class="period-tab ${p === activePeriod ? 'active' : ''}"
-            onclick="setPeriod('${p}')">${p}</button>`).join("")}
-        </div>
-      </div>
-      ${buildChart()}
-    </div>
+  document.getElementById("statusBadge").className = "status-badge live-mode";
+  document.getElementById("statusLabel").textContent = "LIVE";
 
-    <div class="meta-section">
-      <div class="meta-grid">
-        <div class="meta-item">
-          <div class="meta-label">NAV</div>
-          <span class="meta-value">${fmtN(stock.price, 0)}</span>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">口数</div>
-          ${inlineOrVal("holding", fmtN(stock.holding, 0))}
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">取得コスト</div>
-          ${inlineOrVal("cost", fmt(stock.cost))}
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">平均取得単価</div>
-          <span class="meta-value">${fmtN(avg, 0)}</span>
-        </div>
-      </div>
-    </div>
+  document.getElementById("mainValDisplay").textContent = fmtYen(val);
+  
+  const dayEl = document.getElementById("dayValDisplay");
+  const dayPctEl = document.getElementById("dayPctDisplay");
+  dayEl.textContent = dayDiff === null ? "---" : fmtSign(dayDiff);
+  dayEl.className = `stat-num ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
+  dayPctEl.textContent = stock.diff !== null ? fmtPct(parseFloat(stock.diff)) : '---';
+  dayPctEl.className = `stat-per ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
+
+  const totEl = document.getElementById("totalValDisplay");
+  const totPctEl = document.getElementById("totalPctDisplay");
+  totEl.textContent = fmtSign(pnl);
+  totEl.className = `stat-num ${pnl >= 0 ? 'pos' : 'neg'}`;
+  totPctEl.textContent = fmtPct(rate);
+  totPctEl.className = `stat-per ${pnl >= 0 ? 'pos' : 'neg'}`;
+}
+
+function updateDisplayValues(targetPnL, targetDate) {
+  // チャートをなぞっている間の過去データプレビューレンダリング
+  const badge = document.getElementById("statusBadge");
+  badge.className = "status-badge history-mode";
+  document.getElementById("statusLabel").textContent = targetDate;
+
+  // 過去のその日のコストベースでの評価額を逆算シミュレート
+  const simulatedVal = stock.cost + targetPnL;
+  const simulatedRate = getUnrealizedRate(targetPnL);
+
+  document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
+  
+  // 過去閲覧中はDAYを一時的に潜める（視線誘導のため）
+  document.getElementById("dayValDisplay").textContent = "---";
+  document.getElementById("dayValDisplay").className = "stat-num neutral";
+  document.getElementById("dayPctDisplay").textContent = "HISTORY";
+  document.getElementById("dayPctDisplay").className = "stat-per neutral";
+
+  const totEl = document.getElementById("totalValDisplay");
+  const totPctEl = document.getElementById("totalPctDisplay");
+  totEl.textContent = fmtSign(targetPnL);
+  totEl.className = `stat-num ${targetPnL >= 0 ? 'pos' : 'neg'}`;
+  totPctEl.textContent = fmtPct(simulatedRate);
+  totPctEl.className = `stat-per ${targetPnL >= 0 ? 'pos' : 'neg'}`;
+}
+
+function render() {
+  document.getElementById("fundNameDisplay").textContent = stock.name;
+  document.getElementById("lastSyncDisplay").textContent = "SYNC: " + lastSyncTime;
+
+  renderLiveValues();
+
+  // チャート構築
+  document.getElementById("canvasWrapper").innerHTML = buildChart();
+  initChartInteractions();
+
+  // メタデータダッシュボード構築
+  const avg = getAvgCost();
+  const inlineElement = (field, display) => {
+    if (editingField === field) {
+      return `<input id="input-${field}" class="dash-input" type="number" step="any" value="${stock[field]}" onblur="finishEdit('${field}', this.value)" onkeydown="if(event.key==='Enter')this.blur()">`;
+    }
+    return `<span class="dash-val editable" onclick="startEdit('${field}')">${display}</span>`;
+  };
+
+  document.getElementById("dashboardGrid").innerHTML = `
+    <div class="dash-item"><div class="dash-label">基準価額 (NAV)</div><div class="dash-val">${fmtNum(stock.price, 0)}</div></div>
+    <div class="dash-item"><div class="dash-label">保有口数</div>${inlineElement("holding", fmtNum(stock.holding, 0))}</div>
+    <div class="dash-item"><div class="dash-label">取得総コスト</div>${inlineElement("cost", fmtYen(stock.cost))}</div>
+    <div class="dash-item"><div class="dash-label">平均取得単価</div><div class="dash-val">${fmtNum(avg, 0)}</div></div>
   `;
 }
 
 function setPeriod(p) {
   activePeriod = p;
+  const tabs = document.querySelectorAll(".p-tab");
+  tabs.forEach(t => t.classList.toggle("active", t.textContent === p));
   render();
 }
 
-// ── Fetch ──
+// ── Modern API Fetcher ──
 async function fetchAll() {
   if (isUpdating) return;
   isUpdating = true;
@@ -731,11 +754,11 @@ async function fetchAll() {
   const label = document.getElementById("updateLabel");
 
   btn.disabled = true;
-  label.textContent = "updating";
+  label.textContent = "Syncing with Markets...";
 
   const anim = icon.animate(
     [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
-    { duration: 900, iterations: Infinity, easing: "linear" }
+    { duration: 800, iterations: Infinity, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
   );
 
   try {
@@ -746,33 +769,31 @@ async function fetchAll() {
       stock.price = json.price;
       stock.diff = json.diff ?? null;
       save();
-
       recordTodayPnL();
 
       const now = new Date();
-      lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+      lastSyncTime = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2, "0");
       localStorage.setItem(SK + "_sync", lastSyncTime);
 
       render();
       anim.cancel();
-      label.textContent = "updated";
-      showToast("Updated");
-    } else {
-      throw new Error("API error");
-    }
-  } catch (e) {
+      label.textContent = "Dashboard Updated";
+      showToast("Updated successfully");
+    } else { throw new Error(); }
+  } catch {
     anim.cancel();
-    label.textContent = "failed";
-    showToast("Update failed");
+    label.textContent = "Sync Failed";
+    showToast("Network error");
   }
 
   setTimeout(() => {
-    label.textContent = "update";
+    label.textContent = "Update Dashboard";
     btn.disabled = false;
     isUpdating = false;
-  }, 1100);
+  }, 1200);
 }
 
+// 起動
 render();
 </script>
 </body>
