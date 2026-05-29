@@ -3,487 +3,333 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#f4f3f0" />
+<meta name="theme-color" content="#000000" />
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="mobile-web-app-capable" content="yes">
-<title>MONEY LOG ARCHIVE</title>
-<link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
-<link rel="icon" type="image/png" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>𝄃</title>
 <style>
-:root {
-  --bg: #f4f3f0;
-  --text-main: #1c1b1a;
-  --text-sub: #7a7772;
-  --text-soft: #c8c6be;
-  --line: #e2e0d8;
-  --pos: #2a6f43; /* ボタニカルグリーン */
-  --neg: #b83b30; /* マダーレッド */
-  --chart-line: #1c1b1a;
-  --accent: #ffffff;
-}
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
 html, body {
-  min-height: 100%;
-  color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
-  overflow-x: hidden;
+  height: 100%;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  background: #000000;
+  overflow: hidden;
+  user-select: none; -webkit-user-select: none;
 }
 
 body {
-  min-height: 100vh;
-  padding: calc(40px + env(safe-area-inset-top)) 24px calc(130px + env(safe-area-inset-bottom));
-}
-
-.app-container {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-/* ── Header ── */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--text-main);
-  margin-bottom: 40px;
-}
-
-.app-title {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-.app-sub {
-  font-size: 10px;
-  color: var(--text-sub);
-  font-variant-numeric: tabular-nums;
-}
-
-.system-actions {
-  display: flex;
-  gap: 8px;
-}
-.sys-btn {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-sub);
-  text-decoration: underline;
-  cursor: pointer;
-  user-select: none;
-}
-.sys-btn:active { color: var(--text-main); }
-
-/* ── Hero Asset Block (伝統と知性の伝統的タイポグラフィ) ── */
-.hero-block {
-  margin-bottom: 48px;
-}
-
-.status-badge-wrapper {
-  height: 20px;
-  margin-bottom: 8px;
-}
-.status-badge {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text-sub);
-  text-transform: uppercase;
-  border: 1px solid var(--text-soft);
-  padding: 2px 8px;
-  display: inline-block;
-}
-.status-badge.history-mode {
-  background: var(--text-main);
-  color: var(--bg);
-  border-color: var(--text-main);
-}
-
-.val-main {
-  font-family: "Georgia", "Times New Roman", serif;
-  font-size: 56px;
-  font-weight: 400;
-  letter-spacing: -1px;
-  line-height: 1.0;
-  font-variant-numeric: tabular-nums;
-  margin-top: 4px;
-}
-
-/* ── Stats Grid ── */
-.stats-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 48px;
-}
-
-.stat-card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: calc(60px + env(safe-area-inset-top)) 32px calc(40px + env(safe-area-inset-bottom));
 }
 
-.stat-label {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
+/* ── Asset Hero (タップすると同期する巨大な数字) ── */
+.center-piece {
+  margin-top: auto;
+  margin-bottom: auto;
+  cursor: pointer;
 }
 
-.stat-num {
-  font-family: "Georgia", "Times New Roman", serif;
-  font-size: 26px;
+.main-value {
+  font-size: 64px;
+  font-weight: 100;
+  letter-spacing: -3px;
+  line-height: 1.0;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.5s ease;
+}
+.center-piece:active .main-value { opacity: 0.2; }
+
+/* 同期中の静かな明滅 */
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.syncing .main-value { animation: pulse 1.5s infinite ease-in-out; pointer-events: none; }
+
+.sub-metrics {
+  font-size: 11px;
   font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #555555;
+  margin-top: 16px;
   font-variant-numeric: tabular-nums;
+  transition: color 0.3s;
+}
+.history-mode .sub-metrics { color: #ffffff; }
+
+/* ── 1px Line Chart (ただ横たわる軌跡) ── */
+.chart-space {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 60px;
+  position: relative;
 }
 
-.stat-per {
-  font-size: 12px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  margin-top: 4px;
+svg.minimal-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-/* ── Fine Line Chart ── */
-.chart-container {
-  margin-bottom: 48px;
+/* ── 隠蔽された設定コントロールレイヤー ── */
+.meta-trigger {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #222222;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  padding: 10px;
 }
+.meta-trigger:active { color: #ffffff; }
 
-.chart-meta-row {
+.control-panel {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: #000000;
+  z-index: 100;
+  padding: calc(40px + env(safe-area-inset-top)) 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.control-panel.open { transform: translateY(0); }
+
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--line);
 }
+.panel-title { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #555555; text-transform: uppercase; }
+.close-btn { font-size: 11px; color: #ffffff; cursor: pointer; text-decoration: underline; }
 
-.chart-headline {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.period-selector {
-  display: flex;
-  gap: 4px;
-}
-
-.p-tab {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-sub);
-  padding: 3px 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-.p-tab.active {
-  color: var(--text-main);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.canvas-wrapper {
-  width: 100%;
-  height: 150px;
-  position: relative;
-  cursor: crosshair;
-}
-
-svg.chart-canvas-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: visible;
-}
-
-svg.chart-canvas-svg path {
-  transition: d 0.3s cubic-bezier(0.25, 1, 0.5, 1), stroke 0.3s;
-}
-
-.chart-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 150px;
-  font-size: 11px;
-  color: var(--text-sub);
-  letter-spacing: 0.05em;
-}
-
-/* ── Meta Blueprint Dashboard ── */
-.dashboard-list {
+.input-group {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--text-main);
+  gap: 8px;
+  border-bottom: 1px solid #111111;
+  padding-bottom: 16px;
+}
+.input-label { font-size: 9px; color: #555555; letter-spacing: 0.1em; text-transform: uppercase; }
+.clean-input {
+  background: transparent; border: none; color: #ffffff;
+  font-size: 18px; font-family: inherit; font-weight: 300; outline: none;
 }
 
-.dash-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.dash-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-sub);
-}
-
-.dash-val {
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.dash-val.editable {
-  cursor: pointer;
-  color: var(--text-main);
-  border-bottom: 1px dotted var(--text-sub);
-}
-
-.dash-input {
-  background: var(--accent);
-  border: 1px solid var(--text-main);
-  color: var(--text-main);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 2px 6px;
-  outline: none;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Modern Bottom Dock Bar ── */
-.bottom-dock {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  padding: 16px 24px calc(24px + env(safe-area-inset-bottom));
-  display: flex;
-  justify-content: center;
-  z-index: 10;
-  background: linear-gradient(to top, var(--bg) 80%, transparent);
-  pointer-events: none;
-}
-
-.action-trigger {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  height: 52px;
-  background: var(--text-main);
-  color: var(--bg);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: none;
-  transition: opacity 0.15s ease;
-  cursor: pointer;
-}
-.action-trigger:active { opacity: 0.85; }
-.action-trigger:disabled { opacity: 0.2; }
-
-/* ── Toast ── */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(90px + env(safe-area-inset-bottom));
-  transform: translateX(-50%) translateY(10px);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 100;
-  padding: 10px 20px;
-  background: var(--text-main);
-  color: var(--bg);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── Global Color Classes ── */
-.pos { color: var(--pos) !important; }
-.neg { color: var(--neg) !important; }
-.neutral { color: var(--text-sub) !important; }
+.action-row { display: flex; gap: 24px; margin-top: auto; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+.action-link { font-size: 11px; color: #555555; cursor: pointer; text-decoration: underline; }
+.action-link:active { color: #ffffff; }
 </style>
 </head>
 <body>
 
-<div class="app-container">
-  <div class="header">
-    <div class="app-title" id="fundNameDisplay">---</div>
-    <div class="system-actions">
-      <span class="sys-btn" onclick="exportData()">Backup</span>
-      <span class="sys-btn" onclick="importData()">Restore</span>
-    </div>
-  </div>
-
-  <div class="hero-block">
-    <div class="status-badge-wrapper">
-      <div id="statusBadge" class="status-badge">LIVE INDEX</div>
-    </div>
-    <div class="val-main" id="mainValDisplay">¥0</div>
-  </div>
-
-  <div class="stats-layout">
-    <div class="stat-card">
-      <span class="stat-label">Day / Margin</span>
-      <span class="stat-num" id="dayValDisplay">---</span>
-      <span class="stat-per" id="dayPctDisplay">---</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">Total / Yield</span>
-      <span class="stat-num" id="totalValDisplay">---</span>
-      <span class="stat-per" id="totalPctDisplay">---</span>
-    </div>
-  </div>
-
-  <div class="chart-container">
-    <div class="chart-meta-row">
-      <span class="chart-headline">Historical Performance</span>
-      <div class="period-selector">
-        <button class="p-tab" onclick="setPeriod('1M')">1M</button>
-        <button class="p-tab" onclick="setPeriod('3M')">3M</button>
-        <button class="p-tab" onclick="setPeriod('6M')">6M</button>
-        <button class="p-tab active" onclick="setPeriod('ALL')">ALL</button>
-      </div>
-    </div>
-    <div class="canvas-wrapper" id="canvasWrapper"></div>
-  </div>
-
-  <div class="dashboard-list" id="dashboardGrid"></div>
+<!-- Main UI -->
+<div class="center-piece" id="syncTrigger" onclick="fetchAll()">
+  <div class="main-value" id="mainValDisplay">¥0</div>
+  <div class="sub-metrics" id="subMetricsDisplay">---</div>
 </div>
 
-<div class="bottom-dock">
-  <button id="updateBtn" class="action-trigger" onclick="fetchAll()">
-    <span id="updateLabel">Synchronize Archive</span>
-  </button>
+<div class="chart-space" id="chartSpace">
+  <!-- JSで1本の線を描画 -->
 </div>
 
-<div id="toast" class="toast"></div>
+<div class="meta-trigger" onclick="togglePanel(true)">data</div>
+
+<!-- 隠し管理パネル -->
+<div class="control-panel" id="controlPanel">
+  <div class="panel-header">
+    <span class="panel-title">Ledger Configuration</span>
+    <span class="close-btn" onclick="togglePanel(false)">Dismiss</span>
+  </div>
+
+  <div class="input-group">
+    <span class="input-label">Total Holdings (口数)</span>
+    <input type="number" id="inputHolding" class="clean-input" onblur="updateConfig('holding', this.value)">
+  </div>
+
+  <div class="input-group">
+    <span class="input-label">Principal Cost (取得コスト)</span>
+    <input type="number" id="inputCost" class="clean-input" onblur="updateConfig('cost', this.value)">
+  </div>
+
+  <div class="input-group">
+    <span class="input-label">Fund Ident Code</span>
+    <input type="text" id="inputCode" class="clean-input" onblur="updateConfig('code', this.value)">
+  </div>
+
+  <div class="action-row">
+    <span class="action-link" onclick="exportData()">Export Token</span>
+    <span class="action-link" onclick="importData()">Import Token</span>
+  </div>
+</div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
-const MORPH_SAMPLES = 40;
 
-// ── State Management ──
-const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isNisa: true, diff: null };
+// ── Minimal States ──
+const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, diff: null };
 let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
 let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
-let activePeriod = "ALL";
-let editingField = null;
 let isUpdating = false;
-let lastSyncTime = localStorage.getItem(SK + "_sync") || "--:--";
 
 function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
 function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-// ── Financial Calculators ──
-function getValuation(p = stock.price) { return p * stock.holding / 10000; }
-function getUnrealizedPnL(v) { return v - stock.cost; }
-function getUnrealizedRate(pnl) { return stock.cost > 0 ? (pnl / stock.cost * 100) : 0; }
-function getAvgCost() { return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0; }
+const getValuation = (p = stock.price) => p * stock.holding / 10000;
+const getPnL = (v) => v - stock.cost;
 
-// ── String Formatters ──
+// ── Pure Formatters (色を排した表現) ──
 const fmtYen = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
-const fmtSign = v => { if (v === null || !isFinite(v)) return "---"; const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
-const fmtPct = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
-const fmtNum = (v, d=0) => v === null || !isFinite(v) ? "---" : Number(v).toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d});
+const fmtSign = v => { const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
+const fmtPct = v => (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 
-// ── UI Components ──
-let _toastTimer;
-function showToast(msg) {
-  const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
-}
-
-function exportData() {
-  const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist"), sync: localStorage.getItem(SK + "_sync") };
-  navigator.clipboard.writeText(JSON.stringify(b)).then(() => showToast("Archive token copied")).catch(() => showToast("Failed"));
-}
-function importData() {
-  const str = prompt("トークンを入力してください:"); if (!str) return;
-  try {
-    const b = JSON.parse(str);
-    if (b.stock) localStorage.setItem(SK, b.stock); if (b.hist) localStorage.setItem(SK + "_hist", b.hist); if (b.sync) localStorage.setItem(SK + "_sync", b.sync);
-    showToast("Restored successfully."); setTimeout(() => location.reload(), 1000);
-  } catch { showToast("Error"); }
-}
-
-function startEdit(f) { editingField = f; render(); requestAnimationFrame(() => { const el = document.getElementById("input-" + f); if (el) { el.focus(); el.select(); } }); }
-function finishEdit(f, v) { const n = parseFloat(v); if (!isNaN(n) && isFinite(n)) { stock[f] = n; save(); showToast("Updated"); } editingField = null; render(); }
-
-function recordTodayPnL() {
-  const today = new Date().toISOString().slice(0, 10);
-  const pnl = Math.round(getUnrealizedPnL(getValuation()));
-  const idx = history.findIndex(h => h.date === today);
-  if (idx >= 0) history[idx].pnl = pnl; else history.push({ date: today, pnl });
-  if (history.length > 180) history = history.slice(-180);
-  saveHistory();
-}
-
-function getResampledHistory() {
-  if (!history.length) return [];
-  const now = new Date(); let cutoff = null;
-  if (activePeriod === "1M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1); }
-  else if (activePeriod === "3M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3); }
-  else if (activePeriod === "6M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6); }
-  
-  let filtered = [...history].sort((a,b) => a.date.localeCompare(b.date));
-  if (cutoff) filtered = filtered.filter(h => new Date(h.date) >= cutoff);
-  if (filtered.length === 0) return [];
-  if (filtered.length === 1) return Array(MORPH_SAMPLES).fill(0).map(() => ({ date: filtered[0].date, pnl: filtered[0].pnl }));
-
-  const resampled = [];
-  for (let i = 0; i < MORPH_SAMPLES; i++) {
-    const rawIdx = (i / (MORPH_SAMPLES - 1)) * (filtered.length - 1);
-    const low = Math.floor(rawIdx); const high = Math.ceil(rawIdx); const weight = rawIdx - low;
-    const pnlItem = Math.round(filtered[low].pnl + (filtered[high].pnl - filtered[low].pnl) * weight);
-    resampled.push({ date: filtered[high].date, pnl: pnlItem });
-  }
-  return resampled;
-}
-
-// ── Blueprint Graphics Architecture ──
+// ── Chart Engine (1px Line) ──
 let chartPoints = [];
+function drawMinimalChart() {
+  const space = document.getElementById("chartSpace");
+  if (history.length < 2) { space.innerHTML = ""; return; }
 
-function injectChartStructure() {
-  const data = getResampledHistory();
-  const wrapper = document.getElementById("canvasWrapper");
-  if (data.length < 2) { wrapper.innerHTML = `<div class="chart-empty">No Index Data Compiled</div>`; return; }
-
-  const vals = data.map(d => d.pnl);
+  // 過去最大180日の全歴史をそのままマッピング
+  const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
+  const vals = sorted.map(d => d.pnl);
   const minV = Math.min(...vals); const maxV = Math.max(...vals); const range = maxV - minV || 1;
-  const W = 500, H = 150, PAD = 4;
-
-  chartPoints = data.map((d, i) => {
-    const x = (i / (data.length - 1)) * W;
-    const y = PAD + (1 - (d.pnl - minV) / range) * (H - PAD * 2);
-    return { x, y, date: d.date, pnl: d.pnl };
-  });
+  
+  const W = 500, H = 120;
+  chartPoints = sorted.map((d, i) => ({
+    x: (i / (sorted.length - 1)) * W,
+    y: 4 + (1 - (d.pnl - minV) / range) * (H - 8),
+    date: d.date,
+    pnl: d.pnl
+  }));
 
   const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
-  const lastPnl = history[history.length - 1]?.pnl ?? 0;
-  const colorLine = lastPnl >= 0 ? "var(--pos)" : "var(--neg)";
 
-  const svgElement = document.getElementById("interactiveSvg");
-  if (!svg
+  space.innerHTML = `
+    <svg class="minimal-svg" id="minimalSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <path d="${pathD}" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line id="hairline" x1="0" y1="0" x2="0" y2="${H}" stroke="#222222" stroke-width="1" style="display:none;" />
+    </svg>
+  `;
+  
+  initChartInteractions();
+}
+
+function initChartInteractions() {
+  const space = document.getElementById("chartSpace");
+  const hl = document.getElementById("hairline");
+  if (!hl || chartPoints.length === 0) return;
+
+  const handlePointer = (clientX) => {
+    const rect = space.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const targetX = pct * 500;
+
+    let closest = chartPoints[0]; let minDiff = Math.abs(chartPoints[0].x - targetX);
+    for (let p of chartPoints) { const diff = Math.abs(p.x - targetX); if (diff < minDiff) { minDiff = diff; closest = p; } }
+
+    hl.setAttribute("x1", closest.x); hl.setAttribute("x2", closest.x);
+    hl.style.display = "block";
+
+    document.body.classList.add("history-mode");
+    const simulatedVal = stock.cost + closest.pnl;
+    const rate = stock.cost > 0 ? (closest.pnl / stock.cost * 100) : 0;
+    
+    document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
+    document.getElementById("subMetricsDisplay").textContent = `${closest.date} ── TOTAL: ${fmtSign(closest.pnl)} (${fmtPct(rate)})`;
+  };
+
+  const resetPointer = () => { hl.style.display = "none"; document.body.classList.remove("history-mode"); renderLive(); };
+
+  space.addEventListener("mousemove", (e) => handlePointer(e.clientX));
+  space.addEventListener("mouseleave", resetPointer);
+  space.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX), {passive:true});
+  space.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX), {passive:true});
+  space.addEventListener("touchend", resetPointer);
+}
+
+// ── Core UI Render ──
+function renderLive() {
+  const val = getValuation();
+  const pnl = getPnL(val);
+  const rate = stock.cost > 0 ? (pnl / stock.cost * 100) : 0;
+  const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
+
+  document.getElementById("mainValDisplay").textContent = fmtYen(val);
+  
+  let metricsStr = "";
+  if (dayDiff !== null) metricsStr += `DAY: ${fmtSign(dayDiff)} (${fmtPct(parseFloat(stock.diff))})`;
+  metricsStr += `   /   TOTAL: ${fmtSign(pnl)} (${fmtPct(rate)})`;
+  
+  document.getElementById("subMetricsDisplay").textContent = metricsStr;
+}
+
+function render() {
+  renderLive();
+  drawMinimalChart();
+  
+  // パネル内のインプット同期
+  document.getElementById("inputHolding").value = stock.holding;
+  document.getElementById("inputCost").value = stock.cost;
+  document.getElementById("inputCode").value = stock.code;
+}
+
+// ── Control Panel Actions ──
+function togglePanel(open) { document.getElementById("controlPanel").classList.toggle("open", open); }
+function updateConfig(field, value) {
+  if (field === 'code') { stock.code = value; } 
+  else { const n = parseFloat(value); if (!isNaN(n) && isFinite(n)) stock[field] = n; }
+  save(); render();
+}
+
+// ── Backup System ──
+function exportData() {
+  const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist") };
+  navigator.clipboard.writeText(JSON.stringify(b)).then(() => alert("Copied token."));
+}
+function importData() {
+  const str = prompt("Paste token:"); if (!str) return;
+  try {
+    const b = JSON.parse(str);
+    if (b.stock) localStorage.setItem(SK, b.stock); if (b.hist) localStorage.setItem(SK + "_hist");
+    location.reload();
+  } catch { alert("Error"); }
+}
+
+// ── Minimalist Network Sync ──
+async function fetchAll() {
+  if (isUpdating) return; isUpdating = true;
+  const container = document.getElementById("syncTrigger");
+  container.classList.add("syncing");
+
+  try {
+    const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(stock.code)}`, { cache: "no-store" });
+    const json = await res.json();
+    if (json.status === "Success") {
+      stock.price = json.price; stock.diff = json.diff ?? null; save();
+      
+      // 今日の損益履歴を記録
+      const today = new Date().toISOString().slice(0, 10);
+      const pnl = Math.round(getPnL(getValuation()));
+      const idx = history.findIndex(h => h.date === today);
+      if (idx >= 0) history[idx].pnl = pnl; else history.push({ date: today, pnl });
+      if (history.length > 180) history = history.slice(-180);
+      saveHistory();
+
+      render();
+    }
+  } catch (e) {}
+
+  container.classList.remove("syncing");
+  isUpdating = false;
+}
+
+render();
+</script>
+</body>
+</html>
