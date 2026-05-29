@@ -3,26 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#000000" />
+<meta name="theme-color" content="#f4f3f0" />
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<title>MONEY LOG ULTIMATE</title>
+<title>MONEY LOG ARCHIVE</title>
 <link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <link rel="icon" type="image/png" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <style>
 :root {
-  --bg: #000000;
-  --text-main: #ffffff;
-  --text-sub: #86868b;
-  --text-soft: #2c2c2e;
-  --pos: #30d158;
-  --neg: #ff453a;
-  --glow-color: rgba(48,209,88,0.18);
-  --accent: rgba(255,255,255,0.03);
-  --accent-border: rgba(255,255,255,0.06);
-  --glow-x: 50%;
-  --glow-y: 0%;
+  --bg: #f4f3f0;
+  --text-main: #1c1b1a;
+  --text-sub: #7a7772;
+  --text-soft: #c8c6be;
+  --line: #e2e0d8;
+  --pos: #2a6f43; /* ボタニカルグリーン */
+  --neg: #b83b30; /* マダーレッド */
+  --chart-line: #1c1b1a;
+  --accent: #ffffff;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -30,7 +28,7 @@
 html, body {
   min-height: 100%;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
   overflow-x: hidden;
 }
@@ -40,20 +38,8 @@ body {
   padding: calc(40px + env(safe-area-inset-top)) 24px calc(130px + env(safe-area-inset-bottom));
 }
 
-/* 究極の環境発光：指先の動き（--glow-x, --glow-y）に完全にシンクロして動く */
-.ambient-glow {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: radial-gradient(circle 350px at var(--glow-x) var(--glow-y), var(--glow-color) 0%, transparent 100%);
-  z-index: 0;
-  pointer-events: none;
-  transition: background 0.4s ease;
-}
-
 .app-container {
-  position: relative;
-  z-index: 1;
-  max-width: 500px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -61,140 +47,279 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 48px;
+  align-items: baseline;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--text-main);
+  margin-bottom: 40px;
 }
 
-.brand-zone { display: flex; flex-direction: column; }
-.app-title { font-size: 13px; font-weight: 900; letter-spacing: 0.3em; color: #ffffff; text-transform: uppercase; }
-.app-sub { font-size: 9px; color: var(--text-sub); font-weight: 700; letter-spacing: 0.18em; margin-top: 6px; }
+.app-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.app-sub {
+  font-size: 10px;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
 
 .system-actions {
   display: flex;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--accent-border);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  padding: 6px 14px;
-  border-radius: 999px;
+  gap: 8px;
 }
-.sys-btn { font-size: 10px; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: color 0.15s; }
-.sys-btn:active { color: var(--text-main); }
-.sys-sep { color: var(--text-soft); font-size: 10px; margin: 0 8px; }
-
-/* ── Hero Value ── */
-.hero-block { margin-bottom: 40px; }
-.status-badge-wrapper { height: 18px; margin-bottom: 10px; }
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+.sys-btn {
+  font-size: 10px;
+  font-weight: 600;
   color: var(--text-sub);
-  text-transform: uppercase;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
 }
-.status-badge.live-mode .dot {
-  width: 6px; height: 6px; background: var(--pos); border-radius: 50%;
-  box-shadow: 0 0 10px var(--pos);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse { 0% { opacity:0.4; } 50% { opacity:1; } 100% { opacity:0.4; } }
+.sys-btn:active { color: var(--text-main); }
 
-.status-badge.history-mode {
-  color: #000; background: #ffffff; padding: 2px 8px; border-radius: 999px; font-weight: 800;
-}
-
-/* 数値切り替え時のシネマティックなフェード */
-.val-main {
-  font-size: 64px;
-  font-weight: 100;
-  letter-spacing: -3px;
-  color: var(--text-main);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.0;
-  transition: opacity 0.15s ease;
-}
-.val-main.updating-blur { opacity: 0.3; }
-
-/* ── Stats Grid ── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+/* ── Hero Asset Block (伝統と知性の伝統的タイポグラフィ) ── */
+.hero-block {
   margin-bottom: 48px;
 }
-.stat-card { display: flex; flex-direction: column; }
-.stat-label { font-size: 9px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.12em; margin-bottom: 8px; }
-.stat-num { font-size: 24px; font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: -0.5px; transition: color 0.3s; }
-.stat-per { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 4px; }
 
-/* ── Interactive Graph Section ── */
-.chart-container { margin-bottom: 48px; }
-.chart-meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.chart-headline { font-size: 10px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase; }
+.status-badge-wrapper {
+  height: 20px;
+  margin-bottom: 8px;
+}
+.status-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  border: 1px solid var(--text-soft);
+  padding: 2px 8px;
+  display: inline-block;
+}
+.status-badge.history-mode {
+  background: var(--text-main);
+  color: var(--bg);
+  border-color: var(--text-main);
+}
+
+.val-main {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 1.0;
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+
+/* ── Stats Grid ── */
+.stats-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.stat-num {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-per {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+
+/* ── Fine Line Chart ── */
+.chart-container {
+  margin-bottom: 48px;
+}
+
+.chart-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chart-headline {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
 
 .period-selector {
-  display: flex; background: var(--accent); border: 1px solid var(--accent-border); padding: 2px; border-radius: 999px;
+  display: flex;
+  gap: 4px;
 }
+
 .p-tab {
-  font-size: 10px; font-weight: 800; color: var(--text-sub); padding: 5px 14px;
-  border: none; background: transparent; border-radius: 999px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sub);
+  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
-.p-tab.active { color: var(--text-main); background: rgba(255,255,255,0.08); }
+.p-tab.active {
+  color: var(--text-main);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
-.canvas-wrapper { width: 100%; height: 160px; position: relative; cursor: none; }
-.chart-empty { display: flex; align-items: center; justify-content: center; height: 160px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
+.canvas-wrapper {
+  width: 100%;
+  height: 150px;
+  position: relative;
+  cursor: crosshair;
+}
 
-/* ★本気ポイント：CSSによるSVGパスの滑らかな変形アニメーション（モーフィング） */
+svg.chart-canvas-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
 svg.chart-canvas-svg path {
-  transition: d 0.35s cubic-bezier(0.4, 0, 0.2, 1), fill 0.35s, stroke 0.35s;
+  transition: d 0.3s cubic-bezier(0.25, 1, 0.5, 1), stroke 0.3s;
 }
 
-/* ── Dashboard Grid ── */
-.dashboard-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
-  padding-top: 32px; border-top: 1px solid var(--accent-border);
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  font-size: 11px;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
 }
-.dash-item { background: var(--accent); border: 1px solid var(--accent-border); padding: 18px; border-radius: 20px; transition: background 0.2s; }
-.dash-item:focus-within { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); }
-.dash-label { font-size: 9px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-.dash-val { font-size: 16px; font-weight: 600; color: var(--text-main); font-variant-numeric: tabular-nums; }
-.dash-val.editable { cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.25); display: inline-block; }
+
+/* ── Meta Blueprint Dashboard ── */
+.dashboard-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--text-main);
+}
+
+.dash-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.dash-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.dash-val {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dash-val.editable {
+  cursor: pointer;
+  color: var(--text-main);
+  border-bottom: 1px dotted var(--text-sub);
+}
 
 .dash-input {
-  width: 100%; background: transparent; border: none; color: #fff;
-  font-family: inherit; font-size: 16px; font-weight: 600; outline: none; font-variant-numeric: tabular-nums;
+  background: var(--accent);
+  border: 1px solid var(--text-main);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 6px;
+  outline: none;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ── Bottom Dock Bar ── */
+/* ── Modern Bottom Dock Bar ── */
 .bottom-dock {
-  position: fixed; left: 0; right: 0; bottom: 0;
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
   padding: 16px 24px calc(24px + env(safe-area-inset-bottom));
-  display: flex; justify-content: center; z-index: 10;
-  background: linear-gradient(to top, #000 70%, transparent); pointer-events: none;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  background: linear-gradient(to top, var(--bg) 80%, transparent);
+  pointer-events: none;
 }
+
 .action-trigger {
-  pointer-events: auto; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-  width: 100%; max-width: 320px; height: 56px; border-radius: 999px;
-  background: #ffffff; color: #000000; font-size: 14px; font-weight: 800; border: none;
-  box-shadow: 0 16px 40px rgba(255,255,255,0.12); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 52px;
+  background: var(--text-main);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  transition: opacity 0.15s ease;
+  cursor: pointer;
 }
-.action-trigger:active { transform: scale(0.96); opacity: 0.9; }
-.action-trigger:disabled { opacity: 0.3; }
-.trigger-spinner { font-size: 16px; display: inline-block; }
+.action-trigger:active { opacity: 0.85; }
+.action-trigger:disabled { opacity: 0.2; }
 
 /* ── Toast ── */
 .toast {
-  position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom));
-  transform: translateX(-50%) translateY(10px); opacity: 0; pointer-events: none; z-index: 100;
-  padding: 14px 28px; border-radius: 999px; background: #ffffff; color: #000000;
-  font-size: 12px; font-weight: 800; box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;
+  position: fixed;
+  left: 50%;
+  bottom: calc(90px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  padding: 10px 20px;
+  background: var(--text-main);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ── Global Color Classes ── */
 .pos { color: var(--pos) !important; }
 .neg { color: var(--neg) !important; }
 .neutral { color: var(--text-sub) !important; }
@@ -202,38 +327,30 @@ svg.chart-canvas-svg path {
 </head>
 <body>
 
-<div class="ambient-glow" id="ambientGlow"></div>
-
 <div class="app-container">
   <div class="header">
-    <div class="brand-zone">
-      <div class="app-title" id="fundNameDisplay">---</div>
-      <div class="app-sub" id="lastSyncDisplay">SYNC: --:--</div>
-    </div>
+    <div class="app-title" id="fundNameDisplay">---</div>
     <div class="system-actions">
       <span class="sys-btn" onclick="exportData()">Backup</span>
-      <span class="sys-sep">/</span>
       <span class="sys-btn" onclick="importData()">Restore</span>
     </div>
   </div>
 
   <div class="hero-block">
     <div class="status-badge-wrapper">
-      <div id="statusBadge" class="status-badge live-mode">
-        <span class="dot"></span><span id="statusLabel">LIVE</span>
-      </div>
+      <div id="statusBadge" class="status-badge">LIVE INDEX</div>
     </div>
     <div class="val-main" id="mainValDisplay">¥0</div>
   </div>
 
-  <div class="stats-grid">
+  <div class="stats-layout">
     <div class="stat-card">
-      <span class="stat-label">DAY (前日比)</span>
+      <span class="stat-label">Day / Margin</span>
       <span class="stat-num" id="dayValDisplay">---</span>
       <span class="stat-per" id="dayPctDisplay">---</span>
     </div>
     <div class="stat-card">
-      <span class="stat-label">TOTAL (通算損益)</span>
+      <span class="stat-label">Total / Yield</span>
       <span class="stat-num" id="totalValDisplay">---</span>
       <span class="stat-per" id="totalPctDisplay">---</span>
     </div>
@@ -241,7 +358,7 @@ svg.chart-canvas-svg path {
 
   <div class="chart-container">
     <div class="chart-meta-row">
-      <span class="chart-headline">損益パフォーマンス</span>
+      <span class="chart-headline">Historical Performance</span>
       <div class="period-selector">
         <button class="p-tab" onclick="setPeriod('1M')">1M</button>
         <button class="p-tab" onclick="setPeriod('3M')">3M</button>
@@ -252,13 +369,12 @@ svg.chart-canvas-svg path {
     <div class="canvas-wrapper" id="canvasWrapper"></div>
   </div>
 
-  <div class="dashboard-grid" id="dashboardGrid"></div>
+  <div class="dashboard-list" id="dashboardGrid"></div>
 </div>
 
 <div class="bottom-dock">
   <button id="updateBtn" class="action-trigger" onclick="fetchAll()">
-    <span id="updateIcon" class="trigger-spinner">↻</span>
-    <span id="updateLabel">Update Dashboard</span>
+    <span id="updateLabel">Synchronize Archive</span>
   </button>
 </div>
 
@@ -267,9 +383,9 @@ svg.chart-canvas-svg path {
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
-const MORPH_SAMPLES = 40; // モーフィングを美しくシンクロさせるための一定の制御点数
+const MORPH_SAMPLES = 40;
 
-// ── Core States ──
+// ── State Management ──
 const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isNisa: true, diff: null };
 let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
 let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
@@ -281,42 +397,40 @@ let lastSyncTime = localStorage.getItem(SK + "_sync") || "--:--";
 function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
 function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-// ── Financial Engines ──
+// ── Financial Calculators ──
 function getValuation(p = stock.price) { return p * stock.holding / 10000; }
 function getUnrealizedPnL(v) { return v - stock.cost; }
 function getUnrealizedRate(pnl) { return stock.cost > 0 ? (pnl / stock.cost * 100) : 0; }
 function getAvgCost() { return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0; }
 
-// ── Formatters ──
+// ── String Formatters ──
 const fmtYen = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
 const fmtSign = v => { if (v === null || !isFinite(v)) return "---"; const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
 const fmtPct = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 const fmtNum = (v, d=0) => v === null || !isFinite(v) ? "---" : Number(v).toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d});
 
-// ── Toast UI ──
+// ── UI Components ──
 let _toastTimer;
 function showToast(msg) {
   const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
 }
 
-// ── Data Sync (Backup/Restore) ──
 function exportData() {
   const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist"), sync: localStorage.getItem(SK + "_sync") };
-  navigator.clipboard.writeText(JSON.stringify(b)).then(() => showToast("Encrypted backup token copied")).catch(() => showToast("Copy failed"));
+  navigator.clipboard.writeText(JSON.stringify(b)).then(() => showToast("Archive token copied")).catch(() => showToast("Failed"));
 }
 function importData() {
-  const str = prompt("バックアップトークンをペースト:"); if (!str) return;
+  const str = prompt("トークンを入力してください:"); if (!str) return;
   try {
     const b = JSON.parse(str);
     if (b.stock) localStorage.setItem(SK, b.stock); if (b.hist) localStorage.setItem(SK + "_hist", b.hist); if (b.sync) localStorage.setItem(SK + "_sync", b.sync);
-    showToast("Restored perfectly. Reloading..."); setTimeout(() => location.reload(), 1000);
-  } catch { showToast("Invalid Token"); }
+    showToast("Restored successfully."); setTimeout(() => location.reload(), 1000);
+  } catch { showToast("Error"); }
 }
 
-// ── Inline Form Editors ──
 function startEdit(f) { editingField = f; render(); requestAnimationFrame(() => { const el = document.getElementById("input-" + f); if (el) { el.focus(); el.select(); } }); }
-function finishEdit(f, v) { const n = parseFloat(v); if (!isNaN(n) && isFinite(n)) { stock[f] = n; save(); showToast("Dashboard synced"); } editingField = null; render(); }
+function finishEdit(f, v) { const n = parseFloat(v); if (!isNaN(n) && isFinite(n)) { stock[f] = n; save(); showToast("Updated"); } editingField = null; render(); }
 
 function recordTodayPnL() {
   const today = new Date().toISOString().slice(0, 10);
@@ -327,7 +441,6 @@ function recordTodayPnL() {
   saveHistory();
 }
 
-// ★本気機能：異なる配列長から均等にリサンプリングし、超滑らかな幾何学モーフィングを実現するロジック
 function getResampledHistory() {
   if (!history.length) return [];
   const now = new Date(); let cutoff = null;
@@ -338,36 +451,29 @@ function getResampledHistory() {
   let filtered = [...history].sort((a,b) => a.date.localeCompare(b.date));
   if (cutoff) filtered = filtered.filter(h => new Date(h.date) >= cutoff);
   if (filtered.length === 0) return [];
+  if (filtered.length === 1) return Array(MORPH_SAMPLES).fill(0).map(() => ({ date: filtered[0].date, pnl: filtered[0].pnl }));
 
-  if (filtered.length === 1) {
-    return Array(MORPH_SAMPLES).fill(0).map(() => ({ date: filtered[0].date, pnl: filtered[0].pnl }));
-  }
-
-  // 固定長（MORPH_SAMPLES）の配列に線形補完でリサンプリング
   const resampled = [];
   for (let i = 0; i < MORPH_SAMPLES; i++) {
     const rawIdx = (i / (MORPH_SAMPLES - 1)) * (filtered.length - 1);
-    const low = Math.floor(rawIdx);
-    const high = Math.ceil(rawIdx);
-    const weight = rawIdx - low;
-    
+    const low = Math.floor(rawIdx); const high = Math.ceil(rawIdx); const weight = rawIdx - low;
     const pnlItem = Math.round(filtered[low].pnl + (filtered[high].pnl - filtered[low].pnl) * weight);
     resampled.push({ date: filtered[high].date, pnl: pnlItem });
   }
   return resampled;
 }
 
-// ── Ultimate UI Renderer Line ──
+// ── Blueprint Graphics Architecture ──
 let chartPoints = [];
 
 function injectChartStructure() {
   const data = getResampledHistory();
   const wrapper = document.getElementById("canvasWrapper");
-  if (data.length < 2) { wrapper.innerHTML = `<div class="chart-empty">Gathering Market Intel...</div>`; return; }
+  if (data.length < 2) { wrapper.innerHTML = `<div class="chart-empty">No Index Data Compiled</div>`; return; }
 
   const vals = data.map(d => d.pnl);
   const minV = Math.min(...vals); const maxV = Math.max(...vals); const range = maxV - minV || 1;
-  const W = 500, H = 160, PAD = 8;
+  const W = 500, H = 150, PAD = 4;
 
   chartPoints = data.map((d, i) => {
     const x = (i / (data.length - 1)) * W;
@@ -376,182 +482,8 @@ function injectChartStructure() {
   });
 
   const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
-  const fillD = `${pathD} L${chartPoints[chartPoints.length-1].x},${H} L${chartPoints[0].x},${H} Z`;
-
   const lastPnl = history[history.length - 1]?.pnl ?? 0;
-  const colorLine = lastPnl >= 0 ? "#30d158" : "#ff453a";
-  const colorTop = lastPnl >= 0 ? "rgba(48,209,88,0.24)" : "rgba(255,69,58,0.24)";
-  
-  // トレンドカラーによる環境発光の基調色変化
-  document.documentElement.style.setProperty('--glow-color', lastPnl >= 0 ? "rgba(48,209,88,0.18)" : "rgba(255,69,58,0.18)");
+  const colorLine = lastPnl >= 0 ? "var(--pos)" : "var(--neg)";
 
   const svgElement = document.getElementById("interactiveSvg");
-  if (!svgElement) {
-    // 初回レンダリング構造作成
-    const gradId = "morph_grad";
-    wrapper.innerHTML = `
-      <svg class="chart-canvas-svg" id="interactiveSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" id="gradStopTop" stop-color="${colorTop}"/>
-            <stop offset="100%" stop-color="transparent"/>
-          </linearGradient>
-        </defs>
-        <path id="chartFillPath" d="${fillD}" fill="url(#${gradId})" />
-        <path id="chartLinePath" d="${pathD}" fill="none" stroke="${colorLine}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <line id="chartGuideLine" x1="0" y1="0" x2="0" y2="${H}" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-dasharray="4,4" style="display:none;" />
-        <circle id="chartGuideDot" r="6" fill="${colorLine}" stroke="#000" stroke-width="2" style="display:none;" />
-      </svg>
-    `;
-  } else {
-    // 2回目以降は、同一制御点パスをそのまま上書きすることでCSS3モーフィングが自動発動
-    document.getElementById("chartFillPath").setAttribute("d", fillD);
-    document.getElementById("chartLinePath").setAttribute("d", pathD);
-    document.getElementById("chartLinePath").setAttribute("stroke", colorLine);
-    document.getElementById("gradStopTop").setAttribute("stop-color", colorTop);
-    document.getElementById("chartGuideDot").setAttribute("fill", colorLine);
-  }
-}
-
-function initChartInteractions() {
-  const wrapper = document.getElementById("canvasWrapper");
-  const svg = document.getElementById("interactiveSvg");
-  if (!svg || chartPoints.length === 0) return;
-
-  const line = document.getElementById("chartGuideLine"); const dot = document.getElementById("chartGuideDot");
-  const glow = document.documentElement;
-
-  const handlePointer = (clientX, clientY) => {
-    const rect = wrapper.getBoundingClientRect();
-    const touchX = clientX - rect.left;
-    const pct = Math.max(0, Math.min(1, touchX / rect.width));
-    
-    // スポットライトの中心点を指先の絶対座標に追従
-    glow.style.setProperty('--glow-x', `${clientX}px`);
-    glow.style.setProperty('--glow-y', `${clientY}px`);
-    
-    const targetX = pct * 500;
-    let closest = chartPoints[0]; let minDiff = Math.abs(chartPoints[0].x - targetX);
-    for (let p of chartPoints) { const diff = Math.abs(p.x - targetX); if (diff < minDiff) { minDiff = diff; closest = p; } }
-
-    line.setAttribute("x1", closest.x); line.setAttribute("x2", closest.x);
-    dot.setAttribute("cx", closest.x); dot.setAttribute("cy", closest.y);
-    line.style.display = "block"; dot.style.display = "block";
-
-    updateDisplayValues(closest.pnl, closest.date);
-  };
-
-  const resetPointer = () => {
-    line.style.display = "none"; dot.style.display = "none";
-    // 離脱時は発光スポットライトをいつもの最上部へリセット
-    glow.style.setProperty('--glow-x', `50%`); glow.style.setProperty('--glow-y', `0%`);
-    renderLiveValues();
-  };
-
-  wrapper.addEventListener("mousemove", (e) => handlePointer(e.clientX, e.clientY));
-  wrapper.addEventListener("mouseleave", resetPointer);
-  wrapper.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
-  wrapper.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
-  wrapper.addEventListener("touchend", resetPointer);
-}
-
-function renderLiveValues() {
-  const val = getValuation(); const pnl = getUnrealizedPnL(val); const rate = getUnrealizedRate(pnl);
-  const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
-
-  document.getElementById("statusBadge").className = "status-badge live-mode";
-  document.getElementById("statusLabel").textContent = "LIVE MARKET";
-
-  const mainValEl = document.getElementById("mainValDisplay");
-  if(mainValEl.textContent !== fmtYen(val)) {
-    mainValEl.classList.add("updating-blur");
-    setTimeout(() => { mainValEl.textContent = fmtYen(val); mainValEl.classList.remove("updating-blur"); }, 60);
-  }
-
-  const dV = document.getElementById("dayValDisplay"); const dP = document.getElementById("dayPctDisplay");
-  dV.textContent = dayDiff === null ? "---" : fmtSign(dayDiff); dV.className = `stat-num ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
-  dP.textContent = stock.diff !== null ? fmtPct(parseFloat(stock.diff)) : '---'; dP.className = `stat-per ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
-
-  const tV = document.getElementById("totalValDisplay"); const tP = document.getElementById("totalPctDisplay");
-  tV.textContent = fmtSign(pnl); tV.className = `stat-num ${pnl >= 0 ? 'pos' : 'neg'}`;
-  tP.textContent = fmtPct(rate); tP.className = `stat-per ${pnl >= 0 ? 'pos' : 'neg'}`;
-}
-
-function updateDisplayValues(targetPnL, targetDate) {
-  document.getElementById("statusBadge").className = "status-badge history-mode";
-  document.getElementById("statusLabel").textContent = targetDate;
-
-  const simulatedVal = stock.cost + targetPnL;
-  document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
-  
-  document.getElementById("dayValDisplay").textContent = "---";
-  document.getElementById("dayValDisplay").className = "stat-num neutral";
-  document.getElementById("dayPctDisplay").textContent = "HISTORY TRACK";
-  document.getElementById("dayPctDisplay").className = "stat-per neutral";
-
-  const tV = document.getElementById("totalValDisplay"); const tP = document.getElementById("totalPctDisplay");
-  tV.textContent = fmtSign(targetPnL); tV.className = `stat-num ${targetPnL >= 0 ? 'pos' : 'neg'}`;
-  tP.textContent = fmtPct(getUnrealizedRate(targetPnL)); tP.className = `stat-per ${targetPnL >= 0 ? 'pos' : 'neg'}`;
-}
-
-function render() {
-  document.getElementById("fundNameDisplay").textContent = stock.name;
-  document.getElementById("lastSyncDisplay").textContent = "SYNC: " + lastSyncTime;
-
-  renderLiveValues();
-  injectChartStructure();
-  initChartInteractions();
-
-  const avg = getAvgCost();
-  const inlineElement = (f, disp) => {
-    if (editingField === f) return `<input id="input-${f}" class="dash-input" type="number" step="any" value="${stock[f]}" onblur="finishEdit('${f}', this.value)" onkeydown="if(event.key==='Enter')this.blur()">`;
-    return `<span class="dash-val editable" onclick="startEdit('${f}')">${disp}</span>`;
-  };
-
-  document.getElementById("dashboardGrid").innerHTML = `
-    <div class="dash-item"><div class="dash-label">基準価額 (NAV)</div><div class="dash-val">${fmtNum(stock.price, 0)}</div></div>
-    <div class="dash-item"><div class="dash-label">保有口数</div>${inlineElement("holding", fmtNum(stock.holding, 0))}</div>
-    <div class="dash-item"><div class="dash-label">取得コスト</div>${inlineElement("cost", fmtYen(stock.cost))}</div>
-    <div class="dash-item"><div class="dash-label">平均取得単価</div><div class="dash-val">${fmtNum(avg, 0)}</div></div>
-  `;
-}
-
-function setPeriod(p) {
-  activePeriod = p;
-  document.querySelectorAll(".p-tab").forEach(t => t.classList.toggle("active", t.textContent === p));
-  render();
-}
-
-// ── Asynchronous Network Fetcher ──
-async function fetchAll() {
-  if (isUpdating) return; isUpdating = true;
-  const btn = document.getElementById("updateBtn"); const icon = document.getElementById("updateIcon"); const lbl = document.getElementById("updateLabel");
-
-  btn.disabled = true; lbl.textContent = "Connecting to Node...";
-  const anim = icon.animate([{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }], { duration: 750, iterations: Infinity, easing: "cubic-bezier(0.4, 0, 0.2, 1)" });
-
-  try {
-    const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(stock.code)}`, { cache: "no-store" });
-    const json = await res.json();
-
-    if (json.status === "Success") {
-      stock.price = json.price; stock.diff = json.diff ?? null; save();
-      recordTodayPnL();
-
-      const now = new Date(); lastSyncTime = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2, "0");
-      localStorage.setItem(SK + "_sync", lastSyncTime);
-
-      render(); anim.cancel();
-      lbl.textContent = "Dashboard Core Synced"; showToast("Updated successfully");
-    } else { throw new Error(); }
-  } catch {
-    anim.cancel(); lbl.textContent = "Sync Aborted"; showToast("Network handshake failed");
-  }
-
-  setTimeout(() => { lbl.textContent = "Update Dashboard"; btn.disabled = false; isUpdating = false; }, 1200);
-}
-
-render();
-</script>
-</body>
-</html>
+  if (!svg
