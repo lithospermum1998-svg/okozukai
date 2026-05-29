@@ -7,21 +7,22 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<title>MONEY LOG PRO</title>
+<title>MONEY LOG ULTIMATE</title>
 <link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <link rel="icon" type="image/png" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <style>
 :root {
   --bg: #000000;
   --text-main: #ffffff;
-  --text-sub: #88888e;
-  --text-soft: #3a3a3c;
+  --text-sub: #86868b;
+  --text-soft: #2c2c2e;
   --pos: #30d158;
   --neg: #ff453a;
-  --pos-glow: rgba(48,209,88,0.15);
-  --neg-glow: rgba(255,69,58,0.15);
-  --accent: rgba(255,255,255,0.04);
-  --accent-border: rgba(255,255,255,0.08);
+  --glow-color: rgba(48,209,88,0.18);
+  --accent: rgba(255,255,255,0.03);
+  --accent-border: rgba(255,255,255,0.06);
+  --glow-x: 50%;
+  --glow-y: 0%;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -29,352 +30,174 @@
 html, body {
   min-height: 100%;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
   background: var(--bg);
   overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
-  padding: calc(30px + env(safe-area-inset-top)) 24px calc(120px + env(safe-area-inset-bottom));
+  padding: calc(40px + env(safe-area-inset-top)) 24px calc(130px + env(safe-area-inset-bottom));
 }
 
-/* 背景に溶け込む有機的な光のレイヤー */
+/* 究極の環境発光：指先の動き（--glow-x, --glow-y）に完全にシンクロして動く */
 .ambient-glow {
   position: fixed;
-  top: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100vw; height: 400px;
-  background: radial-gradient(circle at 50% 0%, var(--pos-glow) 0%, transparent 75%);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: radial-gradient(circle 350px at var(--glow-x) var(--glow-y), var(--glow-color) 0%, transparent 100%);
   z-index: 0;
   pointer-events: none;
-  transition: background 0.5s ease;
-}
-body.is-neg-trend .ambient-glow {
-  background: radial-gradient(circle at 50% 0%, var(--neg-glow) 0%, transparent 75%);
+  transition: background 0.4s ease;
 }
 
 .app-container {
   position: relative;
   z-index: 1;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-/* ── Header (超ミニマル＆スタイリッシュ) ── */
+/* ── Header ── */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 40px;
+  align-items: center;
+  margin-bottom: 48px;
 }
 
-.brand-zone {
-  display: flex;
-  flex-direction: column;
-}
-
-.app-title {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.25em;
-  color: #ffffff;
-}
-
-.app-sub {
-  font-size: 9px;
-  color: var(--text-sub);
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  margin-top: 6px;
-  text-transform: uppercase;
-}
+.brand-zone { display: flex; flex-direction: column; }
+.app-title { font-size: 13px; font-weight: 900; letter-spacing: 0.3em; color: #ffffff; text-transform: uppercase; }
+.app-sub { font-size: 9px; color: var(--text-sub); font-weight: 700; letter-spacing: 0.18em; margin-top: 6px; }
 
 .system-actions {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--accent);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--accent-border);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   padding: 6px 14px;
   border-radius: 999px;
 }
-
-.sys-btn {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-sub);
-  cursor: pointer;
-  transition: color 0.15s;
-  user-select: none;
-}
+.sys-btn { font-size: 10px; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: color 0.15s; }
 .sys-btn:active { color: var(--text-main); }
-.sys-sep { color: var(--text-soft); font-size: 10px; }
+.sys-sep { color: var(--text-soft); font-size: 10px; margin: 0 8px; }
 
-/* ── Hero Section (圧倒的なタイポグラフィ) ── */
-.hero-block {
-  margin-bottom: 32px;
-}
-
-.status-badge-wrapper {
-  height: 16px;
-  margin-bottom: 8px;
-}
+/* ── Hero Value ── */
+.hero-block { margin-bottom: 40px; }
+.status-badge-wrapper { height: 18px; margin-bottom: 10px; }
 
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
   color: var(--text-sub);
-  transition: all 0.2s ease;
+  text-transform: uppercase;
 }
 .status-badge.live-mode .dot {
-  width: 6px; height: 6px;
-  background: var(--pos);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--pos);
+  width: 6px; height: 6px; background: var(--pos); border-radius: 50%;
+  box-shadow: 0 0 10px var(--pos);
+  animation: pulse 2s infinite;
 }
+@keyframes pulse { 0% { opacity:0.4; } 50% { opacity:1; } 100% { opacity:0.4; } }
+
 .status-badge.history-mode {
-  color: #e5e5ea;
-  background: rgba(255,255,255,0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
+  color: #000; background: #ffffff; padding: 2px 8px; border-radius: 999px; font-weight: 800;
 }
 
+/* 数値切り替え時のシネマティックなフェード */
 .val-main {
-  font-size: 52px;
-  font-weight: 200;
-  letter-spacing: -2px;
+  font-size: 64px;
+  font-weight: 100;
+  letter-spacing: -3px;
   color: var(--text-main);
   font-variant-numeric: tabular-nums;
   line-height: 1.0;
+  transition: opacity 0.15s ease;
 }
+.val-main.updating-blur { opacity: 0.3; }
 
-/* ── Stats Row ── */
+/* ── Stats Grid ── */
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 40px;
+  gap: 32px;
+  margin-bottom: 48px;
 }
+.stat-card { display: flex; flex-direction: column; }
+.stat-label { font-size: 9px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.12em; margin-bottom: 8px; }
+.stat-num { font-size: 24px; font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: -0.5px; transition: color 0.3s; }
+.stat-per { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 4px; }
 
-.stat-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.1em;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-
-.stat-num {
-  font-size: 22px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.5px;
-}
-
-.stat-per {
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  margin-top: 2px;
-  opacity: 0.9;
-}
-
-/* ── Interactive Chart ── */
-.chart-container {
-  margin-bottom: 40px;
-}
-
-.chart-meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.chart-headline {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.05em;
-}
+/* ── Interactive Graph Section ── */
+.chart-container { margin-bottom: 48px; }
+.chart-meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.chart-headline { font-size: 10px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase; }
 
 .period-selector {
-  display: flex;
-  background: var(--accent);
-  border: 1px solid var(--accent-border);
-  padding: 2px;
-  border-radius: 999px;
+  display: flex; background: var(--accent); border: 1px solid var(--accent-border); padding: 2px; border-radius: 999px;
 }
-
 .p-tab {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-sub);
-  padding: 4px 12px;
-  border: none;
-  background: transparent;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-size: 10px; font-weight: 800; color: var(--text-sub); padding: 5px 14px;
+  border: none; background: transparent; border-radius: 999px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.p-tab.active {
-  color: var(--text-main);
-  background: rgba(255,255,255,0.12);
+.p-tab.active { color: var(--text-main); background: rgba(255,255,255,0.08); }
+
+.canvas-wrapper { width: 100%; height: 160px; position: relative; cursor: none; }
+.chart-empty { display: flex; align-items: center; justify-content: center; height: 160px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
+
+/* ★本気ポイント：CSSによるSVGパスの滑らかな変形アニメーション（モーフィング） */
+svg.chart-canvas-svg path {
+  transition: d 0.35s cubic-bezier(0.4, 0, 0.2, 1), fill 0.35s, stroke 0.35s;
 }
 
-.canvas-wrapper {
-  width: 100%;
-  height: 140px;
-  position: relative;
-  cursor: crosshair;
-}
-
-svg.chart-canvas-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: visible;
-}
-
-.chart-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 140px;
-  font-size: 12px;
-  color: var(--text-sub);
-  font-weight: 500;
-}
-
-/* ── Meta Dashboard Grid ── */
+/* ── Dashboard Grid ── */
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding-top: 24px;
-  border-top: 1px solid var(--accent-border);
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  padding-top: 32px; border-top: 1px solid var(--accent-border);
 }
-
-.dash-item {
-  background: var(--accent);
-  border: 1px solid var(--accent-border);
-  padding: 16px;
-  border-radius: 16px;
-}
-
-.dash-label {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-sub);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.dash-val {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-main);
-  font-variant-numeric: tabular-nums;
-}
-.dash-val.editable {
-  border-bottom: 1px dashed rgba(255,255,255,0.3);
-  display: inline-block;
-}
+.dash-item { background: var(--accent); border: 1px solid var(--accent-border); padding: 18px; border-radius: 20px; transition: background 0.2s; }
+.dash-item:focus-within { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); }
+.dash-label { font-size: 9px; font-weight: 800; color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.dash-val { font-size: 16px; font-weight: 600; color: var(--text-main); font-variant-numeric: tabular-nums; }
+.dash-val.editable { cursor: pointer; border-bottom: 1px dashed rgba(255,255,255,0.25); display: inline-block; }
 
 .dash-input {
-  width: 100%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #fff;
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 4px 6px;
-  outline: none;
-  font-variant-numeric: tabular-nums;
+  width: 100%; background: transparent; border: none; color: #fff;
+  font-family: inherit; font-size: 16px; font-weight: 600; outline: none; font-variant-numeric: tabular-nums;
 }
 
-/* ── Fixed Bottom Trigger ── */
+/* ── Bottom Dock Bar ── */
 .bottom-dock {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
+  position: fixed; left: 0; right: 0; bottom: 0;
   padding: 16px 24px calc(24px + env(safe-area-inset-bottom));
-  display: flex;
-  justify-content: center;
-  z-index: 10;
-  background: linear-gradient(to top, #000 60%, transparent);
-  pointer-events: none;
+  display: flex; justify-content: center; z-index: 10;
+  background: linear-gradient(to top, #000 70%, transparent); pointer-events: none;
 }
-
 .action-trigger {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 280px;
-  height: 54px;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #000000;
-  font-size: 14px;
-  font-weight: 700;
-  border: none;
-  box-shadow: 0 12px 32px rgba(255,255,255,0.15);
-  transition: transform 0.1s ease, opacity 0.2s;
-  cursor: pointer;
+  pointer-events: auto; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  width: 100%; max-width: 320px; height: 56px; border-radius: 999px;
+  background: #ffffff; color: #000000; font-size: 14px; font-weight: 800; border: none;
+  box-shadow: 0 16px 40px rgba(255,255,255,0.12); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
 }
-.action-trigger:active { transform: scale(0.97); }
-.action-trigger:disabled { opacity: 0.4; }
-
-.trigger-spinner {
-  font-size: 16px;
-  display: inline-block;
-}
+.action-trigger:active { transform: scale(0.96); opacity: 0.9; }
+.action-trigger:disabled { opacity: 0.3; }
+.trigger-spinner { font-size: 16px; display: inline-block; }
 
 /* ── Toast ── */
 .toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(96px + env(safe-area-inset-bottom));
-  transform: translateX(-50%) translateY(10px);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 100;
-  padding: 12px 24px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.95);
-  color: #000000;
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  transition: opacity 0.2s, transform 0.2s;
-  white-space: nowrap;
+  position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(10px); opacity: 0; pointer-events: none; z-index: 100;
+  padding: 14px 28px; border-radius: 999px; background: #ffffff; color: #000000;
+  font-size: 12px; font-weight: 800; box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ── Utilities ── */
 .pos { color: var(--pos) !important; }
 .neg { color: var(--neg) !important; }
 .neutral { color: var(--text-sub) !important; }
-
-@media (max-width: 360px) {
-  .val-main { font-size: 42px; }
-  .stat-num { font-size: 18px; }
-}
 </style>
 </head>
 <body>
@@ -426,12 +249,10 @@ svg.chart-canvas-svg {
         <button class="p-tab active" onclick="setPeriod('ALL')">ALL</button>
       </div>
     </div>
-    <div class="canvas-wrapper" id="canvasWrapper">
-      </div>
+    <div class="canvas-wrapper" id="canvasWrapper"></div>
   </div>
 
-  <div class="dashboard-grid" id="dashboardGrid">
-    </div>
+  <div class="dashboard-grid" id="dashboardGrid"></div>
 </div>
 
 <div class="bottom-dock">
@@ -446,32 +267,12 @@ svg.chart-canvas-svg {
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
+const MORPH_SAMPLES = 40; // モーフィングを美しくシンクロさせるための一定の制御点数
 
-// ── State ──
-const DEFAULT = {
-  name: "楽天・プラス・SOX",
-  code: "2931123A",
-  price: 19391,
-  holding: 59845,
-  cost: 121180,
-  isNisa: true,
-  diff: null
-};
-
-let stock = (() => {
-  try {
-    const s = localStorage.getItem(SK);
-    return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT };
-  } catch { return { ...DEFAULT }; }
-})();
-
-let history = (() => {
-  try {
-    const h = localStorage.getItem(SK + "_hist");
-    return h ? JSON.parse(h) : [];
-  } catch { return []; }
-})();
-
+// ── Core States ──
+const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isNisa: true, diff: null };
+let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
+let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
 let activePeriod = "ALL";
 let editingField = null;
 let isUpdating = false;
@@ -480,234 +281,217 @@ let lastSyncTime = localStorage.getItem(SK + "_sync") || "--:--";
 function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
 function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-// ── Financial Math ──
-function getValuation(price = stock.price) { return price * stock.holding / 10000; }
-function getUnrealizedPnL(val) { return val - stock.cost; }
+// ── Financial Engines ──
+function getValuation(p = stock.price) { return p * stock.holding / 10000; }
+function getUnrealizedPnL(v) { return v - stock.cost; }
 function getUnrealizedRate(pnl) { return stock.cost > 0 ? (pnl / stock.cost * 100) : 0; }
 function getAvgCost() { return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0; }
 
-// ── Dynamic Formatter ──
+// ── Formatters ──
 const fmtYen = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
-const fmtSign = v => {
-  if (v === null || !isFinite(v)) return "---";
-  const r = Math.round(v);
-  return (r >= 0 ? "+" : "") + r.toLocaleString();
-};
+const fmtSign = v => { if (v === null || !isFinite(v)) return "---"; const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
 const fmtPct = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 const fmtNum = (v, d=0) => v === null || !isFinite(v) ? "---" : Number(v).toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d});
 
-// ── Toast Utility ──
+// ── Toast UI ──
 let _toastTimer;
 function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
+  const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
 }
 
-// ── Backup / Restore System ──
+// ── Data Sync (Backup/Restore) ──
 function exportData() {
-  const backup = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist"), sync: localStorage.getItem(SK + "_sync") };
-  navigator.clipboard.writeText(JSON.stringify(backup))
-    .then(() => showToast("Backup data copied to clipboard"))
-    .catch(() => showToast("Failed to copy"));
+  const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist"), sync: localStorage.getItem(SK + "_sync") };
+  navigator.clipboard.writeText(JSON.stringify(b)).then(() => showToast("Encrypted backup token copied")).catch(() => showToast("Copy failed"));
 }
 function importData() {
-  const str = prompt("バックアップデータを貼り付けてください:");
-  if (!str) return;
+  const str = prompt("バックアップトークンをペースト:"); if (!str) return;
   try {
-    const backup = JSON.parse(str);
-    if (backup.stock) localStorage.setItem(SK, backup.stock);
-    if (backup.hist) localStorage.setItem(SK + "_hist", backup.hist);
-    if (backup.sync) localStorage.setItem(SK + "_sync", backup.sync);
-    showToast("Restored perfectly. Reloading...");
-    setTimeout(() => location.reload(), 1000);
-  } catch { showToast("Invalid backup token"); }
+    const b = JSON.parse(str);
+    if (b.stock) localStorage.setItem(SK, b.stock); if (b.hist) localStorage.setItem(SK + "_hist", b.hist); if (b.sync) localStorage.setItem(SK + "_sync", b.sync);
+    showToast("Restored perfectly. Reloading..."); setTimeout(() => location.reload(), 1000);
+  } catch { showToast("Invalid Token"); }
 }
 
-// ── Inline Editor ──
-function startEdit(field) {
-  editingField = field; render();
-  requestAnimationFrame(() => {
-    const el = document.getElementById("input-" + field);
-    if (el) { el.focus(); el.select(); }
-  });
-}
-function finishEdit(field, value) {
-  const n = parseFloat(value);
-  if (!isNaN(n) && isFinite(n)) { stock[field] = n; save(); showToast("Saved changes"); }
-  editingField = null; render();
-}
+// ── Inline Form Editors ──
+function startEdit(f) { editingField = f; render(); requestAnimationFrame(() => { const el = document.getElementById("input-" + f); if (el) { el.focus(); el.select(); } }); }
+function finishEdit(f, v) { const n = parseFloat(v); if (!isNaN(n) && isFinite(n)) { stock[f] = n; save(); showToast("Dashboard synced"); } editingField = null; render(); }
 
 function recordTodayPnL() {
   const today = new Date().toISOString().slice(0, 10);
   const pnl = Math.round(getUnrealizedPnL(getValuation()));
   const idx = history.findIndex(h => h.date === today);
-  if (idx >= 0) history[idx].pnl = pnl;
-  else history.push({ date: today, pnl });
+  if (idx >= 0) history[idx].pnl = pnl; else history.push({ date: today, pnl });
   if (history.length > 180) history = history.slice(-180);
   saveHistory();
 }
 
-function getFilteredHistory() {
+// ★本気機能：異なる配列長から均等にリサンプリングし、超滑らかな幾何学モーフィングを実現するロジック
+function getResampledHistory() {
   if (!history.length) return [];
   const now = new Date(); let cutoff = null;
   if (activePeriod === "1M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1); }
   else if (activePeriod === "3M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3); }
   else if (activePeriod === "6M") { cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6); }
-  const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
-  return cutoff ? sorted.filter(h => new Date(h.date) >= cutoff) : sorted;
-}
+  
+  let filtered = [...history].sort((a,b) => a.date.localeCompare(b.date));
+  if (cutoff) filtered = filtered.filter(h => new Date(h.date) >= cutoff);
+  if (filtered.length === 0) return [];
 
-// ── Beautiful Interactive Chart Engine ──
-let chartPoints = []; 
-
-function buildChart() {
-  const data = getFilteredHistory();
-  if (data.length < 2) {
-    return `<div class="chart-empty">データを蓄積中…</div>`;
+  if (filtered.length === 1) {
+    return Array(MORPH_SAMPLES).fill(0).map(() => ({ date: filtered[0].date, pnl: filtered[0].pnl }));
   }
 
-  const vals = data.map(d => d.pnl);
-  const minV = Math.min(...vals);
-  const maxV = Math.max(...vals);
-  const range = maxV - minV || 1;
+  // 固定長（MORPH_SAMPLES）の配列に線形補完でリサンプリング
+  const resampled = [];
+  for (let i = 0; i < MORPH_SAMPLES; i++) {
+    const rawIdx = (i / (MORPH_SAMPLES - 1)) * (filtered.length - 1);
+    const low = Math.floor(rawIdx);
+    const high = Math.ceil(rawIdx);
+    const weight = rawIdx - low;
+    
+    const pnlItem = Math.round(filtered[low].pnl + (filtered[high].pnl - filtered[low].pnl) * weight);
+    resampled.push({ date: filtered[high].date, pnl: pnlItem });
+  }
+  return resampled;
+}
 
-  const W = 500, H = 140, PAD_TOP = 10, PAD_BOT = 10;
+// ── Ultimate UI Renderer Line ──
+let chartPoints = [];
+
+function injectChartStructure() {
+  const data = getResampledHistory();
+  const wrapper = document.getElementById("canvasWrapper");
+  if (data.length < 2) { wrapper.innerHTML = `<div class="chart-empty">Gathering Market Intel...</div>`; return; }
+
+  const vals = data.map(d => d.pnl);
+  const minV = Math.min(...vals); const maxV = Math.max(...vals); const range = maxV - minV || 1;
+  const W = 500, H = 160, PAD = 8;
+
   chartPoints = data.map((d, i) => {
     const x = (i / (data.length - 1)) * W;
-    const y = PAD_TOP + (1 - (d.pnl - minV) / range) * (H - PAD_TOP - PAD_BOT);
+    const y = PAD + (1 - (d.pnl - minV) / range) * (H - PAD * 2);
     return { x, y, date: d.date, pnl: d.pnl };
   });
 
   const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
   const fillD = `${pathD} L${chartPoints[chartPoints.length-1].x},${H} L${chartPoints[0].x},${H} Z`;
 
-  const lastPnl = vals[vals.length - 1];
+  const lastPnl = history[history.length - 1]?.pnl ?? 0;
   const colorLine = lastPnl >= 0 ? "#30d158" : "#ff453a";
-  const colorTop = lastPnl >= 0 ? "rgba(48,209,88,0.25)" : "rgba(255,69,58,0.25)";
-  const gradId = "grad_" + Date.now();
+  const colorTop = lastPnl >= 0 ? "rgba(48,209,88,0.24)" : "rgba(255,69,58,0.24)";
+  
+  // トレンドカラーによる環境発光の基調色変化
+  document.documentElement.style.setProperty('--glow-color', lastPnl >= 0 ? "rgba(48,209,88,0.18)" : "rgba(255,69,58,0.18)");
 
-  return `
-    <svg class="chart-canvas-svg" id="interactiveSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${colorTop}"/>
-          <stop offset="100%" stop-color="transparent"/>
-        </linearGradient>
-      </defs>
-      <path d="${fillD}" fill="url(#${gradId})" />
-      <path d="${pathD}" fill="none" stroke="${colorLine}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      
-      <line id="chartGuideLine" x1="0" y1="0" x2="0" y2="${H}" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-dasharray="4,4" style="display:none;" />
-      <circle id="chartGuideDot" r="5" fill="${colorLine}" stroke="#000" stroke-width="1.5" style="display:none;" />
-    </svg>
-  `;
+  const svgElement = document.getElementById("interactiveSvg");
+  if (!svgElement) {
+    // 初回レンダリング構造作成
+    const gradId = "morph_grad";
+    wrapper.innerHTML = `
+      <svg class="chart-canvas-svg" id="interactiveSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" id="gradStopTop" stop-color="${colorTop}"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+        <path id="chartFillPath" d="${fillD}" fill="url(#${gradId})" />
+        <path id="chartLinePath" d="${pathD}" fill="none" stroke="${colorLine}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line id="chartGuideLine" x1="0" y1="0" x2="0" y2="${H}" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-dasharray="4,4" style="display:none;" />
+        <circle id="chartGuideDot" r="6" fill="${colorLine}" stroke="#000" stroke-width="2" style="display:none;" />
+      </svg>
+    `;
+  } else {
+    // 2回目以降は、同一制御点パスをそのまま上書きすることでCSS3モーフィングが自動発動
+    document.getElementById("chartFillPath").setAttribute("d", fillD);
+    document.getElementById("chartLinePath").setAttribute("d", pathD);
+    document.getElementById("chartLinePath").setAttribute("stroke", colorLine);
+    document.getElementById("gradStopTop").setAttribute("stop-color", colorTop);
+    document.getElementById("chartGuideDot").setAttribute("fill", colorLine);
+  }
 }
 
-// チャートのホバー・スワイプ連動処理
 function initChartInteractions() {
   const wrapper = document.getElementById("canvasWrapper");
   const svg = document.getElementById("interactiveSvg");
   if (!svg || chartPoints.length === 0) return;
 
-  const line = document.getElementById("chartGuideLine");
-  const dot = document.getElementById("chartGuideDot");
+  const line = document.getElementById("chartGuideLine"); const dot = document.getElementById("chartGuideDot");
+  const glow = document.documentElement;
 
-  const handlePointer = (clientX) => {
+  const handlePointer = (clientX, clientY) => {
     const rect = wrapper.getBoundingClientRect();
     const touchX = clientX - rect.left;
     const pct = Math.max(0, Math.min(1, touchX / rect.width));
     
-    // 最も近いデータポイントを探索
-    const targetX = pct * 500; 
-    let closest = chartPoints[0];
-    let minDiff = Math.abs(chartPoints[0].x - targetX);
+    // スポットライトの中心点を指先の絶対座標に追従
+    glow.style.setProperty('--glow-x', `${clientX}px`);
+    glow.style.setProperty('--glow-y', `${clientY}px`);
     
-    for (let p of chartPoints) {
-      const diff = Math.abs(p.x - targetX);
-      if (diff < minDiff) { minDiff = diff; closest = p; }
-    }
+    const targetX = pct * 500;
+    let closest = chartPoints[0]; let minDiff = Math.abs(chartPoints[0].x - targetX);
+    for (let p of chartPoints) { const diff = Math.abs(p.x - targetX); if (diff < minDiff) { minDiff = diff; closest = p; } }
 
-    // ガイドを移動
-    line.setAttribute("x1", closest.x);
-    line.setAttribute("x2", closest.x);
-    dot.setAttribute("cx", closest.x);
-    dot.setAttribute("cy", closest.y);
-    line.style.display = "block";
-    dot.style.display = "block";
+    line.setAttribute("x1", closest.x); line.setAttribute("x2", closest.x);
+    dot.setAttribute("cx", closest.x); dot.setAttribute("cy", closest.y);
+    line.style.display = "block"; dot.style.display = "block";
 
-    // 数値を過去のトリガー履歴に一時帰還（パラパラ表示）
     updateDisplayValues(closest.pnl, closest.date);
   };
 
   const resetPointer = () => {
-    line.style.display = "none";
-    dot.style.display = "none";
-    renderLiveValues(); // 元の最新リアルタイム表示に戻す
+    line.style.display = "none"; dot.style.display = "none";
+    // 離脱時は発光スポットライトをいつもの最上部へリセット
+    glow.style.setProperty('--glow-x', `50%`); glow.style.setProperty('--glow-y', `0%`);
+    renderLiveValues();
   };
 
-  wrapper.addEventListener("mousemove", (e) => handlePointer(e.clientX));
+  wrapper.addEventListener("mousemove", (e) => handlePointer(e.clientX, e.clientY));
   wrapper.addEventListener("mouseleave", resetPointer);
-  wrapper.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX), {passive: true});
-  wrapper.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX), {passive: true});
+  wrapper.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+  wrapper.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
   wrapper.addEventListener("touchend", resetPointer);
 }
 
-// ── Core Render Pipeline ──
 function renderLiveValues() {
-  const val = getValuation();
-  const pnl = getUnrealizedPnL(val);
-  const rate = getUnrealizedRate(pnl);
+  const val = getValuation(); const pnl = getUnrealizedPnL(val); const rate = getUnrealizedRate(pnl);
   const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
 
-  // トレンドカラーによる環境発光の切り替え
-  document.body.classList.toggle("is-neg-trend", pnl < 0);
-
   document.getElementById("statusBadge").className = "status-badge live-mode";
-  document.getElementById("statusLabel").textContent = "LIVE";
+  document.getElementById("statusLabel").textContent = "LIVE MARKET";
 
-  document.getElementById("mainValDisplay").textContent = fmtYen(val);
-  
-  const dayEl = document.getElementById("dayValDisplay");
-  const dayPctEl = document.getElementById("dayPctDisplay");
-  dayEl.textContent = dayDiff === null ? "---" : fmtSign(dayDiff);
-  dayEl.className = `stat-num ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
-  dayPctEl.textContent = stock.diff !== null ? fmtPct(parseFloat(stock.diff)) : '---';
-  dayPctEl.className = `stat-per ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
+  const mainValEl = document.getElementById("mainValDisplay");
+  if(mainValEl.textContent !== fmtYen(val)) {
+    mainValEl.classList.add("updating-blur");
+    setTimeout(() => { mainValEl.textContent = fmtYen(val); mainValEl.classList.remove("updating-blur"); }, 60);
+  }
 
-  const totEl = document.getElementById("totalValDisplay");
-  const totPctEl = document.getElementById("totalPctDisplay");
-  totEl.textContent = fmtSign(pnl);
-  totEl.className = `stat-num ${pnl >= 0 ? 'pos' : 'neg'}`;
-  totPctEl.textContent = fmtPct(rate);
-  totPctEl.className = `stat-per ${pnl >= 0 ? 'pos' : 'neg'}`;
+  const dV = document.getElementById("dayValDisplay"); const dP = document.getElementById("dayPctDisplay");
+  dV.textContent = dayDiff === null ? "---" : fmtSign(dayDiff); dV.className = `stat-num ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
+  dP.textContent = stock.diff !== null ? fmtPct(parseFloat(stock.diff)) : '---'; dP.className = `stat-per ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}`;
+
+  const tV = document.getElementById("totalValDisplay"); const tP = document.getElementById("totalPctDisplay");
+  tV.textContent = fmtSign(pnl); tV.className = `stat-num ${pnl >= 0 ? 'pos' : 'neg'}`;
+  tP.textContent = fmtPct(rate); tP.className = `stat-per ${pnl >= 0 ? 'pos' : 'neg'}`;
 }
 
 function updateDisplayValues(targetPnL, targetDate) {
-  // チャートをなぞっている間の過去データプレビューレンダリング
-  const badge = document.getElementById("statusBadge");
-  badge.className = "status-badge history-mode";
+  document.getElementById("statusBadge").className = "status-badge history-mode";
   document.getElementById("statusLabel").textContent = targetDate;
 
-  // 過去のその日のコストベースでの評価額を逆算シミュレート
   const simulatedVal = stock.cost + targetPnL;
-  const simulatedRate = getUnrealizedRate(targetPnL);
-
   document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
   
-  // 過去閲覧中はDAYを一時的に潜める（視線誘導のため）
   document.getElementById("dayValDisplay").textContent = "---";
   document.getElementById("dayValDisplay").className = "stat-num neutral";
-  document.getElementById("dayPctDisplay").textContent = "HISTORY";
+  document.getElementById("dayPctDisplay").textContent = "HISTORY TRACK";
   document.getElementById("dayPctDisplay").className = "stat-per neutral";
 
-  const totEl = document.getElementById("totalValDisplay");
-  const totPctEl = document.getElementById("totalPctDisplay");
-  totEl.textContent = fmtSign(targetPnL);
-  totEl.className = `stat-num ${targetPnL >= 0 ? 'pos' : 'neg'}`;
-  totPctEl.textContent = fmtPct(simulatedRate);
-  totPctEl.className = `stat-per ${targetPnL >= 0 ? 'pos' : 'neg'}`;
+  const tV = document.getElementById("totalValDisplay"); const tP = document.getElementById("totalPctDisplay");
+  tV.textContent = fmtSign(targetPnL); tV.className = `stat-num ${targetPnL >= 0 ? 'pos' : 'neg'}`;
+  tP.textContent = fmtPct(getUnrealizedRate(targetPnL)); tP.className = `stat-per ${targetPnL >= 0 ? 'pos' : 'neg'}`;
 }
 
 function render() {
@@ -715,85 +499,58 @@ function render() {
   document.getElementById("lastSyncDisplay").textContent = "SYNC: " + lastSyncTime;
 
   renderLiveValues();
-
-  // チャート構築
-  document.getElementById("canvasWrapper").innerHTML = buildChart();
+  injectChartStructure();
   initChartInteractions();
 
-  // メタデータダッシュボード構築
   const avg = getAvgCost();
-  const inlineElement = (field, display) => {
-    if (editingField === field) {
-      return `<input id="input-${field}" class="dash-input" type="number" step="any" value="${stock[field]}" onblur="finishEdit('${field}', this.value)" onkeydown="if(event.key==='Enter')this.blur()">`;
-    }
-    return `<span class="dash-val editable" onclick="startEdit('${field}')">${display}</span>`;
+  const inlineElement = (f, disp) => {
+    if (editingField === f) return `<input id="input-${f}" class="dash-input" type="number" step="any" value="${stock[f]}" onblur="finishEdit('${f}', this.value)" onkeydown="if(event.key==='Enter')this.blur()">`;
+    return `<span class="dash-val editable" onclick="startEdit('${f}')">${disp}</span>`;
   };
 
   document.getElementById("dashboardGrid").innerHTML = `
     <div class="dash-item"><div class="dash-label">基準価額 (NAV)</div><div class="dash-val">${fmtNum(stock.price, 0)}</div></div>
     <div class="dash-item"><div class="dash-label">保有口数</div>${inlineElement("holding", fmtNum(stock.holding, 0))}</div>
-    <div class="dash-item"><div class="dash-label">取得総コスト</div>${inlineElement("cost", fmtYen(stock.cost))}</div>
+    <div class="dash-item"><div class="dash-label">取得コスト</div>${inlineElement("cost", fmtYen(stock.cost))}</div>
     <div class="dash-item"><div class="dash-label">平均取得単価</div><div class="dash-val">${fmtNum(avg, 0)}</div></div>
   `;
 }
 
 function setPeriod(p) {
   activePeriod = p;
-  const tabs = document.querySelectorAll(".p-tab");
-  tabs.forEach(t => t.classList.toggle("active", t.textContent === p));
+  document.querySelectorAll(".p-tab").forEach(t => t.classList.toggle("active", t.textContent === p));
   render();
 }
 
-// ── Modern API Fetcher ──
+// ── Asynchronous Network Fetcher ──
 async function fetchAll() {
-  if (isUpdating) return;
-  isUpdating = true;
+  if (isUpdating) return; isUpdating = true;
+  const btn = document.getElementById("updateBtn"); const icon = document.getElementById("updateIcon"); const lbl = document.getElementById("updateLabel");
 
-  const btn = document.getElementById("updateBtn");
-  const icon = document.getElementById("updateIcon");
-  const label = document.getElementById("updateLabel");
-
-  btn.disabled = true;
-  label.textContent = "Syncing with Markets...";
-
-  const anim = icon.animate(
-    [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
-    { duration: 800, iterations: Infinity, easing: "cubic-bezier(0.4, 0, 0.2, 1)" }
-  );
+  btn.disabled = true; lbl.textContent = "Connecting to Node...";
+  const anim = icon.animate([{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }], { duration: 750, iterations: Infinity, easing: "cubic-bezier(0.4, 0, 0.2, 1)" });
 
   try {
     const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(stock.code)}`, { cache: "no-store" });
     const json = await res.json();
 
     if (json.status === "Success") {
-      stock.price = json.price;
-      stock.diff = json.diff ?? null;
-      save();
+      stock.price = json.price; stock.diff = json.diff ?? null; save();
       recordTodayPnL();
 
-      const now = new Date();
-      lastSyncTime = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2, "0");
+      const now = new Date(); lastSyncTime = String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2, "0");
       localStorage.setItem(SK + "_sync", lastSyncTime);
 
-      render();
-      anim.cancel();
-      label.textContent = "Dashboard Updated";
-      showToast("Updated successfully");
+      render(); anim.cancel();
+      lbl.textContent = "Dashboard Core Synced"; showToast("Updated successfully");
     } else { throw new Error(); }
   } catch {
-    anim.cancel();
-    label.textContent = "Sync Failed";
-    showToast("Network error");
+    anim.cancel(); lbl.textContent = "Sync Aborted"; showToast("Network handshake failed");
   }
 
-  setTimeout(() => {
-    label.textContent = "Update Dashboard";
-    btn.disabled = false;
-    isUpdating = false;
-  }, 1200);
+  setTimeout(() => { lbl.textContent = "Update Dashboard"; btn.disabled = false; isUpdating = false; }, 1200);
 }
 
-// 起動
 render();
 </script>
 </body>
