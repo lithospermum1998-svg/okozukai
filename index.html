@@ -2,452 +2,344 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
-/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#070707" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <title>MONEY LOG</title>
-
 <link rel="apple-touch-icon" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
 <link rel="icon" type="image/png" href="./7BBA3812-AFC2-4E73-91C9-B4CDDB54DE12.png">
-
 <style>
 :root {
   --bg: #070707;
-  --bg-2: #0d0d0d;
-  --surface-1: rgba(24, 24, 25, 0.95);
-  --surface-2: #262628;
+  --surface: rgba(22,23,25,0.97);
+  --surface-2: #1e1f21;
+  --surface-3: #2a2b2e;
   --text-main: #f3f4f6;
   --text-sub: #9b9da3;
-  --text-soft: #686b72;
-  --line: rgba(255,255,255,0.09);
-  --line-strong: rgba(255,255,255,0.14);
+  --text-soft: #555860;
+  --line: rgba(255,255,255,0.07);
   --accent: #8f949e;
   --pos: #4ade80;
   --neg: #ff6478;
-  --shadow-soft: 0 12px 36px rgba(0,0,0,0.40);
-  --shadow-deep: 0 22px 48px rgba(0,0,0,0.36);
-  --radius-card: 22px;
+  --chart-line: #6ee7b7;
+  --chart-fill-top: rgba(110,231,183,0.18);
+  --chart-fill-bot: rgba(110,231,183,0.01);
+  --radius: 26px;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
 html, body {
-  margin: 0;
   min-height: 100%;
   color: var(--text-main);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-  background:
-    linear-gradient(180deg, #070707 0%, #0c0c0d 18%, #09090a 48%, #030304 100%);
-  background-color: #070707;
+  background: #070707;
 }
 
 body {
   min-height: 100vh;
-  padding:
-    calc(14px + env(safe-area-inset-top))
-    14px
-    calc(106px + env(safe-area-inset-bottom));
-  line-height: 1.18;
-  position: relative;
+  padding: calc(20px + env(safe-area-inset-top)) 16px calc(110px + env(safe-area-inset-bottom));
   overflow-x: hidden;
 }
 
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(88px);
-  opacity: 0.06;
-}
-
-body::before {
-  width: 190px;
-  height: 190px;
-  top: 170px;
-  left: -60px;
-  background: rgba(150, 156, 170, 0.08);
-}
-
-body::after {
-  width: 240px;
-  height: 240px;
-  top: 360px;
-  right: -90px;
-  background: rgba(255,255,255,0.025);
-}
-
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 430px;
-  margin: 0 auto;
-}
-
-.numeric {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-}
-
-.top-head {
+/* ── Header ── */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 12px;
-  margin: 18px 2px 14px;
-}
-
-.app-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  margin-bottom: 22px;
 }
 
 .app-title {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
-  letter-spacing: 0.16em;
-  margin: 0;
+  letter-spacing: 0.18em;
   color: #fafbfc;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.02);
 }
 
 .app-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-soft);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  margin-top: 3px;
 }
 
 .sync-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 28px;
-  padding: 0 10px;
+  padding: 5px 11px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.09);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.022) 100%),
-    linear-gradient(180deg, rgba(42,43,46,0.95) 0%, rgba(24,25,27,0.95) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
   color: var(--text-sub);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  white-space: nowrap;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -1px 0 rgba(255,255,255,0.02);
-  backdrop-filter: blur(14px) saturate(118%);
-  -webkit-backdrop-filter: blur(14px) saturate(118%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .sync-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px; height: 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.26);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.012);
+  background: rgba(255,255,255,0.22);
 }
 
-.section-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 22px 2px 12px;
-}
-
-.section-title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 800;
-  color: #f5f6f8;
-  letter-spacing: 0.02em;
-}
-
-.list-container {
-  display: grid;
-  gap: 12px;
-}
-
-.stock-card {
+/* ── Main Card ── */
+.main-card {
   position: relative;
+  border-radius: var(--radius);
   overflow: hidden;
-  border-radius: var(--radius-card);
-  padding: 14px;
-  background:
-    repeating-linear-gradient(
-      92deg,
-      transparent 0px,
-      rgba(255,255,255,0.006) 1px,
-      transparent 2px,
-      rgba(255,255,255,0.004) 3px,
-      transparent 5px
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.10) 0%,
-      rgba(255,255,255,0.036) 7%,
-      rgba(255,255,255,0.012) 16%,
-      rgba(0,0,0,0.05) 100%
-    ),
-    linear-gradient(
-      133deg,
-      rgba(255,255,255,0.018) 0%,
-      rgba(255,255,255,0.000) 36%,
-      rgba(175,180,188,0.040) 50%,
-      rgba(0,0,0,0.07) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(37,38,40,0.98) 0%,
-      rgba(24,25,27,0.99) 52%,
-      rgba(16,17,18,1) 100%
-    );
   border: 1px solid rgba(255,255,255,0.10);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 8%, transparent 22%),
+    linear-gradient(180deg, rgba(35,36,39,0.99) 0%, rgba(18,19,21,1) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.10),
-    inset 0 -1px 0 rgba(255,255,255,0.018),
-    inset 0 0 0 1px rgba(255,255,255,0.010),
-    0 10px 24px rgba(0,0,0,0.34),
-    0 18px 40px rgba(0,0,0,0.30);
-  backdrop-filter: blur(10px) saturate(108%);
-  -webkit-backdrop-filter: blur(10px) saturate(108%);
+    inset 0 -1px 0 rgba(255,255,255,0.016),
+    0 20px 50px rgba(0,0,0,0.45),
+    0 8px 20px rgba(0,0,0,0.30);
 }
 
-.stock-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.045),
-    inset 0 -1px 0 rgba(0,0,0,0.24);
-  opacity: 0.95;
-}
-
-.stock-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.035) 9%, transparent 20%),
-    linear-gradient(123deg, transparent 0%, rgba(230,233,238,0.022) 40%, rgba(255,255,255,0.035) 50%, transparent 62%),
-    radial-gradient(480px 110px at 15% 0%, rgba(255,255,255,0.07), transparent 52%);
-  mix-blend-mode: screen;
-  opacity: 0.70;
-}
-
-.summary-card {
-  padding: 16px 14px 14px;
-  background:
-    repeating-linear-gradient(
-      92deg,
-      transparent 0px,
-      rgba(255,255,255,0.007) 1px,
-      transparent 2px,
-      rgba(255,255,255,0.004) 3px,
-      transparent 5px
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.12) 0%,
-      rgba(255,255,255,0.042) 9%,
-      rgba(255,255,255,0.014) 19%,
-      rgba(0,0,0,0.05) 100%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,0.020) 0%,
-      rgba(255,255,255,0.000) 35%,
-      rgba(165,170,178,0.055) 52%,
-      rgba(0,0,0,0.07) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(40,41,43,0.99) 0%,
-      rgba(27,28,30,1) 55%,
-      rgba(17,18,19,1) 100%
-    );
-  border-color: rgba(255,255,255,0.13);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.11),
-    inset 0 -1px 0 rgba(255,255,255,0.022),
-    0 16px 36px rgba(0,0,0,0.38),
-    0 24px 52px rgba(0,0,0,0.28);
-}
-
+/* ── Top section ── */
 .card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  position: relative;
-  z-index: 1;
+  padding: 20px 20px 0;
 }
 
-.card-title-block {
-  min-width: 0;
-  flex: 1;
-}
-
-.card-label {
-  font-size: 15px;
-  font-weight: 850;
-  margin-bottom: 4px;
-  color: #f1f2f4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: -0.01em;
-}
-
-.card-sub-label {
-  color: var(--text-sub);
-  font-size: 10px;
+.fund-name {
+  font-size: 11px;
   font-weight: 800;
+  color: var(--text-sub);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
-.card-main {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: end;
-  position: relative;
-  z-index: 1;
+.fund-code {
+  font-size: 9px;
+  color: var(--text-soft);
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
-.value-main {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -0.7px;
-  color: #f7f8fa;
-  text-shadow: 0 2px 10px rgba(255,255,255,0.012);
-}
-
-.summary-card .value-main {
-  font-size: 30px;
-  letter-spacing: -0.9px;
-}
-
-.performance-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  align-items: flex-end;
-}
-
-.performance-line {
-  font-size: 11px;
-  font-weight: 850;
-  line-height: 1.25;
-  text-align: right;
-  letter-spacing: -0.01em;
-}
-
-.meta-grid,
-.summary-meta-grid {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding-top: 11px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  position: relative;
-  z-index: 1;
-}
-
-.meta-item {
-  min-width: 0;
-}
-
-.meta-label {
-  color: var(--text-sub);
+.nisa-badge {
+  display: inline-block;
   font-size: 9px;
   font-weight: 800;
-  margin-bottom: 5px;
+  color: #b8ffd0;
+  border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: rgba(74,222,128,0.08);
+  margin-left: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Valuation hero ── */
+.valuation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 14px;
+}
+
+.val-main {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -1.2px;
+  color: #f8f9fb;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.val-right {
+  text-align: right;
+}
+
+.day-badge {
+  font-size: 12px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.total-rate {
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-sub);
+  margin-top: 3px;
+}
+
+/* ── P&L highlight ── */
+.pnl-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.pnl-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.pnl-value {
+  font-size: 20px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.pnl-rate {
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+/* ── Chart ── */
+.chart-section {
+  padding: 14px 0 0;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 8px;
+}
+
+.chart-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-soft);
   letter-spacing: 0.08em;
-  text-align: left;
+  text-transform: uppercase;
+}
+
+.chart-period-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.period-tab {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-soft);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.period-tab.active {
+  color: var(--text-main);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+}
+
+.chart-wrap {
+  width: 100%;
+  height: 100px;
+  position: relative;
+}
+
+svg.chart-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ── Meta grid ── */
+.meta-section {
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--line);
+  margin-top: 2px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 10px;
+}
+
+.meta-item {}
+
+.meta-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-soft);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
 }
 
 .meta-value {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 850;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: right;
-  color: #e8eaee;
+  font-variant-numeric: tabular-nums;
+  color: #e6e8ec;
+}
+
+.meta-value.editable {
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(255,255,255,0.12);
+  display: inline-block;
 }
 
 .inline-input {
   width: 100%;
-  background: var(--surface-2);
-  border: 1px solid var(--accent);
+  background: var(--surface-3);
+  border: 1px solid rgba(255,255,255,0.18);
   color: var(--text-main);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
-  border-radius: 4px;
-  padding: 1px 2px;
+  border-radius: 5px;
+  padding: 2px 4px;
   outline: none;
-  text-align: right;
-  box-shadow: none;
+  font-variant-numeric: tabular-nums;
 }
 
-.account-badge {
-  flex-shrink: 0;
-  font-size: 9px;
-  font-weight: 800;
-  color: #c8ccd3;
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 999px;
-  padding: 4px 8px;
-  line-height: 1;
-  white-space: nowrap;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.018) 100%),
-    linear-gradient(180deg, rgba(40,41,44,0.97) 0%, rgba(24,25,27,0.97) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(255,255,255,0.018);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
 
-.pos { color: var(--pos); }
-.neg { color: var(--neg); }
-.neutral { color: var(--text-sub); }
 
+/* ── Bottom bar ── */
 .bottom-bar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding:
-    8px
-    14px
-    calc(16px + env(safe-area-inset-bottom));
+  left: 0; right: 0; bottom: 0;
+  padding: 8px 16px calc(18px + env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
-  pointer-events: none;
   z-index: 20;
-  background: linear-gradient(to top, rgba(4,4,4,0.82) 0%, rgba(4,4,4,0.38) 45%, transparent 100%);
+  background: linear-gradient(to top, rgba(4,4,4,0.88) 0%, rgba(4,4,4,0.42) 50%, transparent 100%);
+  pointer-events: none;
 }
 
 .update-btn {
@@ -456,243 +348,353 @@ body::after {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 156px;
-  height: 50px;
-  padding: 0 22px;
+  min-width: 158px;
+  height: 52px;
+  padding: 0 24px;
   border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 18%, rgba(255,255,255,0.008) 100%),
-    rgba(18, 19, 22, 0.26);
+  background: rgba(255,255,255,0.06);
   color: var(--text-main);
   font-size: 14px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -1px 0 rgba(255,255,255,0.01),
-    0 8px 22px rgba(0,0,0,0.22);
-  backdrop-filter: blur(32px) saturate(155%);
-  -webkit-backdrop-filter: blur(32px) saturate(155%);
-  transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
+  border: 1px solid rgba(255,255,255,0.11);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 22px rgba(0,0,0,0.28);
+  backdrop-filter: blur(32px) saturate(150%);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
+  transition: transform 0.1s, opacity 0.15s;
+  cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-  cursor: pointer;
 }
 
-.update-btn:active {
-  transform: scale(0.96);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.035) 18%, rgba(255,255,255,0.012) 100%),
-    rgba(22, 23, 26, 0.34);
-  border-color: rgba(255,255,255,0.13);
-}
+.update-btn:active { transform: scale(0.96); }
+.update-btn:disabled { opacity: 0.55; cursor: default; }
 
-.update-btn:disabled {
-  opacity: 0.62;
-  cursor: default;
-}
+.update-icon { font-size: 16px; }
 
-.update-icon {
-  font-size: 16px;
-  line-height: 1;
-  display: inline-block;
-}
-
-.update-label {
-  display: inline-block;
-}
-
+/* ── Toast ── */
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(80px + env(safe-area-inset-bottom));
+  bottom: calc(82px + env(safe-area-inset-bottom));
   transform: translateX(-50%) translateY(10px);
   opacity: 0;
   pointer-events: none;
   z-index: 30;
-  min-width: 110px;
-  text-align: center;
-  padding: 11px 14px;
+  padding: 10px 16px;
   border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 100%),
-    linear-gradient(180deg, rgba(37,40,47,0.95) 0%, rgba(21,23,28,0.95) 100%);
-  border: 1px solid rgba(255,255,255,0.11);
+  background: rgba(30,32,36,0.95);
+  border: 1px solid rgba(255,255,255,0.10);
   color: #f5f7fb;
   font-size: 12px;
   font-weight: 800;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    0 10px 24px rgba(0,0,0,0.28);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: opacity 0.2s, transform 0.2s;
+  white-space: nowrap;
 }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+.neutral { color: var(--text-sub); }
 
 @media (max-width: 360px) {
-  .value-main { font-size: 24px; }
-  .summary-card .value-main { font-size: 27px; }
-  .meta-value { font-size: 11px; }
-  .update-btn { min-width: 144px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
+  .val-main { font-size: 32px; }
+  .pnl-value { font-size: 17px; }
 }
 </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="top-head">
-      <div class="app-title-wrap">
-        <h1 class="app-title">MONEY LOG</h1>
-        <div class="app-sub">PERSONAL PORTFOLIO</div>
-      </div>
-      <div class="sync-pill">
-        <span class="sync-dot"></span>
-        <span id="lastSyncDisplay">Last Sync: --:--</span>
-      </div>
-    </div>
 
-    <div id="summaryCards" class="list-container"></div>
-
-    <div class="section-row">
-      <h2 class="section-title">Portfolio</h2>
-    </div>
-    <div id="stockList" class="list-container"></div>
+<div class="header">
+  <div>
+    <div class="app-title">MONEY LOG</div>
+    <div class="app-sub">SOX PORTFOLIO</div>
   </div>
-
-  <div class="bottom-bar">
-    <button id="updateBtn" class="update-btn" onclick="fetchAll()">
-      <span id="updateIcon" class="update-icon">↻</span>
-      <span id="updateLabel" class="update-label">update</span>
-    </button>
+  <div class="sync-pill">
+    <span class="sync-dot"></span>
+    <span id="lastSyncDisplay">Last Sync: --:--</span>
   </div>
+</div>
 
-  <div id="toast" class="toast">Saved</div>
+<div class="main-card" id="mainCard"></div>
+
+<div class="bottom-bar">
+  <button id="updateBtn" class="update-btn" onclick="fetchAll()">
+    <span id="updateIcon" class="update-icon">↻</span>
+    <span id="updateLabel">update</span>
+  </button>
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script>
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
-const STORAGE_KEY = "money_log_compact_ios";
+const SK = "money_log_sox_v2";
 
-// 銘柄リストからPayPayを削除しました
-const INITIAL_DATA = [
-  { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, isStock: false, isNisa: true, diff: null },
-  { name: "NASDAQ100ゴールドプラス", code: "02311251", price: 18700, holding: 0, cost: 3000, isStock: false, isNisa: false, diff: null }
-];
+// ── State ──
+const DEFAULT = {
+  name: "楽天・プラス・SOX",
+  code: "2931123A",
+  price: 19391,
+  holding: 59845,
+  cost: 121180,
+  isNisa: true,
+  diff: null
+};
 
-function safeLoadJSON(key, fallback) {
+function loadState() {
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw);
-    // 保存データがある場合でも、銘柄数が合わない（削除された）場合は初期データを優先してリセット
-    return parsed.length === fallback.length ? parsed : fallback;
-  } catch (e) {
-    return fallback;
-  }
+    const s = localStorage.getItem(SK);
+    return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT };
+  } catch { return { ...DEFAULT }; }
 }
 
-let data = safeLoadJSON(STORAGE_KEY, INITIAL_DATA);
-let currentUsdJpy = parseFloat(localStorage.getItem(STORAGE_KEY + "_usd")) || null;
-let lastSyncTime = localStorage.getItem(STORAGE_KEY + "_sync") || "--:--";
-let editingCell = { index: null, field: null };
+function loadHistory() {
+  try {
+    const h = localStorage.getItem(SK + "_hist");
+    return h ? JSON.parse(h) : [];
+  } catch { return []; }
+}
+
+let stock = loadState();
+let history = loadHistory(); // [{date:"2025-05-01", pnl: 12000}, ...]
+let activePeriod = "ALL";
+let editingField = null;
 let isUpdating = false;
+let lastSyncTime = localStorage.getItem(SK + "_sync") || "--:--";
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function save() {
+  localStorage.setItem(SK, JSON.stringify(stock));
 }
 
-function formatYen(v) {
+function saveHistory() {
+  localStorage.setItem(SK + "_hist", JSON.stringify(history));
+}
+
+// ── Calcs ──
+function valuation() {
+  return stock.price * stock.holding / 10000;
+}
+
+function avgCostPerUnit() {
+  return stock.holding > 0 ? stock.cost / stock.holding * 10000 : 0;
+}
+
+function unrealizedPnL() {
+  return valuation() - stock.cost;
+}
+
+function unrealizedRate() {
+  return stock.cost > 0 ? (unrealizedPnL() / stock.cost * 100) : 0;
+}
+
+
+
+// ── Format ──
+const fmt = v => v === null || !isFinite(v) ? "---" : "¥" + Math.round(v).toLocaleString();
+const fmtS = v => {
   if (v === null || !isFinite(v)) return "---";
-  return "¥" + Math.round(v).toLocaleString();
+  const r = Math.round(v);
+  return (r >= 0 ? "+" : "") + r.toLocaleString();
+};
+const fmtP = v => v === null || !isFinite(v) ? "---" : (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
+const fmtN = (v, d=0) => v === null || !isFinite(v) ? "---" :
+  Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+
+// ── Toast ──
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove("show"), 1400);
 }
 
-function formatSigned(v) {
-  if (v === null || !isFinite(v)) return "---";
-  const rounded = Math.round(v);
-  return (rounded >= 0 ? "+" : "") + rounded.toLocaleString();
-}
-
-function formatPct(v) {
-  if (v === null || !isFinite(v)) return "---";
-  return (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
-}
-
-function formatPlain(v, digits = 0) {
-  if (v === null || !isFinite(v)) return "---";
-  return Number(v).toLocaleString(undefined, {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits
-  });
-}
-
-function trimTrailingZeros(str) {
-  return str.replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
-}
-
-function calcValuation(item) {
-  if (item.isStock) {
-    const rate = item.rate ?? currentUsdJpy;
-    return rate ? item.price * rate * item.holding : null;
-  }
-  return item.price * item.holding / 10000;
-}
-
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(showToast._timer);
-  showToast._timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 1300);
-}
-
-function startEdit(index, field) {
-  editingCell = { index, field };
+// ── Edit ──
+function startEdit(field) {
+  editingField = field;
   render();
-
   requestAnimationFrame(() => {
-    const input = document.getElementById(`input-${index}-${field}`);
-    if (input) {
-      input.focus();
-      input.select();
-    }
+    const el = document.getElementById("input-" + field);
+    if (el) { el.focus(); el.select(); }
   });
 }
 
-function finishEdit(index, field, value) {
-  const num = parseFloat(value);
-  if (!Number.isNaN(num) && Number.isFinite(num)) {
-    data[index][field] = num;
-    saveData();
+function finishEdit(field, value) {
+  const n = parseFloat(value);
+  if (!isNaN(n) && isFinite(n)) {
+    stock[field] = n;
+    save();
     showToast("Saved");
   }
-  editingCell = { index: null, field: null };
+  editingField = null;
   render();
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function recordTodayPnL() {
+  const today = new Date().toISOString().slice(0, 10);
+  const pnl = Math.round(unrealizedPnL());
+  const idx = history.findIndex(h => h.date === today);
+  if (idx >= 0) history[idx].pnl = pnl;
+  else history.push({ date: today, pnl });
+  // 最大180件
+  if (history.length > 180) history = history.slice(-180);
+  saveHistory();
 }
 
+// ── Period filter ──
+function getFilteredHistory() {
+  if (!history.length) return [];
+  const now = new Date();
+  let cutoff = null;
+  if (activePeriod === "1M") {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 1);
+  } else if (activePeriod === "3M") {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 3);
+  } else if (activePeriod === "6M") {
+    cutoff = new Date(now); cutoff.setMonth(cutoff.getMonth() - 6);
+  }
+  const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
+  return cutoff ? sorted.filter(h => new Date(h.date) >= cutoff) : sorted;
+}
+
+// ── Chart ──
+function buildChart() {
+  const data = getFilteredHistory();
+  if (data.length < 2) {
+    return `<div class="chart-empty">データを蓄積中…</div>`;
+  }
+
+  const vals = data.map(d => d.pnl);
+  const minV = Math.min(...vals);
+  const maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  const W = 400, H = 80, PAD = 6;
+  const pts = data.map((d, i) => {
+    const x = PAD + (i / (data.length - 1)) * (W - PAD * 2);
+    const y = PAD + (1 - (d.pnl - minV) / range) * (H - PAD * 2);
+    return [x, y];
+  });
+
+  const pathD = pts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(" ");
+  const fillD = `${pathD} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`;
+
+  const lastPnl = vals[vals.length - 1];
+  const lineColor = lastPnl >= 0 ? "#6ee7b7" : "#ff6478";
+  const fillTop = lastPnl >= 0 ? "rgba(110,231,183,0.20)" : "rgba(255,100,120,0.20)";
+  const fillBot = lastPnl >= 0 ? "rgba(110,231,183,0.01)" : "rgba(255,100,120,0.01)";
+
+  const gradId = "cg" + Date.now();
+
+  return `
+    <div class="chart-wrap">
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${fillTop}"/>
+            <stop offset="100%" stop-color="${fillBot}"/>
+          </linearGradient>
+        </defs>
+        <path d="${fillD}" fill="url(#${gradId})" />
+        <path d="${pathD}" fill="none" stroke="${lineColor}" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  `;
+}
+
+// ── Render ──
+function render() {
+  document.getElementById("lastSyncDisplay").textContent = "Last Sync: " + lastSyncTime;
+
+  const val = valuation();
+  const pnl = unrealizedPnL();
+  const rate = unrealizedRate();
+  const avg = avgCostPerUnit();
+  const dayDiff = stock.diff !== null ? val * (parseFloat(stock.diff) / 100) : null;
+
+  const inlineOrVal = (field, display) => {
+    if (editingField === field) {
+      return `<input id="input-${field}" class="inline-input" type="number" step="any"
+        value="${stock[field]}"
+        onblur="finishEdit('${field}', this.value)"
+        onkeydown="if(event.key==='Enter')this.blur()">`;
+    }
+    return `<span class="meta-value editable" onclick="startEdit('${field}')">${display}</span>`;
+  };
+
+  const periods = ["1M","3M","6M","ALL"];
+
+  document.getElementById("mainCard").innerHTML = `
+    <div class="card-top">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="fund-name">${stock.name}<span class="nisa-badge">NISA</span></div>
+          <div class="fund-code">${stock.code}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--text-soft);font-weight:800;letter-spacing:.06em;margin-bottom:3px">NAV</div>
+          <div style="font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;color:#dde">${fmtN(stock.price, 0)}</div>
+        </div>
+      </div>
+
+      <div class="valuation-row">
+        <div class="val-main">${fmt(val)}</div>
+        <div class="val-right">
+          <div class="day-badge ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
+            Day ${dayDiff === null ? "---" : fmtS(dayDiff)}
+          </div>
+          <div class="total-rate ${rate >= 0 ? 'pos' : 'neg'}">${fmtP(rate)} total</div>
+        </div>
+      </div>
+
+      <div class="pnl-row">
+        <div class="pnl-label">含み損益</div>
+        <div class="pnl-value ${pnl >= 0 ? 'pos' : 'neg'}">${fmtS(pnl)}</div>
+        <div class="pnl-rate ${pnl >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-header">
+        <div class="chart-title">損益の推移</div>
+        <div class="chart-period-tabs">
+          ${periods.map(p => `<button class="period-tab ${p === activePeriod ? 'active' : ''}"
+            onclick="setPeriod('${p}')">${p}</button>`).join("")}
+        </div>
+      </div>
+      ${buildChart()}
+    </div>
+
+    <div class="meta-section">
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">口数</div>
+          ${inlineOrVal("holding", fmtN(stock.holding, 0))}
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">取得コスト</div>
+          ${inlineOrVal("cost", fmt(stock.cost))}
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">平均取得単価</div>
+          <span class="meta-value">${fmtN(avg, 0)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setPeriod(p) {
+  activePeriod = p;
+  render();
+}
+
+// ── Fetch ──
 async function fetchAll() {
   if (isUpdating) return;
   isUpdating = true;
@@ -709,50 +711,31 @@ async function fetchAll() {
     { duration: 900, iterations: Infinity, easing: "linear" }
   );
 
-  let successCount = 0;
-  let failCount = 0;
+  try {
+    const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(stock.code)}`, { cache: "no-store" });
+    const json = await res.json();
 
-  await Promise.all(
-    data.map(async (item) => {
-      try {
-        const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(item.code)}`, { cache: "no-store" });
-        const json = await res.json();
+    if (json.status === "Success") {
+      stock.price = json.price;
+      stock.diff = json.diff ?? null;
+      save();
 
-        if (json.status === "Success") {
-          item.price = json.price;
-          item.diff = json.diff ?? null;
+      // 今日の損益を記録
+      recordTodayPnL();
 
-          if (json.rate) {
-            currentUsdJpy = json.rate;
-            localStorage.setItem(STORAGE_KEY + "_usd", String(json.rate));
-          }
-          successCount++;
-        } else {
-          failCount++;
-        }
-      } catch (e) {
-        failCount++;
-      }
-    })
-  );
+      const now = new Date();
+      lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
+      localStorage.setItem(SK + "_sync", lastSyncTime);
 
-  if (successCount > 0) {
-    const now = new Date();
-    lastSyncTime = now.getHours() + ":" + String(now.getMinutes()).padStart(2, "0");
-    localStorage.setItem(STORAGE_KEY + "_sync", lastSyncTime);
-    saveData();
-  }
-
-  render();
-  anim.cancel();
-
-  if (successCount > 0 && failCount === 0) {
-    label.textContent = "updated";
-    showToast("Updated");
-  } else if (successCount > 0 && failCount > 0) {
-    label.textContent = "partial";
-    showToast(`${failCount} item failed`);
-  } else {
+      render();
+      anim.cancel();
+      label.textContent = "updated";
+      showToast("Updated");
+    } else {
+      throw new Error("API error");
+    }
+  } catch (e) {
+    anim.cancel();
     label.textContent = "failed";
     showToast("Update failed");
   }
@@ -762,163 +745,6 @@ async function fetchAll() {
     btn.disabled = false;
     isUpdating = false;
   }, 1100);
-}
-
-function render() {
-  const list = document.getElementById("stockList");
-  const summary = document.getElementById("summaryCards");
-  const syncDisplay = document.getElementById("lastSyncDisplay");
-
-  syncDisplay.textContent = "Last Sync: " + lastSyncTime;
-
-  let totalValue = 0;
-  let totalCost = 0;
-  let dayDiffSum = 0;
-  let taxableProfit = 0;
-
-  data.forEach(item => {
-    const rawVal = calcValuation(item);
-    const val = rawVal || 0;
-
-    totalValue += val;
-    totalCost += item.cost;
-
-    if (item.diff !== null && isFinite(item.diff)) {
-      dayDiffSum += val * (parseFloat(item.diff) / 100);
-    }
-
-    if (!item.isNisa) {
-      const itemProfit = val - item.cost;
-      if (itemProfit > 0) taxableProfit += itemProfit;
-    }
-  });
-
-  const estTax = taxableProfit > 0 ? taxableProfit * 0.20315 : 0;
-  const netValue = totalValue - estTax;
-  const netGain = netValue - totalCost;
-  const netGainRate = totalCost > 0 ? (netGain / totalCost * 100) : 0;
-
-  const dayDiffPrefix = dayDiffSum === 0 ? "" : (dayDiffSum > 0 ? "+" : "-");
-  const dayDiffDisplay = formatSigned(Math.abs(dayDiffSum)).replace(/^\+/, dayDiffPrefix);
-
-  summary.innerHTML = `
-    <section class="stock-card summary-card">
-      <div class="card-top">
-        <div class="card-title-block">
-          <div class="card-label">Total Assets</div>
-          <div class="card-sub-label">Summary</div>
-        </div>
-      </div>
-
-      <div class="card-main">
-        <div class="value-main numeric">${formatYen(totalValue)}</div>
-        <div class="performance-wrap">
-          <div class="performance-line numeric ${dayDiffSum >= 0 ? "pos" : "neg"}">
-            Day&nbsp; ${dayDiffDisplay}
-          </div>
-          <div class="performance-line numeric ${netGain >= 0 ? "pos" : "neg"}">
-            Total&nbsp; ${formatPct(netGainRate)}
-          </div>
-        </div>
-      </div>
-
-      <div class="summary-meta-grid">
-        <div class="meta-item">
-          <div class="meta-label">After Tax</div>
-          <div class="meta-value numeric">${formatYen(netValue)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Est. Tax</div>
-          <div class="meta-value numeric">${formatYen(estTax)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Invested</div>
-          <div class="meta-value numeric">${formatYen(totalCost)}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Net Gain</div>
-          <div class="meta-value numeric ${netGain >= 0 ? "pos" : "neg"}">${formatSigned(netGain)}</div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  list.innerHTML = data.map((item, index) => {
-    const rawVal = calcValuation(item);
-    const val = rawVal || 0;
-    const profit = val - item.cost;
-    const profitRate = item.cost > 0 ? (profit / item.cost * 100) : 0;
-    const dayDiffValue = item.diff !== null ? val * (parseFloat(item.diff) / 100) : null;
-
-    const renderInline = (field, val, display) => {
-      if (editingCell.index === index && editingCell.field === field) {
-        return `
-          <input
-            id="input-${index}-${field}"
-            class="inline-input"
-            type="number"
-            step="any"
-            value="${escapeHtml(val)}"
-            onblur="finishEdit(${index}, '${field}', this.value)"
-            onkeydown="if(event.key==='Enter') this.blur()"
-          >
-        `;
-      }
-      return `<div onclick="startEdit(${index}, '${field}')">${display}</div>`;
-    };
-
-    const holdingDisplay = trimTrailingZeros(
-      formatPlain(item.holding, item.holding % 1 === 0 ? 0 : 5)
-    );
-
-    const itemDayPrefix = dayDiffValue === null || dayDiffValue === 0 ? "" : (dayDiffValue > 0 ? "+" : "-");
-    const itemDayDisplay = dayDiffValue === null
-      ? "---"
-      : formatSigned(Math.abs(dayDiffValue)).replace(/^\+/, itemDayPrefix);
-
-    return `
-      <section class="stock-card">
-        <div class="card-top">
-          <div class="card-title-block">
-            <div class="card-label">${escapeHtml(item.name)}</div>
-            <div class="card-sub-label numeric">${escapeHtml(item.code)}</div>
-          </div>
-          <div class="account-badge">${item.isNisa ? "NISA" : "特定"}</div>
-        </div>
-
-        <div class="card-main">
-          <div class="value-main numeric">${formatYen(val)}</div>
-          <div class="performance-wrap">
-            <div class="performance-line numeric ${dayDiffValue === null ? "neutral" : (dayDiffValue >= 0 ? "pos" : "neg")}">
-              Day&nbsp; ${dayDiffValue === null ? "---" : itemDayDisplay}
-            </div>
-            <div class="performance-line numeric ${profit >= 0 ? "pos" : "neg"}">
-              Total&nbsp; ${formatPct(profitRate)}
-            </div>
-          </div>
-        </div>
-
-        <div class="meta-grid">
-          <div class="meta-item">
-            <div class="meta-label">${item.isStock ? "USD" : "NAV"}</div>
-            <div class="meta-value numeric">${item.isStock ? formatPlain(item.price, 2) : formatPlain(item.price, 0)}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Qty</div>
-            <div class="meta-value numeric">${renderInline("holding", item.holding, holdingDisplay)}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Cost</div>
-            <div class="meta-value numeric">${renderInline("cost", item.cost, formatYen(item.cost))}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">FX</div>
-            <div class="meta-value numeric">${item.isStock && currentUsdJpy ? "¥" + currentUsdJpy.toFixed(1) : "-"}</div>
-          </div>
-        </div>
-      </section>
-    `;
-  }).join("");
 }
 
 render();
