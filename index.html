@@ -89,7 +89,6 @@ body {
   background: rgba(255,255,255,0.18);
 }
 
-/* バックアップ・復元ボタンのスタイル */
 .pill-btn {
   cursor: pointer;
   transition: color 0.1s;
@@ -140,83 +139,56 @@ body {
   letter-spacing: 0.10em;
 }
 
-.nisa-badge {
-  display: inline-block;
-  font-size: 8px;
-  font-weight: 800;
-  color: #a7f3c8;
-  border: 1px solid rgba(74,222,128,0.20);
-  border-radius: 999px;
-  padding: 2px 8px;
-  background: rgba(74,222,128,0.07);
-  margin-left: 8px;
-  letter-spacing: 0.06em;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-}
-
-/* ── Valuation hero ── */
-.valuation-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+/* ── 改修：集約型の新デザイン評価額セクション ── */
+.hero-section {
   margin-top: 16px;
+  margin-bottom: 6px;
 }
 
 .val-main {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 900;
   letter-spacing: -1.5px;
   color: #f9fafb;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
+  line-height: 1.1;
 }
 
-.val-right {
-  text-align: right;
-  padding-bottom: 3px;
-}
-
-.day-badge {
-  font-size: 13px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.total-rate {
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  margin-top: 5px;
-  opacity: 0.80;
-}
-
-/* ── P&L highlight ── */
-.pnl-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 12px 0 16px;
+.stats-summary-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 14px 0 16px;
   border-bottom: 1px solid var(--line);
 }
 
-.pnl-value {
-  font-size: 22px;
-  font-weight: 900;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.6px;
-  line-height: 1;
+.stat-block {
+  display: flex;
+  flex-direction: column;
 }
 
-.pnl-rate {
-  font-size: 13px;
+.stat-lbl {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.stat-val {
+  font-size: 19px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.stat-pct {
+  font-size: 12px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  opacity: 0.70;
+  opacity: 0.80;
+  margin-top: 1px;
 }
 
 /* ── Chart ── */
@@ -417,8 +389,9 @@ svg.chart-svg {
 .neutral { color: var(--text-sub); }
 
 @media (max-width: 360px) {
-  .val-main { font-size: 32px; }
-  .pnl-value { font-size: 17px; }
+  .val-main { font-size: 34px; }
+  .stat-val { font-size: 16px; }
+  .stat-pct { font-size: 11px; }
 }
 </style>
 </head>
@@ -480,7 +453,7 @@ function loadHistory() {
 }
 
 let stock = loadState();
-let history = loadHistory(); // [{date:"2025-05-01", pnl: 12000}, ...]
+let history = loadHistory();
 let activePeriod = "ALL";
 let editingField = null;
 let isUpdating = false;
@@ -686,19 +659,26 @@ function render() {
         <div class="fund-code">${stock.code}</div>
       </div>
 
-      <div class="valuation-row">
+      <div class="hero-section">
         <div class="val-main">${fmt(val)}</div>
-        <div class="val-right">
-          <div class="day-badge ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
-            Day ${dayDiff === null ? "---" : fmtS(dayDiff)}
-          </div>
-          <div class="total-rate ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">${stock.diff !== null ? fmtP(parseFloat(stock.diff)) : '---'}</div>
-        </div>
       </div>
 
-      <div class="pnl-row">
-        <div class="pnl-value ${pnl >= 0 ? 'pos' : 'neg'}">${fmtS(pnl)}</div>
-        <div class="pnl-rate ${pnl >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</div>
+      <div class="stats-summary-box">
+        <div class="stat-block">
+          <span class="stat-lbl">DAY (前日比)</span>
+          <span class="stat-val ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
+            ${dayDiff === null ? "---" : fmtS(dayDiff)}
+          </span>
+          <span class="stat-pct ${dayDiff === null ? 'neutral' : (dayDiff >= 0 ? 'pos' : 'neg')}">
+            ${stock.diff !== null ? fmtP(parseFloat(stock.diff)) : '---'}
+          </span>
+        </div>
+        
+        <div class="stat-block">
+          <span class="stat-lbl">TOTAL (通算損益)</span>
+          <span class="stat-val ${pnl >= 0 ? 'pos' : 'neg'}">${fmtS(pnl)}</span>
+          <span class="stat-pct ${pnl >= 0 ? 'pos' : 'neg'}">${fmtP(rate)}</span>
+        </div>
       </div>
     </div>
 
