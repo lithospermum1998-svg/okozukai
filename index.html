@@ -185,7 +185,8 @@ let isUpdating = false;
 function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
 function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-const getValuation = (p = stock.price) => p * stock.holding / 10000;
+// FIX 5: 引数を削除し stock.price を直接参照するよう統一
+const getValuation = () => stock.price * stock.holding / 10000;
 const getPnL = (v) => v - stock.cost;
 
 const fmtYen = v => v === null || !isFinite(v) ? "---" : Math.round(v).toLocaleString();
@@ -215,9 +216,12 @@ function render() {
   document.getElementById("inputCode").value = stock.code;
 
   const avgCost = stock.holding > 0 ? (stock.cost / stock.holding * 10000) : 0;
-  const diffPct = stock.diff !== null ? parseFloat(stock.diff) : 0;
 
-  document.getElementById("panelNavDisplay").textContent = `${fmtYen(stock.price)} (${fmtPct(diffPct)})`;
+  // FIX 1: diff が null のとき % 表示しない
+  const diffStr = (stock.diff !== null && isFinite(parseFloat(stock.diff)))
+    ? ` (${fmtPct(parseFloat(stock.diff))})`
+    : "";
+  document.getElementById("panelNavDisplay").textContent = `${fmtYen(stock.price)}${diffStr}`;
   document.getElementById("panelAvgDisplay").textContent = fmtYen(avgCost);
 }
 
@@ -251,9 +255,17 @@ async function fetchAll() {
     const res = await fetch(`${GAS_API_URL}?code=${encodeURIComponent(stock.code)}`, { cache: "no-store" });
     const json = await res.json();
     if (json.status === "Success") {
-      stock.price = json.price; stock.diff = json.diff ?? null; save();
+      stock.price = json.price;
 
-      const today = new Date().toISOString().slice(0, 10);
+      // FIX 3: diff を数値として検証してから格納
+      const parsedDiff = parseFloat(json.diff);
+      stock.diff = (json.diff != null && isFinite(parsedDiff)) ? parsedDiff : null;
+
+      save();
+
+      // FIX 4: タイムゾーンを考慮したローカル日付を使用
+      const now = new Date();
+      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const pnl = Math.round(getPnL(getValuation()));
       const idx = history.findIndex(h => h.date === today);
       if (idx >= 0) history[idx].pnl = pnl; else history.push({ date: today, pnl });
@@ -262,10 +274,13 @@ async function fetchAll() {
 
       render();
     }
-  } catch (e) {}
-
-  container.classList.remove("syncing");
-  isUpdating = false;
+  } catch (e) {
+    // エラーは無視するが finally でクリーンアップを保証
+  } finally {
+    // FIX 2: catch でも必ずアニメーションを止める
+    container.classList.remove("syncing");
+    isUpdating = false;
+  }
 }
 
 render();
