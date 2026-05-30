@@ -143,6 +143,11 @@ body {
   </div>
 
   <div class="input-group">
+    <span class="input-label">Fund Ident Code</span>
+    <input type="text" id="inputCode" class="clean-input" onblur="updateConfig('code', this.value)">
+  </div>
+  
+  <div class="input-group">
     <span class="input-label">Total Holdings (口数)</span>
     <input type="number" id="inputHolding" class="clean-input" onblur="updateConfig('holding', this.value)">
   </div>
@@ -150,11 +155,6 @@ body {
   <div class="input-group">
     <span class="input-label">Principal Cost (取得コスト)</span>
     <input type="number" id="inputCost" class="clean-input" onblur="updateConfig('cost', this.value)">
-  </div>
-
-  <div class="input-group">
-    <span class="input-label">Fund Ident Code</span>
-    <input type="text" id="inputCode" class="clean-input" onblur="updateConfig('code', this.value)">
   </div>
 
   <div class="input-group">
