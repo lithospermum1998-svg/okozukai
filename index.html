@@ -71,19 +71,6 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-.ai-comment {
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.03em;
-  color: #333333;
-  margin-top: 28px;
-  line-height: 1.6;
-  max-width: 280px;
-  min-height: 1.2em;
-  transition: opacity 0.8s ease;
-}
-.ai-comment.hidden { opacity: 0; }
-.ai-comment.visible { opacity: 1; }
 
 .meta-trigger {
   font-size: 10px;
@@ -146,7 +133,6 @@ body {
 <div class="center-piece" id="syncTrigger" onclick="fetchAll()">
   <div class="main-value" id="mainValDisplay">0</div>
   <div class="sub-metrics" id="subMetricsDisplay">---</div>
-  <div class="ai-comment hidden" id="aiComment"></div>
 </div>
 
 <div class="meta-trigger" onclick="togglePanel(true)">data</div>
@@ -288,7 +274,6 @@ async function fetchAll() {
       saveHistory();
 
       render();
-      fetchComment();
     }
   } catch (e) {
     // エラーは無視するが finally でクリーンアップを保証
@@ -296,47 +281,6 @@ async function fetchAll() {
     // FIX 2: catch でも必ずアニメーションを止める
     container.classList.remove("syncing");
     isUpdating = false;
-  }
-}
-
-async function fetchComment() {
-  const el = document.getElementById("aiComment");
-  el.classList.remove("visible");
-  el.classList.add("hidden");
-
-  const val = getValuation();
-  const pnl = getPnL(val);
-  const rate = stock.cost > 0 ? (pnl / stock.cost * 100) : 0;
-  const dayDiff = stock.diff !== null ? stock.diff : null;
-
-  const prompt = `You are a terse, dry financial observer. Given this mutual fund snapshot, write exactly one short sentence (under 20 words) in Japanese as a wry, minimal comment on the current state. No emoji. No cheerfulness. Just a single dry observation.
-
-Fund: 楽天・プラス・SOX (NASDAQ-100 Semiconductors)
-Valuation: ¥${Math.round(val).toLocaleString()}
-Total P&L: ${pnl >= 0 ? "+" : ""}${Math.round(pnl).toLocaleString()} (${rate.toFixed(2)}%)
-Day change: ${dayDiff !== null ? dayDiff.toFixed(2) + "%" : "unknown"}
-
-Reply with only the single sentence, nothing else.`;
-
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": "YOUR_API_KEY_HERE", "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.find(b => b.type === "text")?.text?.trim();
-    if (text) {
-      el.textContent = text;
-      el.classList.remove("hidden");
-      el.classList.add("visible");
-    }
-  } catch (e) {
-    // コメント取得失敗は無視
   }
 }
 
