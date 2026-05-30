@@ -57,7 +57,10 @@ body {
 .center-piece:active .main-value { opacity: 0.2; }
 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.syncing .main-value { animation: pulse 1.5s infinite ease-in-out; pointer-events: none; }
+.syncing .main-value {
+  animation: pulse 3s infinite cubic-bezier(0.45, 0, 0.55, 1);
+  pointer-events: none;
+}
 
 .sub-metrics {
   font-size: 11px;
