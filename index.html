@@ -26,29 +26,30 @@ body {
   padding: calc(80px + env(safe-area-inset-top)) 32px calc(40px + env(safe-area-inset-bottom));
 }
 
-/* ── 静かに佇むタイトル（左揃えのラインに同期） ── */
+/* ── 静かに佇むタイトル（下部のdataと同じトーンに調整） ── */
 .minimal-title {
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.35em;
   color: #222222;
   text-transform: uppercase;
+  text-align: center;
   position: absolute;
-  top: calc(30px + env(safe-area-inset-top));
-  left: 32px; /* 左端の余白に固定 */
+  top: calc(25px + env(safe-area-inset-top));
+  left: 0;
+  right: 0;
   pointer-events: none;
 }
 
-/* ── Asset Hero (左揃え・上方配置へリニューアル) ── */
+/* ── Asset Hero (タップすると同期する巨大な数字) ── */
 .center-piece {
-  margin-top: 10vh; /* 画面全体のやや上方に配置 */
+  margin-top: auto;
   margin-bottom: auto;
-  text-align: left; /* 左揃え */
   cursor: pointer;
 }
 
 .main-value {
-  font-size: 68px;
+  font-size: 64px;
   font-weight: 100;
   letter-spacing: -3px;
   line-height: 1.0;
@@ -66,8 +67,24 @@ body {
   font-weight: 400;
   letter-spacing: 0.05em;
   color: #555555;
-  margin-top: 20px;
+  margin-top: 16px;
   font-variant-numeric: tabular-nums;
+  transition: color 0.3s;
+}
+.history-mode .sub-metrics { color: #ffffff; }
+
+/* ── 1px Line Chart (ただ横たわる軌跡) ── */
+.chart-space {
+  width: 100%;
+  height: 120px;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+svg.minimal-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 /* ── 隠蔽された設定コントロールレイヤー ── */
@@ -75,11 +92,11 @@ body {
   font-size: 10px;
   letter-spacing: 0.2em;
   color: #222222;
-  text-align: left; /* 下部リンクも左揃えにして統一感を補強 */
+  text-align: center;
   cursor: pointer;
   text-transform: uppercase;
   transition: color 0.2s;
-  padding: 10px 0;
+  padding: 10px;
 }
 .meta-trigger:active { color: #ffffff; }
 
@@ -133,6 +150,8 @@ body {
   <div class="sub-metrics" id="subMetricsDisplay">---</div>
 </div>
 
+<div class="chart-space" id="chartSpace"></div>
+
 <div class="meta-trigger" onclick="togglePanel(true)">data</div>
 
 <div class="control-panel" id="controlPanel">
@@ -166,7 +185,7 @@ body {
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
 
-// ── States ──
+// ── Minimal States ──
 const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, diff: null };
 let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
 let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
@@ -181,6 +200,69 @@ const getPnL = (v) => v - stock.cost;
 const fmtYen = v => v === null || !isFinite(v) ? "---" : Math.round(v).toLocaleString();
 const fmtSign = v => { const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
 const fmtPct = v => (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
+
+// ── Chart Engine ──
+let chartPoints = [];
+function drawMinimalChart() {
+  const space = document.getElementById("chartSpace");
+  if (history.length < 2) { space.innerHTML = ""; return; }
+
+  const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
+  const vals = sorted.map(d => d.pnl);
+  const minV = Math.min(...vals); const maxV = Math.max(...vals); const range = maxV - minV || 1;
+  
+  const W = 500, H = 120;
+  chartPoints = sorted.map((d, i) => ({
+    x: (i / (sorted.length - 1)) * W,
+    y: 4 + (1 - (d.pnl - minV) / range) * (H - 8),
+    date: d.date,
+    pnl: d.pnl
+  }));
+
+  const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
+
+  space.innerHTML = `
+    <svg class="minimal-svg" id="minimalSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <path d="${pathD}" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line id="hairline" x1="0" y1="0" x2="0" y2="${H}" stroke="#222222" stroke-width="1" style="display:none;" />
+    </svg>
+  `;
+  
+  initChartInteractions();
+}
+
+function initChartInteractions() {
+  const space = document.getElementById("chartSpace");
+  const hl = document.getElementById("hairline");
+  if (!hl || chartPoints.length === 0) return;
+
+  const handlePointer = (clientX) => {
+    const rect = space.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const targetX = pct * 500;
+
+    let closest = chartPoints[0]; let minDiff = Math.abs(chartPoints[0].x - targetX);
+    for (let p of chartPoints) { const diff = Math.abs(p.x - targetX); if (diff < minDiff) { minDiff = diff; closest = p; } }
+
+    hl.setAttribute("x1", closest.x); hl.setAttribute("x2", closest.x);
+    hl.style.display = "block";
+
+    document.body.classList.add("history-mode");
+    const simulatedVal = stock.cost + closest.pnl;
+    const rate = stock.cost > 0 ? (closest.pnl / stock.cost * 100) : 0;
+    
+    document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
+    document.getElementById("subMetricsDisplay").textContent = `${closest.date} ── TOTAL: ${fmtSign(closest.pnl)} (${fmtPct(rate)})`;
+  };
+
+  const resetPointer = () => { hl.style.display = "none"; document.body.classList.remove("history-mode"); renderLive(); };
+
+  space.addEventListener("mousemove", (e) => handlePointer(e.clientX));
+  space.addEventListener("mouseleave", resetPointer);
+  space.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX), {passive:true});
+  space.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX), {passive:true});
+  space.addEventListener("touchend", resetPointer);
+}
 
 function renderLive() {
   const val = getValuation();
@@ -199,6 +281,7 @@ function renderLive() {
 
 function render() {
   renderLive();
+  drawMinimalChart();
   
   document.getElementById("inputHolding").value = stock.holding;
   document.getElementById("inputCost").value = stock.cost;
