@@ -71,6 +71,20 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.ai-comment {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: #333333;
+  margin-top: 28px;
+  line-height: 1.6;
+  max-width: 280px;
+  min-height: 1.2em;
+  transition: opacity 0.8s ease;
+}
+.ai-comment.hidden { opacity: 0; }
+.ai-comment.visible { opacity: 1; }
+
 .meta-trigger {
   font-size: 10px;
   letter-spacing: 0.2em;
@@ -132,6 +146,7 @@ body {
 <div class="center-piece" id="syncTrigger" onclick="fetchAll()">
   <div class="main-value" id="mainValDisplay">0</div>
   <div class="sub-metrics" id="subMetricsDisplay">---</div>
+  <div class="ai-comment hidden" id="aiComment"></div>
 </div>
 
 <div class="meta-trigger" onclick="togglePanel(true)">data</div>
