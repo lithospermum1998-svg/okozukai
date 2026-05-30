@@ -23,34 +23,32 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: calc(80px + env(safe-area-inset-top)) 32px calc(60px + env(safe-area-inset-bottom));
+  padding: calc(80px + env(safe-area-inset-top)) 32px calc(40px + env(safe-area-inset-bottom));
 }
 
-/* ── 静かに佇むタイトル ── */
+/* ── 静かに佇むタイトル（左揃えのラインに同期） ── */
 .minimal-title {
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.35em;
   color: #222222;
   text-transform: uppercase;
-  text-align: center;
   position: absolute;
-  top: calc(25px + env(safe-area-inset-top));
-  left: 0;
-  right: 0;
+  top: calc(30px + env(safe-area-inset-top));
+  left: 32px; /* 左端の余白に固定 */
   pointer-events: none;
 }
 
-/* ── Asset Hero (完全なる中央集約) ── */
+/* ── Asset Hero (左揃え・上方配置へリニューアル) ── */
 .center-piece {
-  margin-top: auto;
+  margin-top: 10vh; /* 画面全体のやや上方に配置 */
   margin-bottom: auto;
-  text-align: center;
+  text-align: left; /* 左揃え */
   cursor: pointer;
 }
 
 .main-value {
-  font-size: 68px; /* グラフが消えた分、数字の存在感をわずかにアップ */
+  font-size: 68px;
   font-weight: 100;
   letter-spacing: -3px;
   line-height: 1.0;
@@ -77,11 +75,11 @@ body {
   font-size: 10px;
   letter-spacing: 0.2em;
   color: #222222;
-  text-align: center;
+  text-align: left; /* 下部リンクも左揃えにして統一感を補強 */
   cursor: pointer;
   text-transform: uppercase;
   transition: color 0.2s;
-  padding: 10px;
+  padding: 10px 0;
 }
 .meta-trigger:active { color: #ffffff; }
 
@@ -184,7 +182,6 @@ const fmtYen = v => v === null || !isFinite(v) ? "---" : Math.round(v).toLocaleS
 const fmtSign = v => { const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
 const fmtPct = v => (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 
-// ── Core UI Render (グラフにまつわる複雑なインタラクションも削ぎ落とし) ──
 function renderLive() {
   const val = getValuation();
   const pnl = getPnL(val);
@@ -208,7 +205,6 @@ function render() {
   document.getElementById("inputCode").value = stock.code;
 }
 
-// ── Control Panel ──
 function togglePanel(open) { document.getElementById("controlPanel").classList.toggle("open", open); }
 function updateConfig(field, value) {
   if (field === 'code') { stock.code = value; } 
@@ -216,7 +212,6 @@ function updateConfig(field, value) {
   save(); render();
 }
 
-// ── Backup System ──
 function exportData() {
   const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist") };
   navigator.clipboard.writeText(JSON.stringify(b)).then(() => alert("Copied token."));
@@ -230,7 +225,6 @@ function importData() {
   } catch { alert("Error"); }
 }
 
-// ── Network Sync (裏では静かに180日の軌跡をログし続ける) ──
 async function fetchAll() {
   if (isUpdating) return; isUpdating = true;
   const container = document.getElementById("syncTrigger");
@@ -242,7 +236,6 @@ async function fetchAll() {
     if (json.status === "Success") {
       stock.price = json.price; stock.diff = json.diff ?? null; save();
       
-      // 歴史の記録だけは裏で継続
       const today = new Date().toISOString().slice(0, 10);
       const pnl = Math.round(getPnL(getValuation()));
       const idx = history.findIndex(h => h.date === today);
