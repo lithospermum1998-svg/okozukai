@@ -23,7 +23,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: calc(80px + env(safe-area-inset-top)) 32px calc(40px + env(safe-area-inset-bottom));
+  padding: calc(80px + env(safe-area-inset-top)) 32px calc(60px + env(safe-area-inset-bottom));
 }
 
 /* ── 静かに佇むタイトル ── */
@@ -41,15 +41,16 @@ body {
   pointer-events: none;
 }
 
-/* ── Asset Hero (タップすると同期する巨大な数字) ── */
+/* ── Asset Hero (完全なる中央集約) ── */
 .center-piece {
   margin-top: auto;
   margin-bottom: auto;
+  text-align: center;
   cursor: pointer;
 }
 
 .main-value {
-  font-size: 64px;
+  font-size: 68px; /* グラフが消えた分、数字の存在感をわずかにアップ */
   font-weight: 100;
   letter-spacing: -3px;
   line-height: 1.0;
@@ -67,24 +68,8 @@ body {
   font-weight: 400;
   letter-spacing: 0.05em;
   color: #555555;
-  margin-top: 16px;
+  margin-top: 20px;
   font-variant-numeric: tabular-nums;
-  transition: color 0.3s;
-}
-.history-mode .sub-metrics { color: #ffffff; }
-
-/* ── 1px Line Chart (ただ横たわる軌跡) ── */
-.chart-space {
-  width: 100%;
-  height: 120px;
-  margin-bottom: 60px;
-  position: relative;
-}
-
-svg.minimal-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
 }
 
 /* ── 隠蔽された設定コントロールレイヤー ── */
@@ -111,7 +96,6 @@ svg.minimal-svg {
   gap: 32px;
   transform: translateY(100%);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
 }
 .control-panel.open { transform: translateY(0); }
 
@@ -151,8 +135,6 @@ svg.minimal-svg {
   <div class="sub-metrics" id="subMetricsDisplay">---</div>
 </div>
 
-<div class="chart-space" id="chartSpace"></div>
-
 <div class="meta-trigger" onclick="togglePanel(true)">data</div>
 
 <div class="control-panel" id="controlPanel">
@@ -176,16 +158,6 @@ svg.minimal-svg {
     <input type="text" id="inputCode" class="clean-input" onblur="updateConfig('code', this.value)">
   </div>
 
-  <div class="input-group">
-    <span class="input-label">Current NAV (基準価額)</span>
-    <div id="panelNavDisplay" class="clean-input" style="padding: 2px 0;">---</div>
-  </div>
-
-  <div class="input-group">
-    <span class="input-label">Average Cost (平均取得価額)</span>
-    <div id="panelAvgDisplay" class="clean-input" style="padding: 2px 0;">---</div>
-  </div>
-
   <div class="action-row">
     <span class="action-link" onclick="exportData()">Export Token</span>
     <span class="action-link" onclick="importData()">Import Token</span>
@@ -196,7 +168,7 @@ svg.minimal-svg {
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
 
-// ── Minimal States ──
+// ── States ──
 const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, diff: null };
 let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
 let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
@@ -212,69 +184,7 @@ const fmtYen = v => v === null || !isFinite(v) ? "---" : Math.round(v).toLocaleS
 const fmtSign = v => { const r = Math.round(v); return (r >= 0 ? "+" : "") + r.toLocaleString(); };
 const fmtPct = v => (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 
-// ── Chart Engine ──
-let chartPoints = [];
-function drawMinimalChart() {
-  const space = document.getElementById("chartSpace");
-  if (history.length < 2) { space.innerHTML = ""; return; }
-
-  const sorted = [...history].sort((a,b) => a.date.localeCompare(b.date));
-  const vals = sorted.map(d => d.pnl);
-  const minV = Math.min(...vals); const maxV = Math.max(...vals); const range = maxV - minV || 1;
-  
-  const W = 500, H = 120;
-  chartPoints = sorted.map((d, i) => ({
-    x: (i / (sorted.length - 1)) * W,
-    y: 4 + (1 - (d.pnl - minV) / range) * (H - 8),
-    date: d.date,
-    pnl: d.pnl
-  }));
-
-  const pathD = chartPoints.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
-
-  space.innerHTML = `
-    <svg class="minimal-svg" id="minimalSvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-      <path d="${pathD}" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-      <line id="hairline" x1="0" y1="0" x2="0" y2="${H}" stroke="#222222" stroke-width="1" style="display:none;" />
-    </svg>
-  `;
-  
-  initChartInteractions();
-}
-
-function initChartInteractions() {
-  const space = document.getElementById("chartSpace");
-  const hl = document.getElementById("hairline");
-  if (!hl || chartPoints.length === 0) return;
-
-  const handlePointer = (clientX) => {
-    const rect = space.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    const targetX = pct * 500;
-
-    let closest = chartPoints[0]; let minDiff = Math.abs(chartPoints[0].x - targetX);
-    for (let p of chartPoints) { const diff = Math.abs(p.x - targetX); if (diff < minDiff) { minDiff = diff; closest = p; } }
-
-    hl.setAttribute("x1", closest.x); hl.setAttribute("x2", closest.x);
-    hl.style.display = "block";
-
-    document.body.classList.add("history-mode");
-    const simulatedVal = stock.cost + closest.pnl;
-    const rate = stock.cost > 0 ? (closest.pnl / stock.cost * 100) : 0;
-    
-    document.getElementById("mainValDisplay").textContent = fmtYen(simulatedVal);
-    document.getElementById("subMetricsDisplay").textContent = `${closest.date} ── TOTAL: ${fmtSign(closest.pnl)} (${fmtPct(rate)})`;
-  };
-
-  const resetPointer = () => { hl.style.display = "none"; document.body.classList.remove("history-mode"); renderLive(); };
-
-  space.addEventListener("mousemove", (e) => handlePointer(e.clientX));
-  space.addEventListener("mouseleave", resetPointer);
-  space.addEventListener("touchstart", (e) => handlePointer(e.touches[0].clientX), {passive:true});
-  space.addEventListener("touchmove", (e) => handlePointer(e.touches[0].clientX), {passive:true});
-  space.addEventListener("touchend", resetPointer);
-}
-
+// ── Core UI Render (グラフにまつわる複雑なインタラクションも削ぎ落とし) ──
 function renderLive() {
   const val = getValuation();
   const pnl = getPnL(val);
@@ -292,20 +202,13 @@ function renderLive() {
 
 function render() {
   renderLive();
-  drawMinimalChart();
   
   document.getElementById("inputHolding").value = stock.holding;
   document.getElementById("inputCost").value = stock.cost;
   document.getElementById("inputCode").value = stock.code;
-
-  // ── Dataパネル内の表示更新 ──
-  const avgCost = stock.holding > 0 ? (stock.cost / stock.holding * 10000) : 0;
-  const diffPct = stock.diff !== null ? parseFloat(stock.diff) : 0;
-  
-  document.getElementById("panelNavDisplay").textContent = `${fmtYen(stock.price)} (${fmtPct(diffPct)})`;
-  document.getElementById("panelAvgDisplay").textContent = fmtYen(avgCost);
 }
 
+// ── Control Panel ──
 function togglePanel(open) { document.getElementById("controlPanel").classList.toggle("open", open); }
 function updateConfig(field, value) {
   if (field === 'code') { stock.code = value; } 
@@ -313,6 +216,7 @@ function updateConfig(field, value) {
   save(); render();
 }
 
+// ── Backup System ──
 function exportData() {
   const b = { stock: localStorage.getItem(SK), hist: localStorage.getItem(SK + "_hist") };
   navigator.clipboard.writeText(JSON.stringify(b)).then(() => alert("Copied token."));
@@ -321,12 +225,12 @@ function importData() {
   const str = prompt("Paste token:"); if (!str) return;
   try {
     const b = JSON.parse(str);
-    if (b.stock) localStorage.setItem(SK, b.stock); 
-    if (b.hist) localStorage.setItem(SK + "_hist", b.hist);
+    if (b.stock) localStorage.setItem(SK, b.stock); if (b.hist) localStorage.setItem(SK + "_hist");
     location.reload();
   } catch { alert("Error"); }
 }
 
+// ── Network Sync (裏では静かに180日の軌跡をログし続ける) ──
 async function fetchAll() {
   if (isUpdating) return; isUpdating = true;
   const container = document.getElementById("syncTrigger");
@@ -338,6 +242,7 @@ async function fetchAll() {
     if (json.status === "Success") {
       stock.price = json.price; stock.diff = json.diff ?? null; save();
       
+      // 歴史の記録だけは裏で継続
       const today = new Date().toISOString().slice(0, 10);
       const pnl = Math.round(getPnL(getValuation()));
       const idx = history.findIndex(h => h.date === today);
