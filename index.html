@@ -71,6 +71,15 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.sync-time {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #222222;
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}
 
 .meta-trigger {
   font-size: 10px;
@@ -133,6 +142,7 @@ body {
 <div class="center-piece" id="syncTrigger" onclick="fetchAll()">
   <div class="main-value" id="mainValDisplay">0</div>
   <div class="sub-metrics" id="subMetricsDisplay">---</div>
+  <div class="sync-time" id="syncTimeDisplay">UPDATED: ---</div>
 </div>
 
 <div class="meta-trigger" onclick="togglePanel(true)">data</div>
@@ -150,12 +160,12 @@ body {
   
   <div class="input-group">
     <span class="input-label">Total Holdings (口数)</span>
-    <input type="number" id="inputHolding" class="clean-input" onblur="updateConfig('holding', this.value)">
+    <input type="text" id="inputHolding" class="clean-input" inputmode="numeric" onfocus="this.value = stock.holding" onblur="updateConfig('holding', this.value)">
   </div>
 
   <div class="input-group">
     <span class="input-label">Principal Cost (取得コスト)</span>
-    <input type="number" id="inputCost" class="clean-input" onblur="updateConfig('cost', this.value)">
+    <input type="text" id="inputCost" class="clean-input" inputmode="numeric" onfocus="this.value = stock.cost" onblur="updateConfig('cost', this.value)">
   </div>
 
   <div class="input-group">
@@ -178,7 +188,7 @@ body {
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycby2CVXP9e34KWPbe8tFqhjvnznaq03Z8R-EoWLZeafce3PY_aet8nzEd0MlTj77YZM9/exec";
 const SK = "money_log_sox_v2";
 
-const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, diff: null };
+const DEFAULT = { name: "楽天・プラス・SOX", code: "2931123A", price: 19391, holding: 59845, cost: 121180, diff: null, lastSynced: null };
 let stock = (() => { try { const s = localStorage.getItem(SK); return s ? { ...DEFAULT, ...JSON.parse(s) } : { ...DEFAULT }; } catch { return { ...DEFAULT }; } })();
 let history = (() => { try { const h = localStorage.getItem(SK + "_hist"); return h ? JSON.parse(h) : []; } catch { return []; } })();
 let isUpdating = false;
@@ -186,7 +196,6 @@ let isUpdating = false;
 function save() { localStorage.setItem(SK, JSON.stringify(stock)); }
 function saveHistory() { localStorage.setItem(SK + "_hist", JSON.stringify(history)); }
 
-// FIX 5: 引数を削除し stock.price を直接参照するよう統一
 const getValuation = () => stock.price * stock.holding / 10000;
 const getPnL = (v) => v - stock.cost;
 
@@ -207,18 +216,22 @@ function renderLive() {
   metricsStr += `   /   TOTAL: ${fmtSign(pnl)} (${fmtPct(rate)})`;
 
   document.getElementById("subMetricsDisplay").textContent = metricsStr;
+  document.getElementById("syncTimeDisplay").textContent = stock.lastSynced ? `UPDATED: ${stock.lastSynced}` : "UPDATED: ---";
 }
 
 function render() {
   renderLive();
 
-  document.getElementById("inputHolding").value = stock.holding;
-  document.getElementById("inputCost").value = stock.cost;
+  if (document.activeElement !== document.getElementById("inputHolding")) {
+    document.getElementById("inputHolding").value = stock.holding.toLocaleString();
+  }
+  if (document.activeElement !== document.getElementById("inputCost")) {
+    document.getElementById("inputCost").value = stock.cost.toLocaleString();
+  }
   document.getElementById("inputCode").value = stock.code;
 
   const avgCost = stock.holding > 0 ? (stock.cost / stock.holding * 10000) : 0;
 
-  // FIX 1: diff が null のとき % 表示しない
   const diffStr = (stock.diff !== null && isFinite(parseFloat(stock.diff)))
     ? ` (${fmtPct(parseFloat(stock.diff))})`
     : "";
@@ -227,9 +240,14 @@ function render() {
 }
 
 function togglePanel(open) { document.getElementById("controlPanel").classList.toggle("open", open); }
+
 function updateConfig(field, value) {
   if (field === 'code') { stock.code = value; }
-  else { const n = parseFloat(value); if (!isNaN(n) && isFinite(n)) stock[field] = n; }
+  else {
+    const cleanValue = String(value).replace(/,/g, '');
+    const n = parseFloat(cleanValue);
+    if (!isNaN(n) && isFinite(n)) stock[field] = n;
+  }
   save(); render();
 }
 
@@ -258,15 +276,20 @@ async function fetchAll() {
     if (json.status === "Success") {
       stock.price = json.price;
 
-      // FIX 3: diff を数値として検証してから格納
       const parsedDiff = parseFloat(json.diff);
       stock.diff = (json.diff != null && isFinite(parsedDiff)) ? parsedDiff : null;
 
+      const now = new Date();
+      const MM = String(now.getMonth() + 1).padStart(2, '0');
+      const DD = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      stock.lastSynced = `${MM}/${DD} ${hh}:${mm}:${ss}`;
+
       save();
 
-      // FIX 4: タイムゾーンを考慮したローカル日付を使用
-      const now = new Date();
-      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const today = `${now.getFullYear()}-${MM}-${DD}`;
       const pnl = Math.round(getPnL(getValuation()));
       const idx = history.findIndex(h => h.date === today);
       if (idx >= 0) history[idx].pnl = pnl; else history.push({ date: today, pnl });
@@ -276,13 +299,65 @@ async function fetchAll() {
       render();
     }
   } catch (e) {
-    // エラーは無視するが finally でクリーンアップを保証
+    // エラーハンドリング
   } finally {
-    // FIX 2: catch でも必ずアニメーションを止める
     container.classList.remove("syncing");
     isUpdating = false;
   }
 }
+
+// 追加: 下スワイプで閉じるジェスチャーの実装
+(() => {
+  const panel = document.getElementById("controlPanel");
+  let startY = 0;
+  let currentY = 0;
+  let isDragging = false;
+
+  panel.addEventListener("touchstart", (e) => {
+    if (panel.scrollTop === 0) {
+      startY = e.touches[0].clientY;
+      isDragging = true;
+      panel.style.transition = "none"; // ドラッグ中は一時的にアニメーションを無効化
+    }
+  }, { passive: true });
+
+  panel.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY - startY;
+
+    if (currentY > 0) {
+      // 下方向へのスワイプのみ追従させる
+      panel.style.transform = `translateY(${currentY}px)`;
+      if (e.cancelable) e.preventDefault();
+    } else {
+      panel.style.transform = "";
+    }
+  }, { passive: false });
+
+  panel.addEventListener("touchend", () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    if (currentY > 100) {
+      // 100px以上下にスワイプされていたらスムーズに閉じる
+      panel.style.transition = "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)";
+      panel.style.transform = "translateY(100%)";
+      setTimeout(() => {
+        panel.classList.remove("open");
+        panel.style.transform = "";
+        panel.style.transition = "";
+      }, 250);
+    } else {
+      // 閾値未満なら元の位置にバウンドさせて戻す
+      panel.style.transition = "transform 0.2s ease-out";
+      panel.style.transform = "translateY(0)";
+      setTimeout(() => {
+        panel.style.transition = "";
+      }, 200);
+    }
+    currentY = 0;
+  });
+})();
 
 render();
 </script>
